@@ -15,6 +15,12 @@ import { FiExternalLink } from 'react-icons/fi';
 import { CgClose } from 'react-icons/cg';
 import { SiTailwindcss, SiMysql } from 'react-icons/si';
 
+// Import images correctly
+import chiyaghar from '../assets/projects/chiyaghar.png';
+import trekking from '../assets/projects/trekking.png';
+import driving from '../assets/projects/driving.png';
+import carrental from '../assets/projects/carrental.png';
+
 const iconMap = {
   HTML: <FaHtml5 className="text-orange-500" />,
   CSS: <FaCss3Alt className="text-blue-500" />,
@@ -33,7 +39,7 @@ const projects = [
     title: 'Chiya Ghar',
     description:
       'A modern and responsive website for a local Nepali tea café. Features a menu, gallery, online order page, and contact form. Built with a focus on a smooth user experience.',
-    image: '/src/assets/projects/chiyaghar.png',
+    image: chiyaghar,
     tags: ['HTML', 'Tailwind CSS', 'JavaScript'],
     liveUrl: 'https://sabin-khatri.github.io/ChiyaAdda/',
     githubUrl: 'https://github.com/sabin-khatri/ChiyaAdda'
@@ -43,7 +49,7 @@ const projects = [
     title: 'Trekking Website',
     description:
       'A tourism website promoting trekking in Nepal. Includes itinerary pages, image gallery, inquiry form, and destination highlights. Fully responsive and optimized for user engagement.',
-    image: '/src/assets/projects/trekking.png',
+    image: trekking,
     tags: ['HTML', 'Tailwind CSS', 'JavaScript'],
     liveUrl: 'https://sabin-khatri.github.io/HTML_Course/projects/trekking-web/',
     githubUrl: 'https://github.com/sabin-khatri/HTML_Course/tree/main/projects/trekking-web'
@@ -53,7 +59,7 @@ const projects = [
     title: 'Driving App',
     description:
       'A frontend concept for a driving school app featuring course listings, instructor profiles, and student progress tracking. Built with React and Tailwind CSS for a clean, modular UI.',
-    image: '/src/assets/projects/driving.png',
+    image: driving,
     tags: ['React', 'Tailwind CSS', 'JavaScript'],
     liveUrl: 'https://driving-app.pages.dev/',
     githubUrl: 'https://github.com/sabin-khatri/React-Projects-Beginner/tree/main/driving-app'
@@ -63,7 +69,7 @@ const projects = [
     title: 'Car Rental System',
     description:
       'A dynamic web interface for renting cars online. Users can search cars, apply filters, view details, and make bookings. Clean and interactive UI built with React and Tailwind CSS.',
-    image: '/src/assets/projects/carrental.png',
+    image: carrental,
     tags: ['React', 'Tailwind CSS', 'JavaScript'],
     liveUrl: 'https://react-car-rental-sabin.netlify.app/',
     githubUrl: 'https://github.com/sabin-khatri/React-Projects-Beginner/tree/main/car-rental'
@@ -103,17 +109,17 @@ const ProjectCard = ({ project, index, onImageClick }) => (
         ))}
       </div>
       <footer className="flex items-center gap-4 mt-auto">
-        <motion.a whileHover={{ scale: 1.1, color: '#22d3ee' }} whileTap={{ scale: 0.9 }} href={project.githubUrl} target="_blank" rel="noopener noreferrer" aria-label={`${project.title} GitHub`} className="text-slate-300">
+        <motion.a whileHover={{ scale: 1.1, color: '#22d3ee' }} whileTap={{ scale: 0.9 }} href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="text-slate-300">
           <FaGithub size={26} />
         </motion.a>
         {project.liveUrl && (
-          <motion.a whileHover={{ scale: 1.05, y: -3 }} whileTap={{ scale: 0.95 }} href={project.liveUrl} target="_blank" rel="noopener noreferrer" aria-label={`${project.title} Live Link`} className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold bg-cyan-400 text-slate-900 rounded-full shadow-lg shadow-cyan-500/10 hover:bg-cyan-300 transition-colors duration-300">
+          <motion.a whileHover={{ scale: 1.05, y: -3 }} whileTap={{ scale: 0.95 }} href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold bg-cyan-400 text-slate-900 rounded-full shadow-lg hover:bg-cyan-300 transition-colors duration-300">
             <FiExternalLink />Live Demo
           </motion.a>
         )}
       </footer>
     </div>
-    <motion.div className={`relative rounded-xl overflow-hidden shadow-2xl shadow-black/30 cursor-pointer ${index % 2 === 0 ? 'lg:order-2' : 'lg:order-1'}`} onClick={() => onImageClick(project.image)} whileHover={{ scale: 1.03, zIndex: 10 }} transition={{ duration: 0.3 }}>
+    <motion.div className={`relative rounded-xl overflow-hidden shadow-2xl shadow-black/30 cursor-pointer ${index % 2 === 0 ? 'lg:order-2' : 'lg:order-1'}`} onClick={() => onImageClick(project.image)} whileHover={{ scale: 1.03 }} transition={{ duration: 0.3 }}>
       <img src={project.image} alt={`${project.title} Screenshot`} className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105" />
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
         <motion.span initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-white text-lg font-semibold border-2 border-white px-4 py-2 rounded-md">
@@ -133,7 +139,7 @@ const SkillBadge = ({ name }) => (
 
 const ImageModal = ({ src, onClose }) => (
   <motion.div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose}>
-    <motion.button onClick={onClose} aria-label="Close image view" className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors z-50" whileHover={{ scale: 1.2, rotate: 90 }}>
+    <motion.button onClick={onClose} className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors z-50" whileHover={{ scale: 1.2, rotate: 90 }}>
       <CgClose size={32} />
     </motion.button>
     <motion.img src={src} alt="Project screenshot" className="max-w-[90vw] max-h-[90vh] w-auto h-auto rounded-lg shadow-2xl" initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }} transition={{ type: 'spring', stiffness: 200, damping: 25 }} onClick={(e) => e.stopPropagation()} />
