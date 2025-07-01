@@ -141,8 +141,8 @@ const Contact = () => {
           <div>
             <motion.header variants={itemVariants} className="mb-10 text-center lg:text-left">
               <h2 className="text-4xl lg:text-5xl font-extrabold text-white">
-                Let's
-                <span className="bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
+                Let's&nbsp;
+                <span className="gap-2 bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
                   Connect
                 </span>
               </h2>

@@ -5,6 +5,7 @@ import { motion, animate } from 'framer-motion';
 import { useInView } from 'react-intersection-observer'; // Fixed import
 import { FaDownload } from 'react-icons/fa';
 import profileImage from '../assets/about.avif';
+import resume from '../assets/resume/resume.pdf';
 
 // AnimatedCounter component
 function AnimatedCounter({ to, className }) {
@@ -125,8 +126,9 @@ const About = () => {
               variants={itemVariants}
             >
               <motion.a
-                href="src\assets\resume"
-                download="Sabin-Khatri-Frontend-Developer-Resume.pdf"
+                href={resume}
+                
+                download="Frontend-Developer-Resume"
                 className="inline-flex items-center gap-2.5 px-6 py-3 font-semibold text-slate-900 bg-cyan-400 rounded-lg shadow-lg shadow-cyan-500/20"
                 whileHover={{ scale: 1.05, y: -4 }}
                 whileTap={{ scale: 0.95 }}
@@ -137,6 +139,7 @@ const About = () => {
               </motion.a>
               <motion.a
                 href="#contact"
+                download={resume}
                 className="inline-flex items-center px-8 py-3 font-semibold text-slate-200 border-2 border-slate-700 rounded-lg"
                 whileHover={{ scale: 1.05, y: -4, backgroundColor: "#1e293b", borderColor: "#334155" }}
                 whileTap={{ scale: 0.95 }}
