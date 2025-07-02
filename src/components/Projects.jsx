@@ -41,7 +41,7 @@ const projects = [
       'A modern and responsive website for a local Nepali tea café. Features a menu, gallery, online order page, and contact form. Built with a focus on a smooth user experience.',
     image: chiyaghar,
     tags: ['HTML', 'Tailwind CSS', 'JavaScript'],
-    liveUrl: 'https://ephemeral-taffy-7cb079.netlify.app/',
+    liveUrl: 'https://bespoke-twilight-0dc185.netlify.app/',
     githubUrl: 'https://github.com/sabin-khatri/ChiyaAdda'
   },
   {
