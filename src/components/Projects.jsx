@@ -41,7 +41,7 @@ const projects = [
       'A modern and responsive website for a local Nepali tea café. Features a menu, gallery, online order page, and contact form. Built with a focus on a smooth user experience.',
     image: chiyaghar,
     tags: ['HTML', 'Tailwind CSS', 'JavaScript'],
-    liveUrl: 'https://sabin-khatri.github.io/ChiyaAdda/',
+    liveUrl: 'https://ephemeral-taffy-7cb079.netlify.app/',
     githubUrl: 'https://github.com/sabin-khatri/ChiyaAdda'
   },
   {
@@ -71,7 +71,7 @@ const projects = [
       'A dynamic web interface for renting cars online. Users can search cars, apply filters, view details, and make bookings. Clean and interactive UI built with React and Tailwind CSS.',
     image: carrental,
     tags: ['React', 'Tailwind CSS', 'JavaScript'],
-    liveUrl: 'https://react-car-rental-sabin.netlify.app/',
+    liveUrl: 'https://chimerical-sorbet-29e08e.netlify.app/',
     githubUrl: 'https://github.com/sabin-khatri/React-Projects-Beginner/tree/main/car-rental'
   }
 ];
