@@ -1,40 +1,47 @@
+/* eslint-disable no-unused-vars */
 // src/components/Navbar.jsx
 import React, { useState, useEffect } from 'react';
 import { FaBars, FaTimes } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 
 const navLinks = [
   { title: 'Home', url: '#home' },
   { title: 'About', url: '#about' },
   { title: 'Projects', url: '#projects' },
   { title: 'Skills', url: '#skills' },
-  { title: 'Contact', url: '#contact' }, // Assuming you will add a contact section
+  { title: 'Contact', url: '#contact' },
 ];
+
+// --- CHANGE 1: Update variants for a right-to-left slide ---
+const navLinkVariants = {
+  // The background starts completely to the right, hidden by the parent's overflow
+  initial: {
+    x: '100%',
+  },
+  // On hover, it slides in from the right to fill the space
+  hover: {
+    x: '0%',
+  },
+};
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // Effect to handle scroll and change navbar background
   useEffect(() => {
     const handleScroll = () => {
-      // Set scrolled state to true if page is scrolled more than 10px
       setIsScrolled(window.scrollY > 10);
     };
-
-    // Add event listener on component mount
     window.addEventListener('scroll', handleScroll);
-
-    // Clean up event listener on component unmount
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []); // Empty dependency array ensures this effect runs only once
+  }, []);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
 
-  // Close the mobile menu when a link is clicked
   const handleLinkClick = () => {
     if (isOpen) {
       setIsOpen(false);
@@ -59,16 +66,25 @@ const Navbar = () => {
             {/* Desktop Menu */}
             <ul className="hidden md:flex items-center space-x-8">
               {navLinks.map((link) => (
-                <li key={link.title}>
+                <motion.li
+                  key={link.title}
+                  className="relative cursor-pointer overflow-hidden"
+                  initial="initial"
+                  whileHover="hover"
+                >
                   <a
                     href={link.url}
-                    className="relative text-lg font-medium text-slate-200 transition-colors duration-300 hover:text-cyan-400 
-                               after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 after:bg-cyan-400 
-                               after:transition-all after:duration-300 hover:after:w-full"
+                    className="relative text-lg font-medium text-slate-200 transition-colors duration-300 hover:text-cyan-400 px-3 py-2"
                   >
                     {link.title}
                   </a>
-                </li>
+                  {/* --- CHANGE 2: Updated the background color --- */}
+                  <motion.div
+                    className="absolute inset-0 bg-cyan-600/25 rounded-md -z-10" // A slightly more saturated and visible color
+                    variants={navLinkVariants}
+                    transition={{ duration: 0.35, ease: 'easeInOut' }}
+                  />
+                </motion.li>
               ))}
             </ul>
 
