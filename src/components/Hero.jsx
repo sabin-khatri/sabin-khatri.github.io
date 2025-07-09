@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { useTypewriter, Cursor } from 'react-simple-typewriter';
 import { HiOutlineArrowRight } from 'react-icons/hi';
 import { FaGithub, FaLinkedin } from 'react-icons/fa';
-import profilePic from '../assets/profile.jpg';
+import profilePic from '../assets/profile.png';
 
 const socialLinks = [
   { name: 'GitHub', icon: <FaGithub />, url: 'https://github.com/sabin-khatri' },
