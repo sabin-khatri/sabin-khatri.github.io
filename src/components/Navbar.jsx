@@ -1,26 +1,26 @@
 /* eslint-disable no-unused-vars */
 // src/components/Navbar.jsx
-import React, { useState, useEffect } from 'react';
-import { FaBars, FaTimes } from 'react-icons/fa';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from "react";
+import { FaBars, FaTimes } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 const navLinks = [
-  { title: 'Home', url: '#home' },
-  { title: 'About', url: '#about' },
-  { title: 'Projects', url: '#projects' },
-  { title: 'Skills', url: '#skills' },
-  { title: 'Contact', url: '#contact' },
+  { title: "Home", url: "#home" },
+  { title: "About", url: "#about" },
+  { title: "Projects", url: "#projects" },
+  { title: "Skills", url: "#skills" },
+  { title: "Contact", url: "#contact" },
 ];
 
 // --- CHANGE 1: Update variants for a right-to-left slide ---
 const navLinkVariants = {
   // The background starts completely to the right, hidden by the parent's overflow
   initial: {
-    x: '100%',
+    x: "100%",
   },
   // On hover, it slides in from the right to fill the space
   hover: {
-    x: '0%',
+    x: "0%",
   },
 };
 
@@ -32,9 +32,9 @@ const Navbar = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
@@ -53,13 +53,28 @@ const Navbar = () => {
       {/* Main Navbar */}
       <nav
         className={`fixed w-full z-50 top-0 transition-all duration-300 ease-in-out ${
-          isScrolled ? 'bg-slate-900/80 backdrop-blur-sm shadow-md' : 'bg-transparent'
+          isScrolled
+            ? "bg-slate-900/80 backdrop-blur-sm shadow-md"
+            : "bg-transparent"
         }`}
       >
         <div className="container mx-auto px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             {/* Brand/Logo */}
-            <a href="#home" className="text-3xl font-bold text-cyan-400 tracking-wider uppercase transition-colors duration-300 hover:text-cyan-500">
+            <a
+              href="#home"
+              className="
+        relative overflow-hidden
+        text-3xl font-bold text-cyan-400 tracking-wider uppercase 
+        transition-colors duration-300 hover:text-cyan-500
+        before:content-[''] before:absolute before:top-0 before:left-0
+        before:w-full before:h-full 
+        before:bg-[linear-gradient(to_right,transparent_0%,white_50%,transparent_100%)]
+        before:animate-scan
+        before:opacity-40
+        before:blur-lg
+      "
+            >
               SabinK
             </a>
 
@@ -82,7 +97,7 @@ const Navbar = () => {
                   <motion.div
                     className="absolute inset-0 bg-cyan-600/25 rounded-md -z-10" // A slightly more saturated and visible color
                     variants={navLinkVariants}
-                    transition={{ duration: 0.35, ease: 'easeInOut' }}
+                    transition={{ duration: 0.35, ease: "easeInOut" }}
                   />
                 </motion.li>
               ))}
@@ -109,7 +124,11 @@ const Navbar = () => {
         id="mobile-menu"
         className={`md:hidden fixed inset-0 bg-slate-900 z-40 flex flex-col items-center justify-center
                    transition-all duration-300 ease-in-out
-                   ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full'}`}
+                   ${
+                     isOpen
+                       ? "opacity-100 translate-y-0"
+                       : "opacity-0 -translate-y-full"
+                   }`}
       >
         <ul className="flex flex-col items-center space-y-8">
           {navLinks.map((link) => (

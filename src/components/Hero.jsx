@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable no-unused-vars */ // Disable no-unused-vars rule
 // src/components/Hero.jsx
 import React from 'react'; // Import React
 import { motion } from 'framer-motion';
@@ -65,7 +65,7 @@ const Hero = () => {
               variants={itemVariants}
             >
               <span className="mr-2">{text}</span>
-              <Cursor cursorColor="#06b6d4" /> {/* Cyan cursor */}
+              <Cursor cursorColor="#06b6d4" /> 
             </motion.h2>
 
             <motion.p
@@ -99,7 +99,7 @@ const Hero = () => {
                     rel="noopener noreferrer"
                     aria-label={`My ${link.name} profile`}
                     className="text-3xl text-slate-400"
-                    whileHover={{ scale: 1.2, y: -3, color: '#06b6d4' }} // Animate color to cyan on hover
+                    whileHover={{ scale: 1.2, y: -3, color: '#06b6d4' }} 
                     transition={{ duration: 0.3 }}
                   >
                     {link.icon}
@@ -114,18 +114,17 @@ const Hero = () => {
             className="flex justify-center lg:justify-end"
             variants={itemVariants}
           >
-            {/* This div handles the floating animation using Framer Motion */}
             <motion.div
               className="relative group"
-              animate={{ y: ["-3%", "3%"] }} // Creates the up-and-down "floating" motion
+              animate={{ y: ["-3%", "3%"] }} 
               transition={{
-                repeat: Infinity,        // Loop the animation forever
-                repeatType: "reverse",   // Go back and forth
-                duration: 3,             // Duration of one full cycle
-                ease: "easeInOut",       // Smooth start and end
+                repeat: Infinity,      
+                repeatType: "reverse",   
+                duration: 3,           
+                ease: "easeInOut",       
               }}
             >
-              {/* This is the glowing border effect */}
+           
               <div
                 className="absolute -inset-1.5 bg-gradient-to-r from-purple-600 to-cyan-400 rounded-full blur-xl opacity-60 
                            transition-all duration-500 group-hover:opacity-100 group-hover:blur-2xl"
