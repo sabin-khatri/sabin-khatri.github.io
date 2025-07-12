@@ -1,7 +1,9 @@
 /* eslint-disable no-unused-vars */
-// src/components/ProjectsAndSkills.jsx
+// This component displays a list of projects and categorized skills (frontend/backend)
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// Importing all required icons
 import {
   FaGithub,
   FaHtml5,
@@ -15,12 +17,13 @@ import { FiExternalLink } from 'react-icons/fi';
 import { CgClose } from 'react-icons/cg';
 import { SiTailwindcss, SiMysql } from 'react-icons/si';
 
-// Import images correctly
+// Project image assets
 import chiyaghar from '../assets/projects/chiyaghar.png';
 import trekking from '../assets/projects/trekking.png';
 import driving from '../assets/projects/driving.png';
 import carrental from '../assets/projects/carrental.png';
 
+// Mapping skill names to icons for visual display
 const iconMap = {
   HTML: <FaHtml5 className="text-orange-500" />,
   CSS: <FaCss3Alt className="text-blue-500" />,
@@ -33,51 +36,76 @@ const iconMap = {
   'Git & GitHub': <FaGithub className="text-slate-300" />,
 };
 
+// Add a fallback default icon if iconMap lookup fails
+const getIcon = (name) => {
+  return iconMap[name] || <FaGithub className="text-gray-400" />;
+};
+
+// Skill level color mapping
+const levelColor = {
+  Beginner: 'text-green-400',
+  Intermediate: 'text-yellow-400',
+  Pro: 'text-red-400',
+};
+
+// Define skill categories
+const skills = {
+  frontend: [
+    { name: 'HTML', level: 'Beginner' },
+    { name: 'CSS', level: 'Beginner' },
+    { name: 'JavaScript', level: 'Intermediate' },
+    { name: 'React', level: 'Intermediate' },
+    { name: 'Tailwind CSS', level: 'Intermediate' },
+    { name: 'Bootstrap', level: 'Beginner' },
+  ],
+  backend: [
+    { name: 'PHP', level: 'Intermediate' },
+    { name: 'MySQL', level: 'Intermediate' },
+    { name: 'Git & GitHub', level: 'Pro' },
+  ],
+};
+
+// List of projects
 const projects = [
   {
     id: 1,
     title: 'Chiya Ghar',
-    description:
-      'A modern and responsive website for a local Nepali tea café. Features a menu, gallery, online order page, and contact form. Built with a focus on a smooth user experience.',
+    description: 'A modern and responsive website for a local Nepali tea café.',
     image: chiyaghar,
     tags: ['HTML', 'Tailwind CSS', 'JavaScript'],
     liveUrl: 'https://bespoke-twilight-0dc185.netlify.app/',
-    githubUrl: 'https://github.com/sabin-khatri/ChiyaAdda'
+    githubUrl: 'https://github.com/sabin-khatri/ChiyaAdda',
   },
   {
     id: 2,
     title: 'Trekking Website',
-    description:
-      'A tourism website promoting trekking in Nepal. Includes itinerary pages, image gallery, inquiry form, and destination highlights. Fully responsive and optimized for user engagement.',
+    description: 'A tourism website promoting trekking in Nepal.',
     image: trekking,
     tags: ['HTML', 'Tailwind CSS', 'JavaScript'],
     liveUrl: 'https://bespoke-elf-bfee40.netlify.app/',
-    githubUrl: 'https://github.com/sabin-khatri/Trekking-Web'
+    githubUrl: 'https://github.com/sabin-khatri/Trekking-Web',
   },
   {
     id: 3,
     title: 'Driving App',
-    description:
-      'A frontend concept for a driving school app featuring course listings, instructor profiles, and student progress tracking. Built with React and Tailwind CSS for a clean, modular UI.',
+    description: 'Frontend for a driving school app with modular React UI.',
     image: driving,
     tags: ['React', 'Tailwind CSS', 'JavaScript'],
     liveUrl: 'https://driving-app.pages.dev/',
-    githubUrl: 'https://github.com/sabin-khatri/React-Projects-Beginner/tree/main/driving-app'
+    githubUrl: 'https://github.com/sabin-khatri/React-Projects-Beginner/tree/main/driving-app',
   },
   {
     id: 4,
     title: 'Car Rental System',
-    description:
-      'A dynamic web interface for renting cars online. Users can search cars, apply filters, view details, and make bookings. Clean and interactive UI built with React and Tailwind CSS.',
+    description: 'A car rental interface with filters, booking, and clean UI.',
     image: carrental,
     tags: ['React', 'Tailwind CSS', 'JavaScript'],
     liveUrl: 'https://chimerical-sorbet-29e08e.netlify.app/',
-    githubUrl: 'https://github.com/sabin-khatri/React-Projects-Beginner/tree/main/car-rental'
-  }
+    githubUrl: 'https://github.com/sabin-khatri/React-Projects-Beginner/tree/main/car-rental',
+  },
 ];
 
-const skills = ['HTML', 'CSS', 'JavaScript', 'React', 'Tailwind CSS', 'Bootstrap', 'PHP', 'MySQL', 'Git & GitHub'];
-
+// Animation variants for sections
 const sectionVariants = {
   hidden: { opacity: 0, y: 50 },
   visible: {
@@ -92,35 +120,83 @@ const itemVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
+// Component to show level label beside skill name
+const LevelBadge = ({ level }) => (
+  <span className={`text-xs font-bold ${levelColor[level]}`}>{level}</span>
+);
+
+// Skill card with icon, name, and level
+const SkillBadge = ({ name, level }) => (
+  <motion.div
+    className="flex items-center gap-3 bg-slate-800 px-5 py-3 rounded-lg shadow-md"
+    variants={itemVariants}
+    whileHover={{ scale: 1.1, y: -5, backgroundColor: '#334155' }}
+  >
+    <span className="text-2xl">{getIcon(name)}</span>
+    <span className="text-md font-medium text-slate-200 flex items-center gap-2">
+      {name} <LevelBadge level={level} />
+    </span>
+  </motion.div>
+);
+
+// Modal component for enlarged image view
+const ImageModal = ({ src, onClose }) => (
+  <motion.div
+    className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    onClick={onClose}
+  >
+    <motion.button
+      onClick={onClose}
+      className="absolute top-4 right-4 text-white/70 hover:text-white transition z-50"
+      whileHover={{ scale: 1.2, rotate: 90 }}
+    >
+      <CgClose size={32} />
+    </motion.button>
+    <motion.img
+      src={src}
+      alt="Project screenshot"
+      className="max-w-[90vw] max-h-[90vh] rounded-lg shadow-2xl"
+      initial={{ scale: 0.5, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      exit={{ scale: 0.5, opacity: 0 }}
+      transition={{ type: 'spring', stiffness: 200, damping: 25 }}
+      onClick={(e) => e.stopPropagation()}
+    />
+  </motion.div>
+);
+
+// Card to display a project
 const ProjectCard = ({ project, index, onImageClick }) => (
   <motion.article className="group grid grid-cols-1 lg:grid-cols-2 gap-8 items-center" variants={itemVariants}>
     <div className={`p-1 lg:p-4 flex flex-col h-full ${index % 2 === 0 ? 'lg:order-1' : 'lg:order-2'}`}>
       <p className="text-sm font-medium text-cyan-400 mb-2">Featured Project</p>
       <h3 className="text-2xl lg:text-3xl font-bold text-slate-100 mb-4">{project.title}</h3>
-      <div className="bg-slate-800/70 p-6 rounded-lg shadow-inner shadow-black/20 mb-6 flex-grow">
+      <div className="bg-slate-800/70 p-6 rounded-lg shadow-inner mb-6 flex-grow">
         <p className="text-slate-300 font-light leading-relaxed">{project.description}</p>
       </div>
       <div className="flex flex-wrap gap-x-4 gap-y-2 mb-6">
         {project.tags.map(tag => (
           <span key={tag} className="flex items-center gap-2 text-slate-400 text-sm font-mono">
-            {React.cloneElement(iconMap[tag], { className: `${iconMap[tag].props.className} w-4 h-4` })}
-            {tag}
+            {getIcon(tag)} {tag}
           </span>
         ))}
       </div>
       <footer className="flex items-center gap-4 mt-auto">
-        <motion.a whileHover={{ scale: 1.1, color: '#22d3ee' }} whileTap={{ scale: 0.9 }} href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="text-slate-300">
+        <motion.a whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="text-slate-300">
           <FaGithub size={26} />
         </motion.a>
         {project.liveUrl && (
-          <motion.a whileHover={{ scale: 1.05, y: -3 }} whileTap={{ scale: 0.95 }} href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold bg-cyan-400 text-slate-900 rounded-full shadow-lg hover:bg-cyan-300 transition-colors duration-300">
-            <FiExternalLink />Live Demo
+          <motion.a whileHover={{ scale: 1.05, y: -3 }} whileTap={{ scale: 0.95 }} href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold bg-cyan-400 text-slate-900 rounded-full shadow-lg hover:bg-cyan-300 transition">
+            <FiExternalLink /> Live Demo
           </motion.a>
         )}
       </footer>
     </div>
-    <motion.div className={`relative rounded-xl overflow-hidden shadow-2xl shadow-black/30 cursor-pointer ${index % 2 === 0 ? 'lg:order-2' : 'lg:order-1'}`} onClick={() => onImageClick(project.image)} whileHover={{ scale: 1.03 }} transition={{ duration: 0.3 }}>
-      <img src={project.image} alt={`${project.title} Screenshot`} className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105" />
+    <motion.div className={`relative rounded-xl overflow-hidden shadow-2xl cursor-pointer ${index % 2 === 0 ? 'lg:order-2' : 'lg:order-1'}`} onClick={() => onImageClick(project.image)} whileHover={{ scale: 1.03 }}>
+      <img src={project.image} alt={`${project.title} Screenshot`} className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-300" />
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
         <motion.span initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-white text-lg font-semibold border-2 border-white px-4 py-2 rounded-md">
           View Image
@@ -130,24 +206,10 @@ const ProjectCard = ({ project, index, onImageClick }) => (
   </motion.article>
 );
 
-const SkillBadge = ({ name }) => (
-  <motion.div className="flex items-center gap-3 bg-slate-800 px-5 py-3 rounded-lg shadow-md" variants={itemVariants} whileHover={{ scale: 1.1, y: -5, backgroundColor: '#334155' }} transition={{ type: 'spring', stiffness: 300 }}>
-    <span className="text-2xl">{iconMap[name]}</span>
-    <span className="text-md font-medium text-slate-200">{name}</span>
-  </motion.div>
-);
-
-const ImageModal = ({ src, onClose }) => (
-  <motion.div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose}>
-    <motion.button onClick={onClose} className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors z-50" whileHover={{ scale: 1.2, rotate: 90 }}>
-      <CgClose size={32} />
-    </motion.button>
-    <motion.img src={src} alt="Project screenshot" className="max-w-[90vw] max-h-[90vh] w-auto h-auto rounded-lg shadow-2xl" initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }} transition={{ type: 'spring', stiffness: 200, damping: 25 }} onClick={(e) => e.stopPropagation()} />
-  </motion.div>
-);
-
+// Main component with toggle for frontend/backend and all content rendered
 const ProjectsAndSkills = () => {
   const [selectedImage, setSelectedImage] = useState(null);
+  const [viewBackend, setViewBackend] = useState(false);
 
   return (
     <>
@@ -167,10 +229,14 @@ const ProjectsAndSkills = () => {
 
       <motion.section id="skills" className="bg-slate-800/50 py-20 lg:py-28 text-white" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={sectionVariants}>
         <div className="container mx-auto px-6 lg:px-8 text-center">
-          <motion.h2 className="text-4xl lg:text-5xl font-bold mb-16 text-slate-100" variants={itemVariants}>My Tech Stack</motion.h2>
+          <motion.h2 className="text-4xl lg:text-5xl font-bold mb-12 text-slate-100" variants={itemVariants}>My Tech Stack</motion.h2>
+          <div className="mb-8">
+            <button onClick={() => setViewBackend(false)} className={`px-4 py-2 mx-2 font-semibold rounded ${!viewBackend ? 'bg-cyan-400 text-slate-900' : 'bg-slate-700 text-white'}`}>Frontend</button>
+            <button onClick={() => setViewBackend(true)} className={`px-4 py-2 mx-2 font-semibold rounded ${viewBackend ? 'bg-cyan-400 text-slate-900' : 'bg-slate-700 text-white'}`}>Backend</button>
+          </div>
           <motion.div className="flex flex-wrap justify-center gap-4 md:gap-6 max-w-4xl mx-auto" variants={sectionVariants}>
-            {skills.map(skill => (
-              <SkillBadge key={skill} name={skill} />
+            {(viewBackend ? skills.backend : skills.frontend).map(skill => (
+              <SkillBadge key={skill.name} name={skill.name} level={skill.level} />
             ))}
           </motion.div>
         </div>
