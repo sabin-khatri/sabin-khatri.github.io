@@ -51,8 +51,8 @@ const projects = [
       'A tourism website promoting trekking in Nepal. Includes itinerary pages, image gallery, inquiry form, and destination highlights. Fully responsive and optimized for user engagement.',
     image: trekking,
     tags: ['HTML', 'Tailwind CSS', 'JavaScript'],
-    liveUrl: 'https://sabin-khatri.github.io/HTML_Course/projects/trekking-web/',
-    githubUrl: 'https://github.com/sabin-khatri/HTML_Course/tree/main/projects/trekking-web'
+    liveUrl: 'https://bespoke-elf-bfee40.netlify.app/',
+    githubUrl: 'https://github.com/sabin-khatri/Trekking-Web'
   },
   {
     id: 3,
