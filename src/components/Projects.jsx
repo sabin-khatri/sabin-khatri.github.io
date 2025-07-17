@@ -87,8 +87,8 @@ const projects = [
     description: 'A car rental interface with filters, booking, and clean UI.',
     image: carrental,
     tags: ['React', 'Tailwind CSS', 'JavaScript'],
-    liveUrl: 'https://chimerical-sorbet-29e08e.netlify.app/',
-    githubUrl: 'https://github.com/sabin-khatri/React-Projects-Beginner/tree/main/car-rental',
+    liveUrl: 'gadi-rental.netlify.app',
+    githubUrl: 'https://github.com/sabin-khatri/Car-Rental',
   },
 ];
 
