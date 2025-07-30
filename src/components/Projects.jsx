@@ -16,7 +16,7 @@ import { SiTailwindcss, SiMysql } from 'react-icons/si';
 
 import chiyaghar from '../assets/projects/chiyaghar.png';
 import trekking from '../assets/projects/trekking.png';
-import driving from '../assets/projects/driving.png';
+import driving from '../assets/projects/travel.png';
 import carrental from '../assets/projects/carrental.png';
 
 const iconMap = {
@@ -74,12 +74,12 @@ const projects = [
   },
   {
     id: 3,
-    title: 'Driving App',
-    description: 'Frontend for a driving school app with modular React UI.',
+    title: 'Travel Web App',
+    description: 'A travel website for a travel agency.',
     image: driving,
     tags: ['React', 'Tailwind CSS', 'JavaScript'],
-    liveUrl: 'https://driving-app.pages.dev/',
-    githubUrl: 'https://github.com/sabin-khatri/React-Projects-Beginner/tree/main/driving-app',
+    liveUrl: 'https://travel-web-zeta-livid.vercel.app/',
+    githubUrl: 'https://github.com/sabin-khatri/Travel-web',
   },
   {
     id: 4,
