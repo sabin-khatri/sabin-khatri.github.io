@@ -197,7 +197,7 @@ const ProjectCard = ({ project, index, onImageClick }) => {
             <FaGithub size={26} />
           </motion.a>
           {project.liveUrl && (
-            <motion.a whileHover={{ scale: 1.05, y: -3 }} whileTap={{ scale: 0.95 }} href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold bg-cyan-400 text-slate-900 rounded-full shadow-lg hover:bg-cyan-300 transition-colors">
+            <motion.a whileHover={{ scale: 1.05, y: -3 }} whileTap={{ scale: 0.95 }} href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold bg-cyan-400 text-slate-900 rounded-full shadow-lg hover:bg-cyan-300 transition-colors" >
               <FiExternalLink /> Live Demo
             </motion.a>
           )}

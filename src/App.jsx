@@ -1,5 +1,6 @@
 // src/App.jsx
 import React from 'react'
+import SplashCursor from './components/SplashCursor'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Footer from './components/Footer'
@@ -9,6 +10,7 @@ import Contact from './components/Contact'
 function App() {
   return (
     <div className="bg-slate-900 min-h-screen text-white">
+      <SplashCursor />
       <Navbar />
        <main >
         <Hero />
