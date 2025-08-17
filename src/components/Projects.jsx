@@ -14,6 +14,7 @@ import { FiExternalLink } from 'react-icons/fi';
 import { CgClose } from 'react-icons/cg';
 import { SiTailwindcss, SiMysql } from 'react-icons/si';
 
+
 import chiyaghar from '../assets/projects/chiyaghar.png';
 import trekking from '../assets/projects/trekking.png';
 import driving from '../assets/projects/travel.png';

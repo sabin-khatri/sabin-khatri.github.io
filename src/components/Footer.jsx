@@ -1,12 +1,12 @@
 // src/components/Footer.jsx
 import React from 'react';
-import { FaGithub, FaLinkedin, FaTwitter, FaEnvelope } from 'react-icons/fa';
+import { FaGithub, FaLinkedin, FaFacebook  } from 'react-icons/fa';
 
 const Footer = () => {
   const socialLinks = [
     { name: 'GitHub', icon: <FaGithub />, url: 'https://github.com/sabin-khatri' },
     { name: 'LinkedIn', icon: <FaLinkedin />, url: 'https://www.linkedin.com/in/sabin-khatri-25460b26a/' },
-    { name: 'Email', icon: <FaEnvelope />, url: 'mailto:your.sabink802@gmail.com' },
+    { name: 'Facebook', icon: <FaFacebook />, url: 'https://www.facebook.com/sabin.khatri.77312/' },
   ];
 
   const currentYear = new Date().getFullYear();
