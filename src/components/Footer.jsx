@@ -6,7 +6,7 @@ const Footer = () => {
   const socialLinks = [
     { name: 'GitHub', icon: <FaGithub />, url: 'https://github.com/sabin-khatri' },
     { name: 'LinkedIn', icon: <FaLinkedin />, url: 'https://www.linkedin.com/in/sabin-khatri-25460b26a/' },
-    { name: 'Facebook', icon: <FaFacebook />, url: 'https://www.facebook.com/sabin.khatri.77312/' },
+    { name: 'Facebook', icon: <FaFacebook />, url: 'https://www.facebook.com/sabin.khatri.77312/'},
   ];
 
   const currentYear = new Date().getFullYear();
