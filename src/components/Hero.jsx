@@ -1,15 +1,24 @@
 /* eslint-disable no-unused-vars */ // Disable no-unused-vars rule
 // src/components/Hero.jsx
-import React, { useMemo } from 'react'; // Import React and useMemo
-import { motion } from 'framer-motion';
-import { useTypewriter, Cursor } from 'react-simple-typewriter';
-import { HiOutlineArrowRight } from 'react-icons/hi';
-import { FaGithub, FaLinkedin } from 'react-icons/fa';
-import profilePic from '../assets/profile.jpg';
+import React, { useMemo } from "react"; // Import React and useMemo
+import { motion } from "framer-motion";
+import { useTypewriter, Cursor } from "react-simple-typewriter";
+import { HiOutlineArrowRight } from "react-icons/hi";
+import { FaGithub, FaLinkedin } from "react-icons/fa";
+import profilePic from "../assets/profile.jpg";
+import { TypeAnimation } from "react-type-animation";
 
 const socialLinks = [
-  { name: 'GitHub', icon: <FaGithub />, url: 'https://github.com/sabin-khatri' },
-  { name: 'LinkedIn', icon: <FaLinkedin />, url: 'https://www.linkedin.com/in/sabin-khatri-25460b26a/' },
+  {
+    name: "GitHub",
+    icon: <FaGithub />,
+    url: "https://github.com/sabin-khatri",
+  },
+  {
+    name: "LinkedIn",
+    icon: <FaLinkedin />,
+    url: "https://www.linkedin.com/in/sabin-khatri-25460b26a/",
+  },
 ];
 
 // --- NEW COMPONENT: A single animated particle ---
@@ -60,11 +69,10 @@ const BackgroundParticles = ({ count = 100 }) => {
   );
 };
 
-
 const Hero = () => {
   // Hook for the attractive typewriter effect
   const [text] = useTypewriter({
-    words: ['Frontend Developer', 'Learner', 'IT Student'],
+    words: ["Frontend Developer", "Learner", "IT Student"],
     loop: true,
     typeSpeed: 70,
     deleteSpeed: 50,
@@ -82,7 +90,11 @@ const Hero = () => {
 
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
-    visible: { y: 0, opacity: 1, transition: { duration: 0.7, ease: "easeOut" } },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { duration: 0.7, ease: "easeOut" },
+    },
   };
 
   return (
@@ -108,9 +120,14 @@ const Hero = () => {
               className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight"
               variants={itemVariants}
             >
-              Hi, I'm{' '}
+              Hi, I'm{" "}
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-500">
-                Sabin Khatri
+                <TypeAnimation
+                  sequence={["Sabin Khatri", 1000]}
+                  wrapper="span"
+                  speed={50}
+                  repeat={Infinity}
+                />
               </span>
             </motion.h1>
 
@@ -126,7 +143,8 @@ const Hero = () => {
               className="mt-6 text-base sm:text-lg text-slate-400 max-w-xl mx-auto lg:mx-0"
               variants={itemVariants}
             >
-              I craft beautiful and highly functional web experiences, specializing in responsive UIs with React and Tailwind CSS.
+              I craft beautiful and highly functional web experiences,
+              specializing in responsive UIs with React and Tailwind CSS.
             </motion.p>
 
             {/* ====== Buttons & Social Links ====== */}
@@ -136,8 +154,13 @@ const Hero = () => {
             >
               <motion.a
                 href="#projects"
-                className="group inline-flex items-center gap-3 px-7 py-3 text-base font-semibold text-slate-900 bg-cyan-400 rounded-lg shadow-lg shadow-cyan-500/20"
-                whileHover={{ scale: 1.05, y: -5, boxShadow: "0px 10px 20px rgba(6, 182, 212, 0.4)" }}
+                className="group inline-flex items-center gap-3 px-7 py-3 text-base font-semibold text-slate-900 bg-cyan-400 rounded-lg"
+                initial={{ boxShadow: "0px 0px 0px rgba(6, 182, 212, 0)" }}
+                whileHover={{
+                  scale: 1.05,
+                  y: -5,
+                  boxShadow: "0px 10px 20px rgba(6, 182, 212, 0.4)",
+                }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ duration: 0.3 }}
               >
@@ -153,7 +176,7 @@ const Hero = () => {
                     rel="noopener noreferrer"
                     aria-label={`My ${link.name} profile`}
                     className="text-3xl text-slate-400"
-                    whileHover={{ scale: 1.2, y: -3, color: '#06b6d4' }}
+                    whileHover={{ scale: 1.2, y: -3, color: "#06b6d4" }}
                     transition={{ duration: 0.3 }}
                   >
                     {link.icon}

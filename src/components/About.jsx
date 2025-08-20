@@ -129,7 +129,7 @@ const About = () => {
               <p>
                 Hello! I'm a passionate Frontend Developer who thrives on building
                 beautiful, responsive, and highly interactive user interfaces.
-              </p>
+              </p>  
               <p>
                 My toolkit includes <span className="text-white font-medium">JavaScript</span>, <span className="text-white font-medium">React</span>, and <span className="text-white font-medium">Tailwind CSS</span>.
               </p>
