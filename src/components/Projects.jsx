@@ -243,13 +243,13 @@ const ProjectsAndSkills = () => {
           <div className="mb-12 flex justify-center gap-4">
             <button
               onClick={() => setViewBackend(false)}
-              className={`px-6 py-2.5 font-semibold rounded-md transition-all duration-300 ${!viewBackend ? 'bg-cyan-400 text-slate-900 shadow-lg' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
+              className={`px-6 py-2.5 font-semibold rounded-md transition-all duration-300 ${!viewBackend ? 'bg-cyan-400 text-slate-900 shadow-lg' : 'bg-slate-700 text-slate-300 hover:bg-slate-600 cursor-pointer'}`}
             >
               Frontend
             </button>
             <button
               onClick={() => setViewBackend(true)}
-              className={`px-6 py-2.5 font-semibold rounded-md transition-all duration-300 ${viewBackend ? 'bg-cyan-400 text-slate-900 shadow-lg' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
+              className={`px-6 py-2.5 font-semibold rounded-md transition-all duration-300 ${viewBackend ? 'bg-cyan-400 text-slate-900 shadow-lg' : 'bg-slate-700 text-slate-300 hover:bg-slate-600 cursor-pointer'}`}
             >
               Backend
             </button>
