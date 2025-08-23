@@ -1,76 +1,75 @@
-/* eslint-disable no-unused-vars */ // Disable no-unused-vars rule
+/* eslint-disable no-unused-vars */
 // src/components/Hero.jsx
-import React, { useMemo } from "react"; // Import React and useMemo
-import { motion } from "framer-motion";
+import React, { useMemo, useState, useEffect } from "react";
+import { motion, useMotionValue, useSpring, transform } from "framer-motion";
 import { useTypewriter, Cursor } from "react-simple-typewriter";
-import { HiOutlineArrowRight } from "react-icons/hi";
+import { HiOutlineArrowRight, HiOutlineChevronDoubleDown } from "react-icons/hi";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import profilePic from "../assets/profile.jpg";
 import { TypeAnimation } from "react-type-animation";
 
 const socialLinks = [
-  {
-    name: "GitHub",
-    icon: <FaGithub />,
-    url: "https://github.com/sabin-khatri",
-  },
-  {
-    name: "LinkedIn",
-    icon: <FaLinkedin />,
-    url: "https://www.linkedin.com/in/sabin-khatri-25460b26a/",
-  },
+  { name: "GitHub", icon: <FaGithub />, url: "https://github.com/sabin-khatri" },
+  { name: "LinkedIn", icon: <FaLinkedin />, url: "https://www.linkedin.com/in/sabin-khatri-25460b26a/" },
 ];
 
-// --- NEW COMPONENT: A single animated particle ---
 const Particle = ({ left, size, duration, delay }) => (
   <motion.div
-    className="absolute rounded-full bg-cyan-400/20" // Subtle, on-brand color
-    style={{
-      left,
-      width: size,
-      height: size,
-    }}
-    initial={{ y: "110vh" }} // Start below the viewport
-    animate={{ y: "-10vh" }} // Move to above the viewport
-    transition={{
-      repeat: Infinity,
-      repeatType: "loop",
-      duration,
-      delay,
-      ease: "linear",
-    }}
+    className="absolute rounded-full bg-cyan-400/20"
+    style={{ left, width: size, height: size }}
+    initial={{ y: "110vh" }}
+    animate={{ y: "-10vh" }}
+    transition={{ repeat: Infinity, repeatType: "loop", duration, delay, ease: "linear" }}
   />
 );
 
-// --- NEW COMPONENT: The container for the particle animation ---
-const BackgroundParticles = ({ count = 100 }) => {
-  const particles = useMemo(() => {
-    return Array.from({ length: count }).map((_, i) => ({
-      id: i,
-      left: `${Math.random() * 100}%`,
-      size: Math.random() * 5 + 2, // Size between 2px and 7px
-      duration: Math.random() * 10 + 10, // Duration between 10s and 20s
-      delay: Math.random() * 15, // Delay up to 15s
-    }));
-  }, [count]);
+const BackgroundParticles = ({ count = 75 }) => {
+  const particles = useMemo(() => Array.from({ length: count }).map((_, i) => ({
+    id: i,
+    left: `${Math.random() * 100}%`,
+    size: Math.random() * 5 + 2,
+    duration: Math.random() * 10 + 10,
+    delay: Math.random() * 15,
+  })), [count]);
 
   return (
     <div className="absolute inset-0 z-0 overflow-hidden">
-      {particles.map((p) => (
-        <Particle
-          key={p.id}
-          left={p.left}
-          size={p.size}
-          duration={p.duration}
-          delay={p.delay}
-        />
-      ))}
+      {particles.map((p) => <Particle key={p.id} {...p} />)}
     </div>
   );
 };
 
+const AnimatedHeading = ({ text }) => {
+  const words = text.split(" ");
+  const container = {
+    hidden: { opacity: 0 },
+    visible: (i = 1) => ({
+      opacity: 1,
+      transition: { staggerChildren: 0.12, delayChildren: 0.5 * i },
+    }),
+  };
+  const child = {
+    visible: { opacity: 1, y: 0, transition: { type: "spring", damping: 12, stiffness: 100 } },
+    hidden: { opacity: 0, y: 20, transition: { type: "spring", damping: 12, stiffness: 100 } },
+  };
+
+  return (
+    <motion.h1
+      className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight"
+      variants={container}
+      initial="hidden"
+      animate="visible"
+    >
+      {words.map((word, index) => (
+        <motion.span variants={child} style={{ marginRight: "1rem" }} key={index}>
+          {word}
+        </motion.span>
+      ))}
+    </motion.h1>
+  );
+};
+
 const Hero = () => {
-  // Hook for the attractive typewriter effect
   const [text] = useTypewriter({
     words: ["Frontend Developer", "Learner", "IT Student"],
     loop: true,
@@ -79,55 +78,64 @@ const Hero = () => {
     delaySpeed: 2000,
   });
 
-  // Framer Motion variants for staggered animation
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e) => setMousePosition({ x: e.clientX, y: e.clientY });
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
+  const parallaxX = useSpring(0, { stiffness: 50, damping: 20 });
+  const parallaxY = useSpring(0, { stiffness: 50, damping: 20 });
+
+  useEffect(() => {
+    const newX = transform(mousePosition.x, [0, window.innerWidth], [-15, 15]);
+    const newY = transform(mousePosition.y, [0, window.innerHeight], [-15, 15]);
+    parallaxX.set(newX);
+    parallaxY.set(newY);
+  }, [mousePosition, parallaxX, parallaxY]);
+
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.2, delayChildren: 0.3 },
-    },
+    visible: { opacity: 1, transition: { staggerChildren: 0.2, delayChildren: 0.3 } },
   };
 
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: { duration: 0.7, ease: "easeOut" },
-    },
+    visible: { y: 0, opacity: 1, transition: { duration: 0.7, ease: "easeOut" } },
   };
 
   return (
     <section
       id="home"
-      // --- CHANGE 1: Add `relative` for positioning context ---
-      className="relative bg-slate-900 text-white min-h-screen flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8 overflow-hidden"
+      className="relative bg-slate-900 text-white min-h-screen flex flex-col items-center justify-center py-20 px-4 sm:px-6 lg:px-8 overflow-hidden"
     >
-      {/* --- CHANGE 2: Add the background particle animation --- */}
-      <BackgroundParticles count={75} />
+      <motion.div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{
+          background: `radial-gradient(600px at ${mousePosition.x}px ${mousePosition.y}px, rgba(29, 78, 216, 0.15), transparent 80%)`,
+        }}
+      />
 
-      {/* --- CHANGE 2 (cont.): Add `relative` and `z-10` to keep content on top --- */}
-      <div className="container mx-auto max-w-7xl relative z-10">
+      <BackgroundParticles count={50} />
+
+      <div className="container mx-auto max-w-7xl relative z-10 flex-grow flex items-center">
         <motion.div
           className="grid grid-cols-1 lg:grid-cols-2 items-center gap-y-16 lg:gap-x-12"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
         >
-          {/* ====== Text Content ====== */}
           <div className="text-center lg:text-left">
+            <AnimatedHeading text="Hi, I'm" />
+
             <motion.h1
-              className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight"
+              className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mt-2"
               variants={itemVariants}
             >
-              Hi, I'm{" "}
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-500">
-                <TypeAnimation
-                  sequence={["Sabin Khatri", 1000]}
-                  wrapper="span"
-                  speed={50}
-                  repeat={Infinity}
-                />
+                <TypeAnimation sequence={["Sabin Khatri", 2000]} wrapper="span" speed={30} repeat={0} />
               </span>
             </motion.h1>
 
@@ -143,11 +151,9 @@ const Hero = () => {
               className="mt-6 text-base sm:text-lg text-slate-400 max-w-xl mx-auto lg:mx-0"
               variants={itemVariants}
             >
-              I craft beautiful and highly functional web experiences,
-              specializing in responsive UIs with React and Tailwind CSS.
+              I craft beautiful and highly functional web experiences, specializing in responsive UIs with React and Tailwind CSS.
             </motion.p>
 
-            {/* ====== Buttons & Social Links ====== */}
             <motion.div
               className="mt-10 flex flex-col sm:flex-row items-center gap-6 justify-center lg:justify-start"
               variants={itemVariants}
@@ -156,11 +162,7 @@ const Hero = () => {
                 href="#projects"
                 className="group inline-flex items-center gap-3 px-7 py-3 text-base font-semibold text-slate-900 bg-cyan-400 rounded-lg"
                 initial={{ boxShadow: "0px 0px 0px rgba(6, 182, 212, 0)" }}
-                whileHover={{
-                  scale: 1.05,
-                  y: -5,
-                  boxShadow: "0px 10px 20px rgba(6, 182, 212, 0.4)",
-                }}
+                whileHover={{ scale: 1.05, y: -5, boxShadow: "0px 10px 20px rgba(6, 182, 212, 0.4)" }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ duration: 0.3 }}
               >
@@ -186,25 +188,15 @@ const Hero = () => {
             </motion.div>
           </div>
 
-          {/* ====== Profile Image with Floating Animation ====== */}
-          <motion.div
-            className="flex justify-center lg:justify-end"
-            variants={itemVariants}
-          >
+          <motion.div className="flex justify-center lg:justify-end" style={{ x: parallaxX, y: parallaxY }}>
             <motion.div
               className="relative group"
               animate={{ y: ["-3%", "3%"] }}
-              transition={{
-                repeat: Infinity,
-                repeatType: "reverse",
-                duration: 3,
-                ease: "easeInOut",
-              }}
+              transition={{ repeat: Infinity, repeatType: "reverse", duration: 3, ease: "easeInOut" }}
             >
               <div
-                className="absolute -inset-1.5 bg-gradient-to-r from-purple-600 to-cyan-400 rounded-full blur-xl opacity-60 
-                           transition-all duration-500 group-hover:opacity-100 group-hover:blur-2xl"
-              ></div>
+                className="absolute -inset-1.5 bg-gradient-to-r from-purple-600 to-cyan-400 rounded-full blur-xl opacity-60 transition-all duration-500 group-hover:opacity-100 group-hover:blur-2xl"
+              />
               <img
                 src={profilePic}
                 alt="Sabin Khatri"
@@ -214,6 +206,15 @@ const Hero = () => {
           </motion.div>
         </motion.div>
       </div>
+
+      <motion.div
+        className="absolute bottom-10 left-1/2 -translate-x-1/2"
+        initial={{ opacity: 0, y: 0 }}
+        animate={{ opacity: 1, y: 10 }}
+        transition={{ delay: 3, duration: 1.5, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" }}
+      >
+        <HiOutlineChevronDoubleDown className="h-8 w-8 text-slate-500" />
+      </motion.div>
     </section>
   );
 };
