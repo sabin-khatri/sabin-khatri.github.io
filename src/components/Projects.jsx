@@ -54,11 +54,12 @@ const skills = {
   ],
 };
 
+
 const projects = [
   {
     id: 1,
     title: 'Chiya Ghar',
-    description: 'A modern and responsive website for a local Nepali tea café.',
+    description: 'A visually appealing and fully responsive landing page for a local Nepali tea café. Built using HTML, Tailwind CSS, and vanilla JavaScript to create an interactive and clean user experience.',
     image: chiyaghar,
     tags: ['HTML', 'Tailwind CSS', 'JavaScript'],
     liveUrl: 'https://bespoke-twilight-0dc185.netlify.app/',
@@ -67,7 +68,7 @@ const projects = [
   {
     id: 2,
     title: 'Trekking Website',
-    description: 'A tourism website promoting trekking in Nepal.',
+    description: 'A promotional tourism website designed to showcase trekking in Nepal. Developed with a mobile-first approach using HTML and Tailwind CSS, and enhanced with JavaScript for engaging user interactions.',
     image: trekking,
     tags: ['HTML', 'Tailwind CSS', 'JavaScript'],
     liveUrl: 'https://bespoke-elf-bfee40.netlify.app/',
@@ -76,7 +77,7 @@ const projects = [
   {
     id: 3,
     title: 'Travel Web App',
-    description: 'A travel website for a travel agency.',
+    description: 'A dynamic single-page application (SPA) for a travel agency, built with React. It features a component-based architecture and a modern, responsive interface styled with Tailwind CSS for a seamless user experience.',
     image: driving,
     tags: ['React', 'Tailwind CSS', 'JavaScript'],
     liveUrl: 'https://travel-web-zeta-livid.vercel.app/',
@@ -85,7 +86,7 @@ const projects = [
   {
     id: 4,
     title: 'Car Rental System',
-    description: 'A car rental interface with filters, booking, and clean UI.',
+    description: 'A feature-rich car rental application built with React. It includes a dynamic search and filtering system, an intuitive booking interface, and a clean UI, demonstrating efficient state management.',
     image: carrental,
     tags: ['React', 'Tailwind CSS', 'JavaScript'],
     liveUrl: 'https://gadi-rental.netlify.app/',
