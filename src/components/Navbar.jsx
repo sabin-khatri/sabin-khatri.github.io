@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 // src/components/Navbar.jsx
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navLinks = [
@@ -38,45 +38,10 @@ const AnimatedHamburgerIcon = ({ isOpen, toggle }) => {
   );
 };
 
-// NEW: Magnetic Nav Item Component
-const MagneticNavItem = ({ children, active, className, onClick }) => {
-  const ref = useRef(null);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-
-  const handleMouseMove = (e) => {
-    const { clientX, clientY } = e;
-    const { width, height, left, top } = ref.current.getBoundingClientRect();
-    const x = clientX - (left + width / 2);
-    const y = clientY - (top + height / 2);
-    setPosition({ x, y });
-  };
-
-  const handleMouseLeave = () => {
-    setPosition({ x: 0, y: 0 });
-  };
-
-  const { x, y } = position;
-  return (
-    <motion.li
-      ref={ref}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      animate={{ x, y }}
-      transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
-      className={`relative ${className}`}
-      onClick={onClick}
-    >
-      {children}
-    </motion.li>
-  );
-};
-
-
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
-  const [hoveredLink, setHoveredLink] = useState(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -85,7 +50,7 @@ const Navbar = () => {
       let currentSection = 'home';
       sections.forEach(section => {
         if (section) {
-          const sectionTop = section.offsetTop - 80; // Adjust offset if your header is fixed and tall
+          const sectionTop = section.offsetTop - 80;
           if (window.scrollY >= sectionTop) {
             currentSection = section.id;
           }
@@ -129,14 +94,14 @@ const Navbar = () => {
               SabinK
             </a>
 
-            {/* --- ENHANCED: Desktop Menu with Underline Animation and Magnetic Effect --- */}
+            {/* --- ENHANCED: Desktop Menu with Underline Animation --- */}
             <ul className="hidden md:flex items-center space-x-8">
               {navLinks.map((link) => (
-                <MagneticNavItem
+                <motion.li
                   key={link.title}
-                  className="px-2 py-1 rounded-md" // Add some padding for the magnetic effect
-                  onMouseEnter={() => setHoveredLink(link.title)}
-                  onMouseLeave={() => setHoveredLink(null)}
+                  className="relative"
+                  initial="hidden"
+                  whileHover="visible"
                 >
                   <a
                     href={link.url}
@@ -144,28 +109,13 @@ const Navbar = () => {
                   >
                     {link.title}
                   </a>
-                  <AnimatePresence>
-                    {activeSection === link.url.substring(1) && (
-                      <motion.div
-                        className="absolute bottom-[-4px] left-0 w-full h-[2px] bg-cyan-400"
-                        variants={underlineVariants}
-                        initial="hidden"
-                        animate="visible"
-                        exit="hidden"
-                      />
-                    )}
-                    {hoveredLink === link.title && activeSection !== link.url.substring(1) && (
-                      <motion.div
-                        className="absolute inset-0 bg-cyan-400/20 rounded-md -z-10" // Semi-transparent blob
-                        layoutId="magic-hover-background" // This is the magic for a single moving background
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1, transition: { duration: 0.2 } }}
-                        exit={{ opacity: 0, transition: { duration: 0.2 } }}
-                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                      />
-                    )}
-                  </AnimatePresence>
-                </MagneticNavItem>
+                  <motion.div
+                    className="absolute bottom-[-4px] left-0 w-full h-[2px] bg-cyan-400"
+                    variants={underlineVariants}
+                    // The underline is hidden by default but shown if the section is active
+                    animate={activeSection === link.url.substring(1) ? "visible" : "hidden"}
+                  />
+                </motion.li>
               ))}
             </ul>
 
@@ -205,4 +155,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default Navbar; 
