@@ -215,7 +215,7 @@ const About = () => {
               variants={{ hidden: { y: 20, opacity: 0 }, visible: { y: 0, opacity: 1 } }}
             >
               <div className="text-center">
-                <h3 className="text-4xl font-bold text-cyan-400"><AnimatedCounter to={1.5} />+</h3>
+                <h3 className="text-4xl font-bold text-cyan-400"><AnimatedCounter to={1} />+</h3>
                 <p className="text-slate-400 mt-1">Years Experience</p>
               </div>
               <div className="text-center">

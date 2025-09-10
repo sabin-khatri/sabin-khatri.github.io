@@ -71,7 +71,7 @@ const projects = [
     description: 'A promotional tourism website designed to showcase trekking in Nepal. Developed with a mobile-first approach using HTML and Tailwind CSS, and enhanced with JavaScript for engaging user interactions.',
     image: trekking,
     tags: ['HTML', 'Tailwind CSS', 'JavaScript'],
-    liveUrl: 'https://bespoke-elf-bfee40.netlify.app/',
+    liveUrl: 'https://sabintrek.netlify.app/',
     githubUrl: 'https://github.com/sabin-khatri/Trekking-Web',
   },
   {
