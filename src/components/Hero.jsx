@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-vars */
-// src/components/Hero.jsx
 import React, { useMemo, useState, useEffect } from "react";
+// eslint-disable-next-line no-unused-vars
 import { motion, useMotionValue, useSpring, transform } from "framer-motion";
 import { useTypewriter, Cursor } from "react-simple-typewriter";
 import { HiOutlineArrowRight, HiOutlineChevronDoubleDown } from "react-icons/hi";
@@ -15,10 +14,13 @@ const socialLinks = [
 
 const Particle = ({ left, size, duration, delay }) => (
   <motion.div
-    className="absolute rounded-full bg-cyan-400/20"
+    className="absolute rounded-full"
     style={{ left, width: size, height: size }}
     initial={{ y: "110vh" }}
-    animate={{ y: "-10vh" }}
+    animate={{ 
+      y: "-10vh",
+      background: `radial-gradient(circle at center, rgba(0, 255, 255, 0.3), rgba(147, 51, 234, 0.2))`
+    }}
     transition={{ repeat: Infinity, repeatType: "loop", duration, delay, ease: "linear" }}
   />
 );
@@ -55,7 +57,7 @@ const AnimatedHeading = ({ text }) => {
 
   return (
     <motion.h1
-      className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight"
+      className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-cyan-400/80"
       variants={container}
       initial="hidden"
       animate="visible"
@@ -71,7 +73,7 @@ const AnimatedHeading = ({ text }) => {
 
 const Hero = () => {
   const [text] = useTypewriter({
-    words: ["Frontend Developer", "Learner", "IT Student"],
+    words: ["Frontend Developer", "Learner", "IT Student", "React Enthusiast"],
     loop: true,
     typeSpeed: 70,
     deleteSpeed: 50,
@@ -109,16 +111,16 @@ const Hero = () => {
   return (
     <section
       id="home"
-      className="relative bg-slate-900 text-white min-h-screen flex flex-col items-center justify-center py-20 px-4 sm:px-6 lg:px-8 overflow-hidden"
+      className="relative bg-gradient-to-br from-slate-900 to-cyan-900/10 text-white min-h-screen flex flex-col items-center justify-center py-20 px-4 sm:px-6 lg:px-8 overflow-hidden"
     >
       <motion.div
         className="absolute inset-0 z-0 pointer-events-none"
         style={{
-          background: `radial-gradient(600px at ${mousePosition.x}px ${mousePosition.y}px, rgba(29, 78, 216, 0.15), transparent 80%)`,
+          background: `radial-gradient(600px at ${mousePosition.x}px ${mousePosition.y}px, rgba(0, 191, 255, 0.2), transparent 80%)`,
         }}
       />
 
-      <BackgroundParticles count={50} />
+      <BackgroundParticles count={60} />
 
       <div className="container mx-auto max-w-7xl relative z-10 flex-grow flex items-center">
         <motion.div
@@ -134,7 +136,7 @@ const Hero = () => {
               className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mt-2"
               variants={itemVariants}
             >
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-500">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-600">
                 <TypeAnimation sequence={["Sabin Khatri", 2000]} wrapper="span" speed={30} repeat={0} />
               </span>
             </motion.h1>
@@ -160,11 +162,11 @@ const Hero = () => {
             >
               <motion.a
                 href="#projects"
-                className="group inline-flex items-center gap-3 px-7 py-3 text-base font-semibold text-slate-900 bg-cyan-400 rounded-lg"
+                className="group inline-flex items-center gap-3 px-7 py-3 text-base font-semibold text-slate-900 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-lg shadow-lg"
                 initial={{ boxShadow: "0px 0px 0px rgba(6, 182, 212, 0)" }}
-                whileHover={{ scale: 1.05, y: -5, boxShadow: "0px 10px 20px rgba(6, 182, 212, 0.4)" }}
+                whileHover={{ scale: 1.1, y: -5, boxShadow: "0px 15px 30px rgba(6, 182, 212, 0.6)" }}
                 whileTap={{ scale: 0.95 }}
-                transition={{ duration: 0.3 }}
+                transition={{ duration: 0.4 }}
               >
                 View My Work
                 <HiOutlineArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:rotate-90" />
@@ -178,7 +180,7 @@ const Hero = () => {
                     rel="noopener noreferrer"
                     aria-label={`My ${link.name} profile`}
                     className="text-3xl text-slate-400"
-                    whileHover={{ scale: 1.2, y: -3, color: "#06b6d4" }}
+                    whileHover={{ scale: 1.3, y: -3, color: "#9333ea" }}
                     transition={{ duration: 0.3 }}
                   >
                     {link.icon}
@@ -195,12 +197,12 @@ const Hero = () => {
               transition={{ repeat: Infinity, repeatType: "reverse", duration: 3, ease: "easeInOut" }}
             >
               <div
-                className="absolute -inset-1.5 bg-gradient-to-r from-purple-600 to-cyan-400 rounded-full blur-xl opacity-60 transition-all duration-500 group-hover:opacity-100 group-hover:blur-2xl"
+                className="absolute -inset-2 bg-gradient-to-r from-purple-600/40 to-cyan-400/40 rounded-full blur-xl opacity-70 transition-all duration-500 group-hover:opacity-100 group-hover:blur-2xl"
               />
               <img
                 src={profilePic}
                 alt="Sabin Khatri"
-                className="relative w-64 h-64 sm:w-72 sm:h-72 lg:w-80 lg:h-80 rounded-full object-cover shadow-2xl"
+                className="relative w-64 h-64 sm:w-72 sm:h-72 lg:w-80 lg:h-80 rounded-full object-cover shadow-[0_10px_40px_rgba(0,191,255,0.5)]"
               />
             </motion.div>
           </motion.div>
@@ -213,7 +215,7 @@ const Hero = () => {
         animate={{ opacity: 1, y: 10 }}
         transition={{ delay: 3, duration: 1.5, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" }}
       >
-        <HiOutlineChevronDoubleDown className="h-8 w-8 text-slate-500" />
+        <HiOutlineChevronDoubleDown className="h-8 w-8 text-slate-500 animate-pulse" />
       </motion.div>
     </section>
   );

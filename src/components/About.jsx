@@ -1,6 +1,5 @@
-// src/components/About.jsx
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useRef, useState } from 'react';
-// eslint-disable-next-line no-unused-vars
 import { motion, animate, useScroll, useTransform } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { FaDownload, FaCheckCircle } from 'react-icons/fa';
@@ -73,7 +72,7 @@ const TextReveal = ({ children }) => {
         {children}
       </motion.div>
       <motion.div
-        className="absolute top-0 left-0 bottom-0 right-0 bg-cyan-400 z-10"
+        className="absolute top-0 left-0 bottom-0 right-0 bg-gradient-to-r from-cyan-400 to-purple-500 z-10"
         variants={{
           hidden: { left: 0 },
           visible: { left: '100%', transition: { duration: 0.8, ease: 'easeInOut' } },
@@ -91,6 +90,8 @@ const SkillPill = ({ skill }) => (
       hidden: { opacity: 0, scale: 0.8 },
       visible: { opacity: 1, scale: 1 },
     }}
+    whileHover={{ scale: 1.1, backgroundColor: '#1e293b', color: '#93c5fd' }}
+    transition={{ duration: 0.3 }}
   >
     {skill}
   </motion.div>
@@ -146,8 +147,8 @@ const About = () => {
   };
 
   return (
-    <section id="about" ref={sectionRef} className="relative bg-slate-900 py-20 lg:py-28 text-white overflow-hidden">
-      <div className="absolute inset-0 z-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#334155 1px, transparent 1px)', backgroundSize: '2rem 2rem' }} />
+    <section id="about" ref={sectionRef} className="relative bg-gradient-to-br from-slate-900 via-cyan-900/20 to-slate-900 py-20 lg:py-28 text-white overflow-hidden">
+      <div className="absolute inset-0 z-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle, #334155 1px, transparent 1px)', backgroundSize: '2rem 2rem' }} />
       <div className="container mx-auto px-6 lg:px-8 relative z-10">
         <motion.div
           className="grid lg:grid-cols-5 items-center gap-12 lg:gap-20"
@@ -161,16 +162,16 @@ const About = () => {
             style={{ y: imageY }}
           >
             <motion.div
-              className="relative p-1.5 rounded-2xl bg-gradient-to-br from-cyan-500 via-purple-500 to-pink-500"
-              whileHover={{ scale: 1.05, rotate: 2 }}
+              className="relative p-2 rounded-2xl bg-gradient-to-br from-cyan-500/50 via-purple-500/50 to-pink-500/50"
+              whileHover={{ scale: 1.05, rotate: 2, boxShadow: '0 10px 20px rgba(0, 191, 255, 0.3)' }}
               transition={{ type: 'spring', stiffness: 300 }}
               variants={{ hidden: { opacity: 0, scale: 0.8 }, visible: { opacity: 1, scale: 1 } }}
             >
-              <div className="bg-slate-900 p-2 rounded-xl">
+              <div className="bg-slate-900 p-3 rounded-xl">
                 <img
                   src={profileImage}
                   alt="A portrait of the developer"
-                  className="rounded-lg shadow-2xl shadow-black/30 w-full h-auto"
+                  className="rounded-lg shadow-2xl shadow-black/30 w-full h-auto transition-all duration-300 hover:shadow-[0_15px_40px_rgba(0,191,255,0.5)]"
                 />
               </div>
             </motion.div>
@@ -231,15 +232,15 @@ const About = () => {
               <motion.button
                 onClick={handleDownload}
                 disabled={downloadStatus !== 'idle'}
-                className="group relative inline-flex items-center justify-center gap-2.5 px-6 py-3 font-semibold text-slate-900 bg-cyan-400 rounded-lg shadow-lg shadow-cyan-500/20 overflow-hidden"
-                whileHover={downloadStatus === 'idle' ? { scale: 1.05, y: -4 } : {}}
+                className="group relative inline-flex items-center justify-center gap-2.5 px-6 py-3 font-semibold text-slate-900 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-lg shadow-lg shadow-cyan-500/20 overflow-hidden"
+                whileHover={downloadStatus === 'idle' ? { scale: 1.05, y: -4, boxShadow: '0 10px 25px rgba(6, 182, 212, 0.5)' } : {}}
                 whileTap={downloadStatus === 'idle' ? { scale: 0.95 } : {}}
                 transition={{ duration: 0.2 }}
               >
                 <span className="absolute top-0 left-0 h-0.5 w-full bg-gradient-to-r from-transparent via-white to-transparent transition-all duration-500 group-hover:w-full group-hover:via-slate-900 transform -translate-x-full group-hover:translate-x-0" />
                 <span className="absolute bottom-0 right-0 h-0.5 w-full bg-gradient-to-l from-transparent via-white to-transparent transition-all duration-500 group-hover:w-full group-hover:via-slate-900 transform translate-x-full group-hover:translate-x-0" />
                 <div
-                  className="absolute top-0 left-0 h-full bg-cyan-500/50 transition-all duration-300 ease-linear"
+                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-cyan-500/50 to-purple-500/50 transition-all duration-300 ease-linear"
                   style={{ width: `${progress}%` }}
                 />
                 <span className="relative z-10 flex items-center gap-2.5">
@@ -252,7 +253,7 @@ const About = () => {
               <motion.a
                 href="#contact"
                 className="inline-flex items-center px-8 py-3 font-semibold text-slate-200 border-2 border-slate-700 rounded-lg"
-                whileHover={{ scale: 1.05, y: -4, backgroundColor: "#1e293b", borderColor: "#334155" }}
+                whileHover={{ scale: 1.05, y: -4, backgroundColor: "#1e293b", borderColor: "#475569" }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ duration: 0.2 }}
               >

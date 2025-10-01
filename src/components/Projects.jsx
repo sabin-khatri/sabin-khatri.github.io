@@ -14,7 +14,6 @@ import { FiExternalLink } from 'react-icons/fi';
 import { CgClose } from 'react-icons/cg';
 import { SiTailwindcss, SiMysql } from 'react-icons/si';
 
-
 import chiyaghar from '../assets/projects/chiyaghar.png';
 import trekking from '../assets/projects/trekking.png';
 import driving from '../assets/projects/travel.png';
@@ -53,7 +52,6 @@ const skills = {
     { name: 'Git & GitHub', level: 'Intermediate' },
   ],
 };
-
 
 const projects = [
   {
@@ -142,6 +140,14 @@ const SkillBadge = ({ name, level }) => (
     <span className="text-2xl">{getIcon(name)}</span>
     <span className="text-md font-medium text-slate-200 flex items-center gap-2">
       {name} <LevelBadge level={level} />
+      <div className="w-16 h-1 bg-gray-700 rounded-full overflow-hidden">
+        <motion.div
+          className={`h-full rounded-full ${level === 'Beginner' ? 'bg-green-400' : level === 'Intermediate' ? 'bg-yellow-400' : 'bg-red-400'}`}
+          initial={{ width: '0%' }}
+          animate={{ width: level === 'Beginner' ? '40%' : level === 'Intermediate' ? '70%' : '100%' }}
+          transition={{ duration: 1 }}
+        />
+      </div>
     </span>
   </motion.div>
 );
@@ -183,7 +189,7 @@ const ProjectCard = ({ project, index, onImageClick }) => {
     <motion.article className="group grid grid-cols-1 lg:grid-cols-2 gap-8 items-center" variants={itemVariants}>
       <div className={`p-1 lg:p-4 flex flex-col h-full ${textOrderClass}`}>
         <p className="text-sm font-medium text-cyan-400 mb-2">Featured Project</p>
-        <h3 className="text-2xl lg:text-3xl font-bold text-slate-100 mb-4">{project.title}</h3>
+        <h3 className="text-2xl lg:text-3xl font-bold text-slate-100 mb-4 bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">{project.title}</h3>
         <div className="bg-slate-800/70 p-6 rounded-lg shadow-inner mb-6 flex-grow">
           <p className="text-slate-300 font-light leading-relaxed">{project.description}</p>
         </div>
@@ -199,13 +205,13 @@ const ProjectCard = ({ project, index, onImageClick }) => {
             <FaGithub size={26} />
           </motion.a>
           {project.liveUrl && (
-            <motion.a whileHover={{ scale: 1.05, y: -3 }} whileTap={{ scale: 0.95 }} href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold bg-cyan-400 text-slate-900 rounded-full shadow-lg hover:bg-cyan-300 transition-colors" >
+            <motion.a whileHover={{ scale: 1.05, y: -3 }} whileTap={{ scale: 0.95 }} href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold bg-gradient-to-r from-cyan-400 to-purple-500 text-slate-900 rounded-full shadow-lg hover:bg-cyan-300 transition-colors">
               <FiExternalLink /> Live Demo
             </motion.a>
           )}
         </footer>
       </div>
-      <motion.div className={`relative rounded-xl overflow-hidden shadow-2xl cursor-pointer ${imageOrderClass}`} onClick={() => onImageClick(project.image)} whileHover={{ scale: 1.03 }}>
+      <motion.div className={`relative rounded-xl overflow-hidden shadow-2xl cursor-pointer ${imageOrderClass}`} onClick={() => onImageClick(project.image)} whileHover={{ scale: 1.03, boxShadow: '0 0 15px rgba(0, 255, 255, 0.5)' }}>
         <img src={project.image} alt={`${project.title} Screenshot`} className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-300" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
           <motion.span initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-white text-lg font-semibold border-2 border-white px-4 py-2 rounded-md">
@@ -217,16 +223,31 @@ const ProjectCard = ({ project, index, onImageClick }) => {
   );
 }
 
+const Particle = ({ x, y, size, duration, delay }) => (
+  <motion.div
+    className="absolute rounded-full bg-cyan-400/20"
+    style={{ left: `${x}%`, top: `${y}%`, width: size, height: size }}
+    initial={{ opacity: 0.5, scale: 0 }}
+    animate={{ opacity: [0.5, 0], scale: [0, 1.5], y: '-20vh' }}
+    transition={{ duration, delay, repeat: Infinity, repeatType: 'loop', ease: 'linear' }}
+  />
+);
+
 const ProjectsAndSkills = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [viewBackend, setViewBackend] = useState(false);
 
   return (
     <>
-      <motion.section id="projects" className="bg-slate-900 py-20 lg:py-28 text-white" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={sectionVariants}>
-        <div className="container mx-auto px-6 lg:px-8">
+      <motion.section id="projects" className="bg-slate-900 py-20 lg:py-28 text-white relative overflow-hidden" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={sectionVariants}>
+        <div className="absolute inset-0 z-0">
+          {[...Array(20)].map((_, i) => (
+            <Particle key={i} x={Math.random() * 100} y={Math.random() * 100} size={Math.random() * 5 + 2} duration={Math.random() * 10 + 10} delay={Math.random() * 5} />
+          ))}
+        </div>
+        <div className="container mx-auto px-6 lg:px-8 relative z-10">
           <motion.header className="text-center mb-16 lg:mb-20" variants={itemVariants}>
-            <h2 className="text-4xl lg:text-5xl font-bold text-slate-100">Things I've Built</h2>
+            <h2 className="text-4xl lg:text-5xl font-bold text-transparent bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text">Things I've Built</h2>
             <p className="mt-4 text-lg text-slate-400">A selection of my recent work.</p>
           </motion.header>
           <div className="space-y-24 lg:space-y-28">
@@ -239,18 +260,18 @@ const ProjectsAndSkills = () => {
 
       <motion.section id="skills" className="bg-slate-800/50 py-20 lg:py-28 text-white" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={sectionVariants}>
         <div className="container mx-auto px-6 lg:px-8 text-center">
-          <motion.h2 className="text-4xl lg:text-5xl font-bold mb-12 text-slate-100" variants={itemVariants}>My Tech Stack</motion.h2>
+          <motion.h2 className="text-4xl lg:text-5xl font-bold mb-12 text-transparent bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text" variants={itemVariants}>My Tech Stack</motion.h2>
           
           <div className="mb-12 flex justify-center gap-4">
             <button
               onClick={() => setViewBackend(false)}
-              className={`px-6 py-2.5 font-semibold rounded-md transition-all duration-300 ${!viewBackend ? 'bg-cyan-400 text-slate-900 shadow-lg' : 'bg-slate-700 text-slate-300 hover:bg-slate-600 cursor-pointer'}`}
+              className={`px-6 py-2.5 font-semibold rounded-md transition-all duration-300 ${!viewBackend ? 'bg-gradient-to-r from-cyan-400 to-purple-500 text-slate-900 shadow-lg' : 'bg-slate-700 text-slate-300 hover:bg-slate-600 cursor-pointer'}`}
             >
               Frontend
             </button>
             <button
               onClick={() => setViewBackend(true)}
-              className={`px-6 py-2.5 font-semibold rounded-md transition-all duration-300 ${viewBackend ? 'bg-cyan-400 text-slate-900 shadow-lg' : 'bg-slate-700 text-slate-300 hover:bg-slate-600 cursor-pointer'}`}
+              className={`px-6 py-2.5 font-semibold rounded-md transition-all duration-300 ${viewBackend ? 'bg-gradient-to-r from-cyan-400 to-purple-500 text-slate-900 shadow-lg' : 'bg-slate-700 text-slate-300 hover:bg-slate-600 cursor-pointer'}`}
             >
               Backend
             </button>

@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-vars */
-// src/components/Navbar.jsx
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -12,28 +11,32 @@ const navLinks = [
 ];
 
 const AnimatedHamburgerIcon = ({ isOpen, toggle }) => {
-  const topVariants = {
-    closed: { rotate: 0, translateY: 0 },
-    open: { rotate: 45, translateY: 8 },
-  };
-  const middleVariants = {
-    closed: { opacity: 1 },
-    open: { opacity: 0 },
-  };
-  const bottomVariants = {
-    closed: { rotate: 0, translateY: 0 },
-    open: { rotate: -45, translateY: -8 },
+  const barVariants = {
+    closed: { opacity: 1, rotate: 0, translateY: 0 },
+    open: (i) => ({
+      opacity: i === 1 ? 0 : 1,
+      rotate: i === 0 ? 45 : i === 2 ? -45 : 0,
+      translateY: i === 0 ? 8 : i === 2 ? -8 : 0,
+    }),
   };
 
   return (
     <button
       onClick={toggle}
       aria-label="Toggle mobile menu"
-      className="text-white focus:outline-none w-7 h-6 flex flex-col justify-between"
+      className="text-white focus:outline-none w-7 h-6 flex flex-col justify-between z-50"
     >
-      <motion.div className="w-full h-0.5 bg-white origin-center" variants={topVariants} initial={false} animate={isOpen ? "open" : "closed"} transition={{ duration: 0.3, ease: "easeInOut" }} />
-      <motion.div className="w-full h-0.5 bg-white" variants={middleVariants} initial={false} animate={isOpen ? "open" : "closed"} transition={{ duration: 0.3, ease: "easeInOut" }} />
-      <motion.div className="w-full h-0.5 bg-white origin-center" variants={bottomVariants} initial={false} animate={isOpen ? "open" : "closed"} transition={{ duration: 0.3, ease: "easeInOut" }} />
+      {[0, 1, 2].map((i) => (
+        <motion.div
+          key={i}
+          className="w-full h-0.5 bg-white origin-center"
+          custom={i}
+          initial="closed"
+          animate={isOpen ? "open" : "closed"}
+          variants={barVariants}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+        />
+      ))}
     </button>
   );
 };
@@ -65,7 +68,6 @@ const Navbar = () => {
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
-  // --- Animation Variants for the new Underline ---
   const underlineVariants = {
     hidden: { scaleX: 0, originX: 0.5 },
     visible: { scaleX: 1, originX: 0.5, transition: { duration: 0.3, ease: "easeInOut" } },
@@ -83,36 +85,37 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className={`fixed w-full z-50 top-0 transition-colors duration-300 ${isScrolled ? "bg-slate-900/80 backdrop-blur-sm shadow-lg" : "bg-transparent"}`}>
+      <nav className={`fixed w-full z-50 top-0 transition-all duration-300 ${isScrolled ? "bg-gradient-to-r from-slate-900/70 via-cyan-900/30 to-slate-900/70 backdrop-blur-md shadow-[0_6px_30px_rgba(0,191,255,0.4)]" : "bg-transparent shadow-none"}`}>
         <div className="container mx-auto px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
-            {/* NO CHANGES to your awesome logo */}
             <a
               href="#home"
-              className="relative overflow-hidden text-3xl font-bold text-cyan-400 tracking-wider uppercase transition-colors duration-300 hover:text-cyan-500 before:content-[''] before:absolute before:top-0 before:left-0 before:w-full before:h-full before:bg-[linear-gradient(to_right,transparent_0%,white_50%,transparent_100%)] before:animate-scan before:opacity-40 before:blur-lg"
+              className="relative overflow-hidden text-3xl font-bold text-cyan-400 tracking-wider uppercase transition-all duration-300 hover:text-cyan-300 transform hover:scale-105 before:content-[''] before:absolute before:top-0 before:left-0 before:w-full before:h-full before:bg-[linear-gradient(to_right,transparent_0%,#00ffff_50%,transparent_100%)] before:animate-scan before:opacity-20 before:blur-md"
             >
               SabinK
             </a>
 
-            {/* --- ENHANCED: Desktop Menu with Underline Animation --- */}
             <ul className="hidden md:flex items-center space-x-8">
               {navLinks.map((link) => (
                 <motion.li
                   key={link.title}
                   className="relative"
                   initial="hidden"
-                  whileHover="visible"
+                  whileHover={{ scale: 1.1, transition: { duration: 0.2 } }}
                 >
                   <a
                     href={link.url}
-                    className={`relative text-lg font-medium transition-colors duration-300 ${activeSection === link.url.substring(1) ? "text-cyan-400" : "text-slate-300 hover:text-cyan-400"}`}
+                    onClick={toggleMenu}
+                    className={`relative text-lg font-medium transition-all duration-300 ${activeSection === link.url.substring(1) ? "text-cyan-400" : "text-slate-300 hover:text-cyan-400"}`}
+                    onFocus={(e) => (e.target.style.boxShadow = "0 0 20px #00ffff, 0 0 30px #00ffff")}
+                    onBlur={(e) => (e.target.style.boxShadow = "none")}
+                    style={{ outline: 'none' }}
                   >
                     {link.title}
                   </a>
                   <motion.div
                     className="absolute bottom-[-4px] left-0 w-full h-[2px] bg-cyan-400"
                     variants={underlineVariants}
-                    // The underline is hidden by default but shown if the section is active
                     animate={activeSection === link.url.substring(1) ? "visible" : "hidden"}
                   />
                 </motion.li>
@@ -126,11 +129,10 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/*  Mobile Menu Logic */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="md:hidden fixed inset-0 bg-slate-900 z-40 flex flex-col items-center justify-center"
+            className="md:hidden fixed inset-0 bg-gradient-to-br from-slate-900 to-cyan-900/40 z-40 flex flex-col items-center justify-center backdrop-blur-md"
             variants={mobileMenuVariants}
             initial="closed"
             animate="open"
@@ -142,7 +144,14 @@ const Navbar = () => {
             >
               {navLinks.map((link) => (
                 <motion.li key={link.title} variants={mobileLinkVariants}>
-                  <a href={link.url} onClick={toggleMenu} className="text-3xl font-semibold text-slate-100 hover:text-cyan-400 transition-colors duration-300">
+                  <a
+                    href={link.url}
+                    onClick={toggleMenu}
+                    className="text-3xl font-semibold text-slate-100 hover:text-cyan-400 transition-all duration-300"
+                    onFocus={(e) => (e.target.style.boxShadow = "0 0 20px #00ffff, 0 0 30px #00ffff")}
+                    onBlur={(e) => (e.target.style.boxShadow = "none")}
+                    style={{ outline: 'none' }}
+                  >
                     {link.title}
                   </a>
                 </motion.li>
@@ -155,4 +164,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar; 
+export default Navbar;

@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-vars */
-// src/components/Contact.jsx
 import React, { useState } from "react";
 import {
   FaUser,
@@ -7,6 +6,8 @@ import {
   FaRegCommentDots,
   FaPaperPlane,
   FaSpinner,
+  FaGithub,
+  FaLinkedin,
 } from "react-icons/fa";
 import contactIllustration from "../assets/contact.webp";
 
@@ -23,6 +24,7 @@ const InputField = ({
   icon,
   value,
   onChange,
+  error,
 }) => (
   <div>
     <label
@@ -43,12 +45,24 @@ const InputField = ({
         onChange={onChange}
         placeholder={placeholder}
         required
-        className="block w-full bg-slate-800 border border-slate-700 rounded-lg py-3 pl-10 pr-3 
+        className={`block w-full bg-slate-800 border rounded-lg py-3 pl-10 pr-3 
                    text-slate-200 placeholder-slate-500 focus:outline-none 
-                   focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-shadow duration-300"
+                   focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-shadow duration-300
+                   ${error ? "border-red-500" : "border-slate-700"}`}
       />
+      {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
     </div>
   </div>
+);
+
+const Particle = ({ x, y, size, duration, delay }) => (
+  <motion.div
+    className="absolute rounded-full bg-cyan-400/20"
+    style={{ left: `${x}%`, top: `${y}%`, width: size, height: size }}
+    initial={{ opacity: 0.5, scale: 0 }}
+    animate={{ opacity: [0.5, 0], scale: [0, 1.5], y: '-20vh' }}
+    transition={{ duration, delay, repeat: Infinity, repeatType: 'loop', ease: 'linear' }}
+  />
 );
 
 const Contact = () => {
@@ -59,6 +73,7 @@ const Contact = () => {
     message: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -66,6 +81,22 @@ const Contact = () => {
       ...prevData,
       [name]: value,
     }));
+
+    // Real-time validation
+    let newErrors = { ...errors };
+    if (name === "name" && !value.trim()) newErrors.name = "Name is required";
+    else if (name === "name") delete newErrors.name;
+
+    if (name === "email" && !/^\S+@\S+\.\S+$/.test(value)) newErrors.email = "Invalid email format";
+    else if (name === "email") delete newErrors.email;
+
+    if (name === "subject" && !value.trim()) newErrors.subject = "Subject is required";
+    else if (name === "subject") delete newErrors.subject;
+
+    if (name === "message" && !value.trim()) newErrors.message = "Message is required";
+    else if (name === "message") delete newErrors.message;
+
+    setErrors(newErrors);
   };
 
   const containerVariants = {
@@ -88,12 +119,24 @@ const Contact = () => {
   const onSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
+
+    // Final validation before submit
+    const newErrors = {};
+    if (!formData.name.trim()) newErrors.name = "Name is required";
+    if (!/^\S+@\S+\.\S+$/.test(formData.email)) newErrors.email = "Invalid email format";
+    if (!formData.subject.trim()) newErrors.subject = "Subject is required";
+    if (!formData.message.trim()) newErrors.message = "Message is required";
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      setIsLoading(false);
+      return;
+    }
+
     const accessKey = "f6a8b2f4-095d-41c8-8661-42a386854bdf";
 
     const formSubmissionData = new FormData(event.target);
     formSubmissionData.append("access_key", accessKey);
-
-    // Create a better subject line for the email you will receive
     formSubmissionData.set(
       "subject",
       `New Message from ${formData.name} via Portfolio`
@@ -118,8 +161,14 @@ const Contact = () => {
           title: "Success!!",
           text: "Message sent successfully!",
           icon: "success",
+          showConfirmButton: false,
+          timer: 2000,
+          customClass: {
+            popup: 'animate__animated animate__fadeIn',
+          },
         });
         setFormData({ name: "", email: "", subject: "", message: "" });
+        setErrors({});
       } else {
         console.error("Submission failed:", result);
         toast.error(result.message || "Something went wrong.");
@@ -145,7 +194,11 @@ const Contact = () => {
         }}
       />
 
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2/3 h-2/3 bg-gradient-to-tr from-indigo-600 to-purple-600 rounded-full opacity-10 blur-3xl animate-pulse"></div>
+      <div className="absolute inset-0 z-0">
+        {[...Array(20)].map((_, i) => (
+          <Particle key={i} x={Math.random() * 100} y={Math.random() * 100} size={Math.random() * 5 + 2} duration={Math.random() * 10 + 10} delay={Math.random() * 5} />
+        ))}
+      </div>
 
       <div className="container mx-auto px-6 lg:px-8 relative z-10">
         <motion.div
@@ -174,7 +227,7 @@ const Contact = () => {
             >
               <h2 className="text-4xl lg:text-5xl font-extrabold text-white">
                 Let's&nbsp;
-                <span className="gap-2 bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
                   Connect
                 </span>
               </h2>
@@ -200,6 +253,7 @@ const Contact = () => {
                   icon={<FaUser className="text-slate-500" />}
                   value={formData.name}
                   onChange={handleChange}
+                  error={errors.name}
                 />
               </motion.div>
               <motion.div variants={itemVariants}>
@@ -212,6 +266,7 @@ const Contact = () => {
                   icon={<FaEnvelope className="text-slate-500" />}
                   value={formData.email}
                   onChange={handleChange}
+                  error={errors.email}
                 />
               </motion.div>
               <motion.div variants={itemVariants}>
@@ -223,6 +278,7 @@ const Contact = () => {
                   icon={<FaRegCommentDots className="text-slate-500" />}
                   value={formData.subject}
                   onChange={handleChange}
+                  error={errors.subject}
                 />
               </motion.div>
 
@@ -243,8 +299,10 @@ const Contact = () => {
                   required
                   className="block w-full bg-slate-800 border border-slate-700 rounded-lg py-3 px-4
                              text-slate-200 placeholder-slate-500 focus:outline-none
-                             focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-shadow duration-300"
+                             focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-shadow duration-300
+                             ${error ? 'border-red-500' : 'border-slate-700'}"
                 ></textarea>
+                {errors.message && <p className="text-xs text-red-500 mt-1">{errors.message}</p>}
               </motion.div>
 
               <motion.div variants={itemVariants}>
@@ -275,6 +333,30 @@ const Contact = () => {
                 </motion.button>
               </motion.div>
             </motion.form>
+
+            <motion.div
+              className="mt-8 flex justify-center gap-6"
+              variants={itemVariants}
+            >
+              <motion.a
+                href="https://github.com/sabin-khatri"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-400 hover:text-cyan-400"
+                whileHover={{ scale: 1.2 }}
+              >
+                <FaGithub size={24} />
+              </motion.a>
+              <motion.a
+                href="https://www.linkedin.com/in/sabin-khatri-25460b26a/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-400 hover:text-blue-500"
+                whileHover={{ scale: 1.2 }}
+              >
+                <FaLinkedin size={24} />
+              </motion.a>
+            </motion.div>
           </div>
         </motion.div>
       </div>
