@@ -49,9 +49,11 @@ const Navbar = () => {
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
-      const sections = navLinks.map(link => document.getElementById(link.url.substring(1)));
-      let currentSection = 'home';
-      sections.forEach(section => {
+      const sections = navLinks.map((link) =>
+        document.getElementById(link.url.substring(1))
+      );
+      let currentSection = "home";
+      sections.forEach((section) => {
         if (section) {
           const sectionTop = section.offsetTop - 80;
           if (window.scrollY >= sectionTop) {
@@ -69,13 +71,35 @@ const Navbar = () => {
   const toggleMenu = () => setIsOpen(!isOpen);
 
   const underlineVariants = {
-    hidden: { scaleX: 0, originX: 0.5 },
-    visible: { scaleX: 1, originX: 0.5, transition: { duration: 0.3, ease: "easeInOut" } },
+    hidden: {
+      scaleX: 0,
+      opacity: 0,
+      transition: { duration: 0.3, ease: "easeInOut" },
+    },
+    visible: {
+      scaleX: 1,
+      opacity: 1,
+      transition: {
+        scaleX: { duration: 0.3, ease: "easeInOut" },
+        opacity: { duration: 0.3 },
+      },
+    },
+    exit: {
+      scaleX: 0,
+      opacity: 0,
+      transition: {
+        scaleX: { duration: 0.4, ease: "easeIn" },
+        opacity: { duration: 0.2 },
+      },
+    },
   };
 
   const mobileMenuVariants = {
-    closed: { x: '100%', transition: { type: 'spring', stiffness: 400, damping: 40 } },
-    open: { x: 0, transition: { type: 'spring', stiffness: 400, damping: 40, staggerChildren: 0.07, delayChildren: 0.2 } },
+    closed: { x: "100%", transition: { type: "spring", stiffness: 400, damping: 40 } },
+    open: {
+      x: 0,
+      transition: { type: "spring", stiffness: 400, damping: 40, staggerChildren: 0.07, delayChildren: 0.2 },
+    },
   };
 
   const mobileLinkVariants = {
@@ -83,16 +107,70 @@ const Navbar = () => {
     open: { opacity: 1, y: 0 },
   };
 
+  const letterVariants = {
+    hidden: { opacity: 0, scale: 0.8, y: 10 },
+    visible: (i) => ({
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      transition: { delay: i * 0.1, duration: 0.3, ease: "easeOut" },
+    }),
+  };
+
   return (
     <>
-      <nav className={`fixed w-full z-50 top-0 transition-all duration-300 ${isScrolled ? "bg-gradient-to-r from-slate-900/70 via-cyan-900/30 to-slate-900/70 backdrop-blur-md shadow-[0_6px_30px_rgba(0,191,255,0.4)]" : "bg-transparent shadow-none"}`}>
+      <style jsx>{`
+        @keyframes flicker {
+          0%, 100% { box-shadow: 0 0 10px rgba(255, 165, 0, 0.8), 0 0 20px rgba(255, 69, 0, 0.6); }
+          50% { box-shadow: 0 0 15px rgba(255, 165, 0, 1), 0 0 25px rgba(255, 69, 0, 0.8); }
+        }
+        .flicker {
+          animation: flicker 0.5s infinite alternate;
+        }
+        @keyframes logoGlow {
+          0%, 100% { text-shadow: 0 0 10px rgba(0, 255, 255, 0.5), 0 0 20px rgba(0, 255, 255, 0.3); }
+          50% { text-shadow: 0 0 20px rgba(0, 255, 255, 0.8), 0 0 30px rgba(0, 255, 255, 0.5); }
+        }
+        .logo-glow {
+          animation: logoGlow 2s ease-in-out infinite;
+        }
+        @keyframes scan {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+        .animate-scan {
+          animation: scan 3s infinite linear;
+        }
+      `}</style>
+
+      <nav
+        className={`fixed w-full z-50 top-0 transition-all duration-300 ${
+          isScrolled
+            ? "bg-gradient-to-r from-slate-900/70 via-cyan-900/30 to-slate-900/70 backdrop-blur-md shadow-[0_6px_30px_rgba(0,191,255,0.4)]"
+            : "bg-transparent shadow-none"
+        }`}
+      >
         <div className="container mx-auto px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             <a
               href="#home"
-              className="relative overflow-hidden text-3xl font-bold text-cyan-400 tracking-wider uppercase transition-all duration-300 hover:text-cyan-300 transform hover:scale-105 before:content-[''] before:absolute before:top-0 before:left-0 before:w-full before:h-full before:bg-[linear-gradient(to_right,transparent_0%,#00ffff_50%,transparent_100%)] before:animate-scan before:opacity-20 before:blur-md"
+              className="relative overflow-hidden text-3xl font-bold text-cyan-400 tracking-wider uppercase transition-all duration-300 hover:text-cyan-300 transform hover:scale-105 logo-glow"
             >
-              SabinK
+              {Array.from("SabinK").map((letter, i) => (
+                <motion.span
+                  key={i}
+                  className="inline-block"
+                  custom={i}
+                  initial="hidden"
+                  animate="visible"
+                  variants={letterVariants}
+                >
+                  {letter}
+                </motion.span>
+              ))}
+              <span
+                className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,transparent_0%,#00ffff_50%,transparent_100%)] opacity-20 blur-md animate-scan"
+              ></span>
             </a>
 
             <ul className="hidden md:flex items-center space-x-8">
@@ -106,18 +184,28 @@ const Navbar = () => {
                   <a
                     href={link.url}
                     onClick={toggleMenu}
-                    className={`relative text-lg font-medium transition-all duration-300 ${activeSection === link.url.substring(1) ? "text-cyan-400" : "text-slate-300 hover:text-cyan-400"}`}
+                    className={`relative text-lg font-medium transition-all duration-300 ${
+                      activeSection === link.url.substring(1)
+                        ? "text-cyan-400"
+                        : "text-slate-300 hover:text-cyan-400"
+                    }`}
                     onFocus={(e) => (e.target.style.boxShadow = "0 0 20px #00ffff, 0 0 30px #00ffff")}
                     onBlur={(e) => (e.target.style.boxShadow = "none")}
-                    style={{ outline: 'none' }}
+                    style={{ outline: "none" }}
                   >
                     {link.title}
                   </a>
-                  <motion.div
-                    className="absolute bottom-[-4px] left-0 w-full h-[2px] bg-cyan-400"
-                    variants={underlineVariants}
-                    animate={activeSection === link.url.substring(1) ? "visible" : "hidden"}
-                  />
+                  <AnimatePresence>
+                    {activeSection === link.url.substring(1) && (
+                      <motion.div
+                        className="absolute bottom-[-4px] left-0 w-full h-[2px] bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 flicker"
+                        variants={underlineVariants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                      />
+                    )}
+                  </AnimatePresence>
                 </motion.li>
               ))}
             </ul>
@@ -150,7 +238,7 @@ const Navbar = () => {
                     className="text-3xl font-semibold text-slate-100 hover:text-cyan-400 transition-all duration-300"
                     onFocus={(e) => (e.target.style.boxShadow = "0 0 20px #00ffff, 0 0 30px #00ffff")}
                     onBlur={(e) => (e.target.style.boxShadow = "none")}
-                    style={{ outline: 'none' }}
+                    style={{ outline: "none" }}
                   >
                     {link.title}
                   </a>
