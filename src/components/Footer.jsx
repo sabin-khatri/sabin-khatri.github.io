@@ -102,7 +102,7 @@ const Footer = () => {
               Crafted with <span className="text-red-500">❤</span> using React & Tailwind CSS
             </p>
             <p className="mt-2">
-              Email: <a href="mailto:sabinkhatri77312@gmail.com" className="text-cyan-400 hover:underline">sabink802@gmail.com</a> | Website: <a href="https://sabinkhatri.com" className="text-cyan-400 hover:underline">https://sabinkhatri18.com.np/</a>
+              Email: <a href="mailto:sabinkhatri77312@gmail.com" className="text-cyan-400 hover:underline">sabink802@gmail.com</a> | Website: <a href="https://sabinkhatri18.com.np/" className="text-cyan-400 hover:underline">Sabin Khatri Portfolio</a>
             </p>
           </div>
         </div>
