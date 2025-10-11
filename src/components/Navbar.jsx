@@ -21,10 +21,13 @@ const AnimatedHamburgerIcon = ({ isOpen, toggle }) => {
   };
 
   return (
-    <button
+    <motion.button
       onClick={toggle}
       aria-label="Toggle mobile menu"
       className="text-white focus:outline-none w-7 h-6 flex flex-col justify-between z-50"
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+      transition={{ duration: 0.2 }}
     >
       {[0, 1, 2].map((i) => (
         <motion.div
@@ -37,7 +40,7 @@ const AnimatedHamburgerIcon = ({ isOpen, toggle }) => {
           transition={{ duration: 0.3, ease: "easeInOut" }}
         />
       ))}
-    </button>
+    </motion.button>
   );
 };
 
@@ -80,15 +83,15 @@ const Navbar = () => {
       scaleX: 1,
       opacity: 1,
       transition: {
-        scaleX: { duration: 0.3, ease: "easeInOut" },
-        opacity: { duration: 0.3 },
+        scaleX: { duration: 0.4, ease: "easeOut" },
+        opacity: { duration: 0.2 },
       },
     },
     exit: {
       scaleX: 0,
       opacity: 0,
       transition: {
-        scaleX: { duration: 0.4, ease: "easeIn" },
+        scaleX: { duration: 0.3, ease: "easeIn" },
         opacity: { duration: 0.2 },
       },
     },
@@ -98,31 +101,26 @@ const Navbar = () => {
     closed: { x: "100%", transition: { type: "spring", stiffness: 400, damping: 40 } },
     open: {
       x: 0,
-      transition: { type: "spring", stiffness: 400, damping: 40, staggerChildren: 0.07, delayChildren: 0.2 },
+      transition: { type: "spring", stiffness: 400, damping: 40, staggerChildren: 0.1, delayChildren: 0.3 },
     },
   };
 
   const mobileLinkVariants = {
-    closed: { opacity: 0, y: 20 },
-    open: { opacity: 1, y: 0 },
+    closed: { opacity: 0, y: 20, scale: 0.8 },
+    open: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 200, damping: 20 } },
   };
 
-  const letterVariants = {
-    hidden: { opacity: 0, scale: 0.8, y: 10 },
-    visible: (i) => ({
-      opacity: 1,
-      scale: 1,
-      y: 0,
-      transition: { delay: i * 0.1, duration: 0.3, ease: "easeOut" },
-    }),
+  const rippleVariants = {
+    initial: { scale: 0, opacity: 0.5 },
+    animate: { scale: 2, opacity: 0, transition: { duration: 0.5, ease: "easeOut" } },
   };
 
   return (
     <>
       <style jsx>{`
         @keyframes flicker {
-          0%, 100% { box-shadow: 0 0 10px rgba(255, 165, 0, 0.8), 0 0 20px rgba(255, 69, 0, 0.6); }
-          50% { box-shadow: 0 0 15px rgba(255, 165, 0, 1), 0 0 25px rgba(255, 69, 0, 0.8); }
+          0%, 100% { box-shadow: 0 0 10px rgba(0, 255, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.4); }
+          50% { box-shadow: 0 0 15px rgba(0, 255, 255, 1), 0 0 25px rgba(0, 255, 255, 0.6); }
         }
         .flicker {
           animation: flicker 0.5s infinite alternate;
@@ -163,7 +161,15 @@ const Navbar = () => {
                   custom={i}
                   initial="hidden"
                   animate="visible"
-                  variants={letterVariants}
+                  variants={{
+                    hidden: { opacity: 0, scale: 0.8, y: 10 },
+                    visible: (i) => ({
+                      opacity: 1,
+                      scale: 1,
+                      y: 0,
+                      transition: { delay: i * 0.1, duration: 0.3, ease: "easeOut" },
+                    }),
+                  }}
                 >
                   {letter}
                 </motion.span>
@@ -178,27 +184,45 @@ const Navbar = () => {
                 <motion.li
                   key={link.title}
                   className="relative"
-                  initial="hidden"
-                  whileHover={{ scale: 1.1, transition: { duration: 0.2 } }}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
                 >
                   <a
                     href={link.url}
-                    onClick={toggleMenu}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      toggleMenu();
+                      const section = document.querySelector(link.url);
+                      if (section) {
+                        window.scrollTo({
+                          top: section.offsetTop - 80,
+                          behavior: "smooth",
+                        });
+                      }
+                    }}
                     className={`relative text-lg font-medium transition-all duration-300 ${
                       activeSection === link.url.substring(1)
                         ? "text-cyan-400"
                         : "text-slate-300 hover:text-cyan-400"
                     }`}
-                    onFocus={(e) => (e.target.style.boxShadow = "0 0 20px #00ffff, 0 0 30px #00ffff")}
-                    onBlur={(e) => (e.target.style.boxShadow = "none")}
+                    onFocus={(e) => (e.target.style.textShadow = "0 0 10px rgba(0, 255, 255, 0.8)")}
+                    onBlur={(e) => (e.target.style.textShadow = "none")}
                     style={{ outline: "none" }}
                   >
                     {link.title}
+                    <motion.div
+                      className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,255,0.3),transparent)] pointer-events-none"
+                      variants={rippleVariants}
+                      initial="initial"
+                      animate="initial"
+                      whileTap="animate"
+                    />
                   </a>
                   <AnimatePresence>
                     {activeSection === link.url.substring(1) && (
                       <motion.div
-                        className="absolute bottom-[-4px] left-0 w-full h-[2px] bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 flicker"
+                        className="absolute bottom-[-4px] left-0 w-full h-[2px] bg-gradient-to-r from-cyan-400 to-purple-500 flicker"
                         variants={underlineVariants}
                         initial="hidden"
                         animate="visible"
@@ -226,21 +250,57 @@ const Navbar = () => {
             animate="open"
             exit="closed"
           >
+            <motion.div
+              className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,255,0.2),transparent)]"
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 3, opacity: 0.5, transition: { duration: 0.5 } }}
+              exit={{ scale: 0, opacity: 0 }}
+            />
             <motion.ul
               className="flex flex-col items-center space-y-8"
-              variants={{ open: { transition: { staggerChildren: 0.1, delayChildren: 0.2 } }, closed: {} }}
+              variants={{ open: { transition: { staggerChildren: 0.1, delayChildren: 0.3 } }, closed: {} }}
             >
               {navLinks.map((link) => (
                 <motion.li key={link.title} variants={mobileLinkVariants}>
                   <a
                     href={link.url}
-                    onClick={toggleMenu}
-                    className="text-3xl font-semibold text-slate-100 hover:text-cyan-400 transition-all duration-300"
-                    onFocus={(e) => (e.target.style.boxShadow = "0 0 20px #00ffff, 0 0 30px #00ffff")}
-                    onBlur={(e) => (e.target.style.boxShadow = "none")}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      toggleMenu();
+                      const section = document.querySelector(link.url);
+                      if (section) {
+                        window.scrollTo({
+                          top: section.offsetTop - 80,
+                          behavior: "smooth",
+                        });
+                      }
+                    }}
+                    className={`relative text-3xl font-semibold transition-all duration-300 ${
+                      activeSection === link.url.substring(1)
+                        ? "text-cyan-400"
+                        : "text-slate-100 hover:text-cyan-400"
+                    }`}
+                    onFocus={(e) => (e.target.style.textShadow = "0 0 10px rgba(0, 255, 255, 0.8)")}
+                    onBlur={(e) => (e.target.style.textShadow = "none")}
                     style={{ outline: "none" }}
                   >
                     {link.title}
+                    <motion.div
+                      className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,255,0.3),transparent)] pointer-events-none"
+                      variants={rippleVariants}
+                      initial="initial"
+                      animate="initial"
+                      whileTap="animate"
+                    />
+                    {activeSection === link.url.substring(1) && (
+                      <motion.div
+                        className="absolute bottom-[-4px] left-0 w-full h-[2px] bg-gradient-to-r from-cyan-400 to-purple-500 flicker"
+                        variants={underlineVariants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                      />
+                    )}
                   </a>
                 </motion.li>
               ))}

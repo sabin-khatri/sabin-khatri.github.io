@@ -1,5 +1,5 @@
+/* eslint-disable no-unused-vars */
 import React, { useMemo, useState, useEffect } from "react";
-// eslint-disable-next-line no-unused-vars
 import { motion, useMotionValue, useSpring, transform } from "framer-motion";
 import { useTypewriter, Cursor } from "react-simple-typewriter";
 import { HiOutlineArrowRight, HiOutlineChevronDoubleDown } from "react-icons/hi";
@@ -162,12 +162,26 @@ const Hero = () => {
             >
               <motion.a
                 href="#projects"
-                className="group inline-flex items-center gap-3 px-7 py-3 text-base font-semibold text-slate-900 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-lg shadow-lg"
+                className="group inline-flex items-center gap-3 px-7 py-3 text-base font-semibold text-slate-900 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-lg shadow-lg relative overflow-hidden"
                 initial={{ boxShadow: "0px 0px 0px rgba(6, 182, 212, 0)" }}
-                whileHover={{ scale: 1.1, y: -5, boxShadow: "0px 15px 30px rgba(6, 182, 212, 0.6)" }}
+                whileHover={{
+                  scale: 1.1,
+                  y: -5,
+                  boxShadow: "0px 15px 30px rgba(6, 182, 212, 0.6)",
+                  background: "linear-gradient(90deg, #06b6d4, #7e22ce, #06b6d4)",
+                }}
                 whileTap={{ scale: 0.95 }}
-                transition={{ duration: 0.4 }}
+                whileFocus={{
+                  scale: 1.1,
+                  boxShadow: "0px 0px 10px rgba(6, 182, 212, 0.8)",
+                }}
+                transition={{ duration: 0.4, background: { duration: 0.8, repeat: Infinity, repeatType: "reverse" } }}
               >
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent to-white/30"
+                  initial={{ x: "-100%" }}
+                  whileHover={{ x: "100%", transition: { duration: 0.5 } }}
+                />
                 View My Work
                 <HiOutlineArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:rotate-90" />
               </motion.a>
@@ -179,10 +193,23 @@ const Hero = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`My ${link.name} profile`}
-                    className="text-3xl text-slate-400"
-                    whileHover={{ scale: 1.3, y: -3, color: "#9333ea" }}
-                    transition={{ duration: 0.3 }}
+                    className="text-3xl text-slate-400 relative"
+                    whileHover={{
+                      scale: [1, 1.4, 1.2],
+                      y: -5,
+                      color: "#9333ea",
+                      transition: { scale: { times: [0, 0.4, 1], duration: 0.4 }, y: { duration: 0.3 } },
+                    }}
+                    whileFocus={{
+                      scale: 1.1,
+                      boxShadow: "0px 0px 10px rgba(6, 182, 212, 0.8)",
+                    }}
                   >
+                    <motion.div
+                      className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-600/20 to-cyan-400/20"
+                      initial={{ scale: 0, opacity: 0 }}
+                      whileHover={{ scale: 2, opacity: 1, transition: { duration: 0.4 } }}
+                    />
                     {link.icon}
                   </motion.a>
                 ))}
