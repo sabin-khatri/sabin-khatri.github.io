@@ -1,29 +1,46 @@
-"use client";
-
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import OrbitingSkills from './orbiting-skills';
+import { motion, animate, useScroll, useTransform } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
 import { FaDownload, FaCheckCircle } from 'react-icons/fa';
+import profileImage from '../assets/about.avif';
 import resume from '../assets/resume/resume.pdf';
+
+function AnimatedCounter({ to }) {
+  const ref = useRef(null);
+  const [inViewRef, inView] = useInView({ triggerOnce: true, threshold: 0.3 });
+
+  useEffect(() => {
+    if (inView) {
+      animate(0, to, {
+        duration: 2,
+        onUpdate(value) {
+          if (ref.current) {
+            ref.current.textContent = value.toFixed(0);
+          }
+        },
+      });
+    }
+  }, [inView, to]);
+
+  return <span ref={(node) => {
+    ref.current = node;
+    inViewRef(node);
+  }}>0</span>;
+}
 
 const AnimatedTitle = ({ text }) => {
   const letters = Array.from(text);
-
   const container = {
     hidden: { opacity: 0 },
     visible: (i = 1) => ({
       opacity: 1,
-      transition: { staggerChildren: 0.06, delayChildren: i * 0.08 },
+      transition: { staggerChildren: 0.04, delayChildren: i * 0.05 },
     }),
   };
-
   const child = {
-    hidden: { opacity: 0, y: 40 },
-    visible: { 
-      opacity: 1, 
-      y: 0, 
-      transition: { type: 'spring', damping: 14, stiffness: 110 } 
-    },
+    hidden: { opacity: 0, y: 20, transition: { type: 'spring', damping: 12, stiffness: 100 } },
+    visible: { opacity: 1, y: 0, transition: { type: 'spring', damping: 12, stiffness: 100 } },
   };
 
   return (
@@ -35,7 +52,7 @@ const AnimatedTitle = ({ text }) => {
       viewport={{ once: true }}
     >
       {letters.map((letter, index) => (
-        <motion.span key={index} variants={child}>
+        <motion.span variants={child} key={index}>
           {letter === ' ' ? '\u00A0' : letter}
         </motion.span>
       ))}
@@ -43,15 +60,40 @@ const AnimatedTitle = ({ text }) => {
   );
 };
 
-const TextReveal = ({ children }) => (
+const TextReveal = ({ children }) => {
+  return (
+    <div className="relative overflow-hidden">
+      <motion.div
+        variants={{
+          hidden: { opacity: 0, y: 20 },
+          visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+        }}
+      >
+        {children}
+      </motion.div>
+      <motion.div
+        className="absolute top-0 left-0 bottom-0 right-0 bg-gradient-to-r from-cyan-400 to-purple-500 z-10"
+        variants={{
+          hidden: { left: 0 },
+          visible: { left: '100%', transition: { duration: 0.8, ease: 'easeInOut' } },
+        }}
+        style={{ originX: 0 }}
+      />
+    </div>
+  );
+};
+
+const SkillPill = ({ skill }) => (
   <motion.div
-    initial={{ opacity: 0, y: 35 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ duration: 0.75, ease: 'easeOut' }}
-    className="text-slate-300 text-lg leading-relaxed"
+    className="bg-slate-800 text-cyan-300 text-sm font-medium px-4 py-1.5 rounded-full"
+    variants={{
+      hidden: { opacity: 0, scale: 0.8 },
+      visible: { opacity: 1, scale: 1 },
+    }}
+    whileHover={{ scale: 1.1, backgroundColor: '#1e293b', color: '#93c5fd' }}
+    transition={{ duration: 0.3 }}
   >
-    {children}
+    {skill}
   </motion.div>
 );
 
@@ -61,19 +103,17 @@ const About = () => {
 
   const handleDownload = () => {
     if (downloadStatus !== 'idle') return;
-
     setDownloadStatus('downloading');
-    setProgress(0);
 
     const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 95) {
+      setProgress(prev => {
+        if (prev >= 100) {
           clearInterval(interval);
           return 100;
         }
-        return prev + 8;
+        return prev + 10;
       });
-    }, 140);
+    }, 150);
 
     setTimeout(() => {
       clearInterval(interval);
@@ -90,8 +130,8 @@ const About = () => {
       setTimeout(() => {
         setDownloadStatus('idle');
         setProgress(0);
-      }, 2200);
-    }, 1800);
+      }, 2000);
+    }, 2000);
   };
 
   const sectionRef = useRef(null);
@@ -99,117 +139,129 @@ const About = () => {
     target: sectionRef,
     offset: ['start end', 'end start'],
   });
-
   const imageY = useTransform(scrollYProgress, [0, 1], ['-20%', '20%']);
 
-  return (
-    <section
-      id="about"
-      ref={sectionRef}
-      className="relative bg-gradient-to-br from-slate-900 via-cyan-900/20 to-slate-900 py-20 lg:py-28 text-white overflow-hidden"
-    >
-      {/* Background Pattern */}
-      <div
-        className="absolute inset-0 z-0 opacity-10"
-        style={{
-          backgroundImage: 'radial-gradient(circle, #334155 1px, transparent 1px)',
-          backgroundSize: '2.5rem 2.5rem',
-        }}
-      />
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.15, delayChildren: 0.3 } },
+  };
 
+  return (
+    <section id="about" ref={sectionRef} className="relative bg-gradient-to-br from-slate-900 via-cyan-900/20 to-slate-900 py-20 lg:py-28 text-white overflow-hidden">
+      <div className="absolute inset-0 z-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle, #334155 1px, transparent 1px)', backgroundSize: '2rem 2rem' }} />
       <div className="container mx-auto px-6 lg:px-8 relative z-10">
-        <div className="grid lg:grid-cols-5 gap-12 lg:gap-20 items-center">
-          
-          {/* Left Side - Only Big Orbiting Skills (Image removed) */}
+        <motion.div
+          className="grid lg:grid-cols-5 items-center gap-12 lg:gap-20"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={containerVariants}
+        >
           <motion.div
             className="lg:col-span-2 flex justify-center"
             style={{ y: imageY }}
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.9 }}
           >
-            <div className="relative w-full max-w-[480px] aspect-square flex items-center justify-center">
-              <OrbitingSkills />
-            </div>
+            <motion.div
+              className="relative p-2 rounded-2xl bg-gradient-to-br from-cyan-500/50 via-purple-500/50 to-pink-500/50"
+              whileHover={{ scale: 1.05, rotate: 2, boxShadow: '0 10px 20px rgba(0, 191, 255, 0.3)' }}
+              transition={{ type: 'spring', stiffness: 300 }}
+              variants={{ hidden: { opacity: 0, scale: 0.8 }, visible: { opacity: 1, scale: 1 } }}
+            >
+              <div className="bg-slate-900 p-3 rounded-xl">
+                <img
+                  src={profileImage}
+                  alt="A portrait of the developer"
+                  className="rounded-lg shadow-2xl shadow-black/30 w-full h-auto transition-all duration-300 hover:shadow-[0_15px_40px_rgba(0,191,255,0.5)]"
+                />
+              </div>
+            </motion.div>
           </motion.div>
 
-          {/* Right Side - Content */}
-          <div className="lg:col-span-3 text-center lg:text-left space-y-10">
-            <div>
+          <div className="lg:col-span-3 text-center lg:text-left">
+            <header>
               <AnimatedTitle text="About Me" />
               <motion.p
-                className="mt-4 text-xl text-cyan-400 font-medium"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
+                className="mt-4 text-lg text-cyan-400 font-semibold"
+                variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { delay: 0.8 } } }}
               >
-                Frontend Developer &amp; UI Enthusiast
+                Frontend Developer & UI Enthusiast
               </motion.p>
-            </div>
+            </header>
 
-            <div className="space-y-6">
-              <TextReveal>
-                <p>
-                  Hello! I'm a passionate Frontend Developer who thrives on turning complex problems 
-                  into beautiful, intuitive, and highly interactive web experiences.
-                </p>
-              </TextReveal>
-
-              <TextReveal>
-                <p>
-                  From concept to deployment, my focus is on crafting responsive, high-performance 
-                  applications that users love to interact with. I love clean code, smooth animations, 
-                  and delightful user interfaces.
-                </p>
-              </TextReveal>
-            </div>
-
-            {/* Buttons */}
             <motion.div
-              className="flex flex-wrap justify-center lg:justify-start gap-4 pt-6"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
+              className="mt-8 space-y-5 text-slate-300 text-lg leading-relaxed"
+              variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.2 } } }}
+            >
+              <TextReveal>
+                <p>Hello! I'm a passionate Frontend Developer who thrives on turning complex problems into beautiful, intuitive, and highly interactive web experiences.</p>
+              </TextReveal>
+              <TextReveal>
+                <p>From concept to deployment, my focus is on crafting responsive, high-performance applications that users love to interact with.</p>
+              </TextReveal>
+            </motion.div>
+
+            <motion.div
+              className="mt-8 flex flex-wrap justify-center lg:justify-start items-center gap-3"
+              variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.1 } } }}
+            >
+              <span className="text-slate-400 font-medium mr-2">My Toolkit:</span>
+              <SkillPill skill="JavaScript (ES6+)" />
+              <SkillPill skill="React" />
+              <SkillPill skill="Tailwind CSS" />
+              <SkillPill skill="Framer Motion" />
+            </motion.div>
+
+            <motion.div
+              className="mt-12 flex justify-center lg:justify-start gap-8 sm:gap-12"
+              variants={{ hidden: { y: 20, opacity: 0 }, visible: { y: 0, opacity: 1 } }}
+            >
+              <div className="text-center">
+                <h3 className="text-4xl font-bold text-cyan-400"><AnimatedCounter to={1} />+</h3>
+                <p className="text-slate-400 mt-1">Years Experience</p>
+              </div>
+              <div className="text-center">
+                <h3 className="text-4xl font-bold text-cyan-400"><AnimatedCounter to={5} />+</h3>
+                <p className="text-slate-400 mt-1">Projects Completed</p>
+              </div>
+            </motion.div>
+
+            <motion.div
+              className="mt-12 flex justify-center lg:justify-start gap-4"
+              variants={{ hidden: { y: 20, opacity: 0 }, visible: { y: 0, opacity: 1 } }}
             >
               <motion.button
                 onClick={handleDownload}
                 disabled={downloadStatus !== 'idle'}
-                className="group relative inline-flex items-center justify-center gap-3 px-8 py-3.5 font-semibold text-slate-950 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-xl shadow-xl shadow-cyan-500/30 overflow-hidden"
-                whileHover={downloadStatus === 'idle' ? { scale: 1.05, y: -3 } : {}}
-                whileTap={downloadStatus === 'idle' ? { scale: 0.97 } : {}}
+                className="group relative inline-flex items-center justify-center gap-2.5 px-6 py-3 font-semibold text-slate-900 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-lg shadow-lg shadow-cyan-500/20 overflow-hidden"
+                whileHover={downloadStatus === 'idle' ? { scale: 1.05, y: -4, boxShadow: '0 10px 25px rgba(6, 182, 212, 0.5)' } : {}}
+                whileTap={downloadStatus === 'idle' ? { scale: 0.95 } : {}}
+                transition={{ duration: 0.2 }}
               >
+                <span className="absolute top-0 left-0 h-0.5 w-full bg-gradient-to-r from-transparent via-white to-transparent transition-all duration-500 group-hover:w-full group-hover:via-slate-900 transform -translate-x-full group-hover:translate-x-0" />
+                <span className="absolute bottom-0 right-0 h-0.5 w-full bg-gradient-to-l from-transparent via-white to-transparent transition-all duration-500 group-hover:w-full group-hover:via-slate-900 transform translate-x-full group-hover:translate-x-0" />
                 <div
-                  className="absolute inset-0 bg-gradient-to-r from-cyan-500/60 to-purple-500/60 transition-all duration-200"
+                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-cyan-500/50 to-purple-500/50 transition-all duration-300 ease-linear"
                   style={{ width: `${progress}%` }}
                 />
-
                 <span className="relative z-10 flex items-center gap-2.5">
-                  {downloadStatus === 'idle' && (
-                    <>
-                      <FaDownload className="text-lg" /> Download Resume
-                    </>
-                  )}
+                  {downloadStatus === 'idle' && (<><FaDownload /> Download Resume</>)}
                   {downloadStatus === 'downloading' && `Downloading... ${progress}%`}
-                  {downloadStatus === 'completed' && (
-                    <>
-                      <FaCheckCircle className="text-lg" /> Download Completed!
-                    </>
-                  )}
+                  {downloadStatus === 'completed' && (<><FaCheckCircle /> Completed!</>)}
                 </span>
               </motion.button>
-
+              
               <motion.a
                 href="#contact"
-                className="inline-flex items-center px-8 py-3.5 font-semibold text-slate-200 border-2 border-slate-600 hover:border-slate-400 rounded-xl transition-all"
-                whileHover={{ scale: 1.05, y: -3, backgroundColor: 'rgba(30, 41, 59, 0.6)' }}
-                whileTap={{ scale: 0.97 }}
+                className="inline-flex items-center px-8 py-3 font-semibold text-slate-200 border-2 border-slate-700 rounded-lg"
+                whileHover={{ scale: 1.05, y: -4, backgroundColor: "#1e293b", borderColor: "#475569" }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ duration: 0.2 }}
               >
-                Get In Touch
+                Contact Me
               </motion.a>
             </motion.div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
