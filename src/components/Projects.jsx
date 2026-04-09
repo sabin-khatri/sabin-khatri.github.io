@@ -31,11 +31,44 @@ const iconMap = {
   'Git & GitHub': <FaGithub className="text-slate-300" />,
 };
 
-const levelColor = {
-  Beginner: 'text-green-400',
-  Intermediate: 'text-yellow-400',
-  Pro: 'text-red-400',
-};
+const projects = [
+  {
+    id: 1,
+    title: 'Chiya Ghar',
+    description: 'A visually appealing and fully responsive landing page for a local Nepali tea café. Built with HTML, Tailwind CSS, and vanilla JavaScript.',
+    image: chiyaghar,
+    tags: ['HTML', 'Tailwind CSS', 'JavaScript'],
+    liveUrl: 'https://bespoke-twilight-0dc185.netlify.app/',
+    githubUrl: 'https://github.com/sabin-khatri/ChiyaAdda',
+  },
+  {
+    id: 2,
+    title: 'Trekking Website',
+    description: 'A promotional tourism website showcasing trekking adventures in Nepal. Designed with mobile-first approach using Tailwind CSS and JavaScript.',
+    image: trekking,
+    tags: ['HTML', 'Tailwind CSS', 'JavaScript'],
+    liveUrl: 'https://sabintrek.netlify.app/',
+    githubUrl: 'https://github.com/sabin-khatri/Trekking-Web',
+  },
+  {
+    id: 3,
+    title: 'Travel Web App',
+    description: 'A dynamic single-page travel agency application built with React and Tailwind CSS, featuring smooth animations and responsive design.',
+    image: driving,
+    tags: ['React', 'Tailwind CSS', 'JavaScript'],
+    liveUrl: 'https://travel-web-zeta-livid.vercel.app/',
+    githubUrl: 'https://github.com/sabin-khatri/Travel-web',
+  },
+  {
+    id: 4,
+    title: 'Car Rental System',
+    description: 'A feature-rich car rental platform with search, filtering, and booking functionality. Built using React with clean state management.',
+    image: carrental,
+    tags: ['React', 'Tailwind CSS', 'JavaScript'],
+    liveUrl: 'https://gadi-rental.netlify.app/',
+    githubUrl: 'https://github.com/sabin-khatri/Car-Rental',
+  },
+];
 
 const skills = {
   frontend: [
@@ -53,268 +86,216 @@ const skills = {
   ],
 };
 
-const projects = [
-  {
-    id: 1,
-    title: 'Chiya Ghar',
-    description: 'A visually appealing and fully responsive landing page for a local Nepali tea café. Built using HTML, Tailwind CSS, and vanilla JavaScript to create an interactive and clean user experience.',
-    image: chiyaghar,
-    tags: ['HTML', 'Tailwind CSS', 'JavaScript'],
-    liveUrl: 'https://bespoke-twilight-0dc185.netlify.app/',
-    githubUrl: 'https://github.com/sabin-khatri/ChiyaAdda',
-  },
-  {
-    id: 2,
-    title: 'Trekking Website',
-    description: 'A promotional tourism website designed to showcase trekking in Nepal. Developed with a mobile-first approach using HTML and Tailwind CSS, and enhanced with JavaScript for engaging user interactions.',
-    image: trekking,
-    tags: ['HTML', 'Tailwind CSS', 'JavaScript'],
-    liveUrl: 'https://sabintrek.netlify.app/',
-    githubUrl: 'https://github.com/sabin-khatri/Trekking-Web',
-  },
-  {
-    id: 3,
-    title: 'Travel Web App',
-    description: 'A dynamic single-page application (SPA) for a travel agency, built with React. It features a component-based architecture and a modern, responsive interface styled with Tailwind CSS for a seamless user experience.',
-    image: driving,
-    tags: ['React', 'Tailwind CSS', 'JavaScript'],
-    liveUrl: 'https://travel-web-zeta-livid.vercel.app/',
-    githubUrl: 'https://github.com/sabin-khatri/Travel-web',
-  },
-  {
-    id: 4,
-    title: 'Car Rental System',
-    description: 'A feature-rich car rental application built with React. It includes a dynamic search and filtering system, an intuitive booking interface, and a clean UI, demonstrating efficient state management.',
-    image: carrental,
-    tags: ['React', 'Tailwind CSS', 'JavaScript'],
-    liveUrl: 'https://gadi-rental.netlify.app/',
-    githubUrl: 'https://github.com/sabin-khatri/Car-Rental',
-  },
-];
-
-const sectionVariants = {
-  hidden: { opacity: 0, y: 50 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: 'easeOut', staggerChildren: 0.2 },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-};
-
-const skillContainerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      delayChildren: 0.2,
-      staggerChildren: 0.1,
-    },
-  },
-  exit: {
-    opacity: 0,
-    transition: {
-      staggerChildren: 0.05,
-      staggerDirection: -1,
-    },
-  },
-};
-
-const getIcon = (name) => iconMap[name] || <FaGithub className="text-gray-400" />;
-
-const LevelBadge = ({ level }) => (
-  <span className={`text-xs font-bold ${levelColor[level]}`}>{level}</span>
-);
-
-const SkillBadge = ({ name, level }) => (
-  <motion.div
-    className="flex items-center gap-3 bg-slate-800 px-5 py-3 rounded-lg shadow-md"
-    variants={itemVariants}
-    whileHover={{ scale: 1.1, y: -5, backgroundColor: '#334155' }}
-    transition={{ type: 'spring', stiffness: 300 }}
-  >
-    <span className="text-2xl">{getIcon(name)}</span>
-    <span className="text-md font-medium text-slate-200 flex items-center gap-2">
-      {name} <LevelBadge level={level} />
-      <div className="w-16 h-1 bg-gray-700 rounded-full overflow-hidden">
-        <motion.div
-          className={`h-full rounded-full ${level === 'Beginner' ? 'bg-green-400' : level === 'Intermediate' ? 'bg-yellow-400' : 'bg-red-400'}`}
-          initial={{ width: '0%' }}
-          animate={{ width: level === 'Beginner' ? '40%' : level === 'Intermediate' ? '70%' : '100%' }}
-          transition={{ duration: 1 }}
-        />
-      </div>
-    </span>
-  </motion.div>
-);
-
-const ImageModal = ({ src, onClose }) => (
-  <motion.div
-    className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    exit={{ opacity: 0 }}
-    onClick={onClose}
-  >
-    <motion.button
-      onClick={onClose}
-      className="absolute top-4 right-4 text-white/70 hover:text-white transition z-50"
-      whileHover={{ scale: 1.2, rotate: 90 }}
-    >
-      <CgClose size={32} />
-    </motion.button>
-    <motion.img
-      src={src}
-      alt="Project screenshot"
-      className="max-w-[90vw] max-h-[90vh] rounded-lg shadow-2xl"
-      initial={{ scale: 0.5, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      exit={{ scale: 0.5, opacity: 0 }}
-      transition={{ type: 'spring', stiffness: 200, damping: 25 }}
-      onClick={(e) => e.stopPropagation()}
-    />
-  </motion.div>
-);
-
-const ProjectCard = ({ project, index, onImageClick }) => {
-  const isEven = index % 2 === 0;
-  const textOrderClass = isEven ? 'lg:order-1' : 'lg:order-2';
-  const imageOrderClass = isEven ? 'lg:order-2' : 'lg:order-1';
-
-  return (
-    <motion.article className="group grid grid-cols-1 lg:grid-cols-2 gap-8 items-center" variants={itemVariants}>
-      <div className={`p-1 lg:p-4 flex flex-col h-full ${textOrderClass}`}>
-        <p className="text-sm font-medium text-cyan-400 mb-2">Featured Project</p>
-        <h3 className="text-2xl lg:text-3xl font-bold text-slate-100 mb-4 bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">{project.title}</h3>
-        <div className="bg-slate-800/70 p-6 rounded-lg shadow-inner mb-6 flex-grow">
-          <p className="text-slate-300 font-light leading-relaxed">{project.description}</p>
-        </div>
-        <div className="flex flex-wrap gap-x-4 gap-y-2 mb-6">
-          {project.tags.map(tag => (
-            <span key={tag} className="flex items-center gap-2 text-slate-400 text-sm font-mono">
-              {getIcon(tag)} {tag}
-            </span>
-          ))}
-        </div>
-        <footer className="flex items-center gap-4 mt-auto">
-          <motion.a whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="text-slate-300 hover:text-cyan-400 transition-colors">
-            <FaGithub size={26} />
-          </motion.a>
-          {project.liveUrl && (
-            <motion.a whileHover={{ scale: 1.05, y: -3 }} whileTap={{ scale: 0.95 }} href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold bg-gradient-to-r from-cyan-400 to-purple-500 text-slate-900 rounded-full shadow-lg hover:bg-cyan-300 transition-colors">
-              <FiExternalLink /> Live Demo
-            </motion.a>
-          )}
-        </footer>
-      </div>
-      <motion.div className={`relative rounded-xl overflow-hidden shadow-2xl cursor-pointer ${imageOrderClass}`} onClick={() => onImageClick(project.image)} whileHover={{ scale: 1.03, boxShadow: '0 0 15px rgba(0, 255, 255, 0.5)' }}>
-        <img src={project.image} alt={`${project.title} Screenshot`} className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-300" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-          <motion.span initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-white text-lg font-semibold border-2 border-white px-4 py-2 rounded-md">
-            View Image
-          </motion.span>
-        </div>
-      </motion.div>
-    </motion.article>
-  );
-}
-
-const Particle = ({ x, y, size, duration, delay }) => (
-  <motion.div
-    className="absolute rounded-full bg-cyan-400/20"
-    style={{ left: `${x}%`, top: `${y}%`, width: size, height: size }}
-    initial={{ opacity: 0.5, scale: 0 }}
-    animate={{ opacity: [0.5, 0], scale: [0, 1.5], y: '-20vh' }}
-    transition={{ duration, delay, repeat: Infinity, repeatType: 'loop', ease: 'linear' }}
-  />
-);
-
 const ProjectsAndSkills = () => {
   const [selectedImage, setSelectedImage] = useState(null);
-  const [viewBackend, setViewBackend] = useState(false);
+  const [activeTab, setActiveTab] = useState('frontend'); // 'frontend' or 'backend'
+
+  const getIcon = (name) => iconMap[name] || null;
 
   return (
     <>
-      <motion.section id="projects" className="bg-slate-900 py-20 lg:py-28 text-white relative overflow-hidden" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={sectionVariants}>
-        <div className="absolute inset-0 z-0">
-          {[...Array(20)].map((_, i) => (
-            <Particle key={i} x={Math.random() * 100} y={Math.random() * 100} size={Math.random() * 5 + 2} duration={Math.random() * 10 + 10} delay={Math.random() * 5} />
-          ))}
-        </div>
+      {/* ====================== PROJECTS SECTION ====================== */}
+      <section id="projects" className="relative bg-slate-950 py-20 lg:py-32 overflow-hidden">
         <div className="container mx-auto px-6 lg:px-8 relative z-10">
-          <motion.header className="text-center mb-16 lg:mb-20" variants={itemVariants}>
-            <h2 className="text-4xl lg:text-5xl font-bold text-transparent bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text">Things I've Built</h2>
-            <p className="mt-4 text-lg text-slate-400">A selection of my recent work.</p>
-          </motion.header>
-          <div className="space-y-24 lg:space-y-28">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl lg:text-6xl font-bold tracking-tight bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
+              Things I've Built
+            </h2>
+            <p className="mt-4 text-slate-400 text-lg">Selected projects that showcase my skills and passion</p>
+          </div>
+
+          <div className="space-y-24 lg:space-y-32">
             {projects.map((project, index) => (
-              <ProjectCard key={project.id} project={project} index={index} onImageClick={setSelectedImage} />
+              <motion.div
+                key={project.id}
+                initial={{ opacity: 0, y: 60 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7, delay: index * 0.1 }}
+                className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center"
+              >
+                {/* Text Content */}
+                <div className={index % 2 === 0 ? 'lg:order-1' : 'lg:order-2'}>
+                  <div className="mb-6">
+                    <span className="text-cyan-400 text-sm font-mono tracking-widest">PROJECT {String(index + 1).padStart(2, '0')}</span>
+                    <h3 className="text-3xl lg:text-4xl font-bold text-white mt-2">{project.title}</h3>
+                  </div>
+
+                  <div className="bg-slate-900/70 border border-slate-700/50 p-7 rounded-2xl mb-8">
+                    <p className="text-slate-300 leading-relaxed">{project.description}</p>
+                  </div>
+
+                  <div className="flex flex-wrap gap-3 mb-8">
+                    {project.tags.map((tag) => (
+                      <div key={tag} className="flex items-center gap-2 bg-slate-800 px-4 py-2 rounded-full text-sm">
+                        {getIcon(tag)}
+                        <span className="text-slate-300">{tag}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center gap-5">
+                    <motion.a
+                      href={project.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-3xl text-slate-400 hover:text-white transition-colors"
+                      whileHover={{ scale: 1.2 }}
+                      whileTap={{ scale: 0.9 }}
+                    >
+                      <FaGithub />
+                    </motion.a>
+
+                    {project.liveUrl && (
+                      <motion.a
+                        href={project.liveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-3 px-7 py-3 bg-gradient-to-r from-cyan-400 to-purple-500 text-slate-950 font-semibold rounded-2xl hover:brightness-110 transition-all"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <FiExternalLink className="text-lg" />
+                        Live Demo
+                      </motion.a>
+                    )}
+                  </div>
+                </div>
+
+                {/* Project Image */}
+                <motion.div
+                  className={index % 2 === 0 ? 'lg:order-2' : 'lg:order-1'}
+                  whileHover={{ scale: 1.03 }}
+                  transition={{ type: 'spring', stiffness: 300 }}
+                  onClick={() => setSelectedImage(project.image)}
+                >
+                  <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-700/50 cursor-pointer group">
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-auto object-cover aspect-video transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <span className="text-white border border-white/70 px-6 py-2.5 rounded-full text-sm font-medium backdrop-blur-sm">
+                        Click to enlarge
+                      </span>
+                    </div>
+                  </div>
+                </motion.div>
+              </motion.div>
             ))}
           </div>
         </div>
-      </motion.section>
+      </section>
 
-      <motion.section id="skills" className="bg-slate-800/50 py-20 lg:py-28 text-white" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={sectionVariants}>
-        <div className="container mx-auto px-6 lg:px-8 text-center">
-          <motion.h2 className="text-4xl lg:text-5xl font-bold mb-12 text-transparent bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text" variants={itemVariants}>My Tech Stack</motion.h2>
-          
-          <div className="mb-12 flex justify-center gap-4">
-            <button
-              onClick={() => setViewBackend(false)}
-              className={`px-6 py-2.5 font-semibold rounded-md transition-all duration-300 ${!viewBackend ? 'bg-gradient-to-r from-cyan-400 to-purple-500 text-slate-900 shadow-lg' : 'bg-slate-700 text-slate-300 hover:bg-slate-600 cursor-pointer'}`}
-            >
-              Frontend
-            </button>
-            <button
-              onClick={() => setViewBackend(true)}
-              className={`px-6 py-2.5 font-semibold rounded-md transition-all duration-300 ${viewBackend ? 'bg-gradient-to-r from-cyan-400 to-purple-500 text-slate-900 shadow-lg' : 'bg-slate-700 text-slate-300 hover:bg-slate-600 cursor-pointer'}`}
-            >
-              Backend
-            </button>
+      {/* ====================== SKILLS SECTION ====================== */}
+      <section id="skills" className="bg-slate-900 py-20 lg:py-28 border-t border-slate-800">
+        <div className="container mx-auto px-6 lg:px-8">
+          <div className="text-center mb-14">
+            <h2 className="text-4xl lg:text-6xl font-bold tracking-tight bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
+              My Tech Stack
+            </h2>
           </div>
 
-          <div className="flex justify-center min-h-[160px] items-start">
-            <AnimatePresence mode="wait">
-              {!viewBackend && (
-                <motion.div
-                  key="frontend"
-                  className="flex flex-wrap justify-center gap-4 md:gap-6 max-w-4xl mx-auto"
-                  variants={skillContainerVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                >
-                  {skills.frontend.map(skill => (
-                    <SkillBadge key={skill.name} name={skill.name} level={skill.level} />
-                  ))}
-                </motion.div>
-              )}
-              
-              {viewBackend && (
-                <motion.div
-                  key="backend"
-                  className="flex flex-wrap justify-center gap-4 md:gap-6 max-w-4xl mx-auto"
-                  variants={skillContainerVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                >
-                  {skills.backend.map(skill => (
-                    <SkillBadge key={skill.name} name={skill.name} level={skill.level} />
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
+          {/* Tab Buttons */}
+          <div className="flex justify-center mb-12">
+            <div className="inline-flex bg-slate-800 rounded-2xl p-1">
+              <button
+                onClick={() => setActiveTab('frontend')}
+                className={`px-8 py-3 font-semibold rounded-xl transition-all duration-300 ${
+                  activeTab === 'frontend'
+                    ? 'bg-gradient-to-r from-cyan-400 to-purple-500 text-slate-950 shadow-lg'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                Frontend
+              </button>
+              <button
+                onClick={() => setActiveTab('backend')}
+                className={`px-8 py-3 font-semibold rounded-xl transition-all duration-300 ${
+                  activeTab === 'backend'
+                    ? 'bg-gradient-to-r from-cyan-400 to-purple-500 text-slate-950 shadow-lg'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                Backend
+              </button>
+            </div>
           </div>
+
+          {/* Skills Grid */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.4 }}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-5xl mx-auto"
+            >
+              {skills[activeTab].map((skill, index) => (
+                <motion.div
+                  key={skill.name}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="bg-slate-800/80 border border-slate-700 hover:border-cyan-400/30 p-6 rounded-2xl flex items-center gap-5 group"
+                  whileHover={{ y: -6 }}
+                >
+                  <div className="text-4xl transition-transform group-hover:scale-110">
+                    {getIcon(skill.name)}
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-medium text-lg text-white">{skill.name}</div>
+                    <div className="text-sm text-cyan-400 font-mono tracking-wider">{skill.level}</div>
+                    
+                    <div className="mt-3 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                      <motion.div
+                        className="h-full bg-gradient-to-r from-cyan-400 to-purple-500"
+                        initial={{ width: 0 }}
+                        animate={{
+                          width: skill.level === 'Beginner' ? '45%' : skill.level === 'Intermediate' ? '75%' : '95%'
+                        }}
+                        transition={{ duration: 1.2, ease: "easeOut" }}
+                      />
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </AnimatePresence>
         </div>
-      </motion.section>
+      </section>
 
+      {/* ====================== IMAGE MODAL ====================== */}
       <AnimatePresence>
-        {selectedImage && <ImageModal src={selectedImage} onClose={() => setSelectedImage(null)} />}
+        {selectedImage && (
+          <motion.div
+            className="fixed inset-0 bg-black/95 z-[100] flex items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedImage(null)}
+          >
+            <motion.button
+              onClick={() => setSelectedImage(null)}
+              className="absolute top-6 right-6 text-white/70 hover:text-white z-10"
+              whileHover={{ scale: 1.2, rotate: 90 }}
+            >
+              <CgClose size={36} />
+            </motion.button>
+
+            <motion.img
+              src={selectedImage}
+              alt="Project screenshot"
+              className="max-w-full max-h-[92vh] rounded-2xl shadow-2xl"
+              initial={{ scale: 0.7, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.7, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+            />
+          </motion.div>
+        )}
       </AnimatePresence>
     </>
   );
