@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navLinks = [
@@ -11,33 +11,27 @@ const navLinks = [
 ];
 
 const AnimatedHamburgerIcon = ({ isOpen, toggle }) => {
-  const barVariants = {
-    closed: { opacity: 1, rotate: 0, translateY: 0 },
-    open: (i) => ({
-      opacity: i === 1 ? 0 : 1,
-      rotate: i === 0 ? 45 : i === 2 ? -45 : 0,
-      translateY: i === 0 ? 8 : i === 2 ? -8 : 0,
-    }),
-  };
-
   return (
     <motion.button
       onClick={toggle}
       aria-label="Toggle mobile menu"
-      className="text-white focus:outline-none w-7 h-6 flex flex-col justify-between z-50"
+      aria-expanded={isOpen}
+      className="text-white focus:outline-none w-8 h-8 flex flex-col justify-center items-center z-50 relative"
       whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
+      whileTap={{ scale: 0.95 }}
       transition={{ duration: 0.2 }}
     >
       {[0, 1, 2].map((i) => (
-        <motion.div
+        <motion.span
           key={i}
-          className="w-full h-0.5 bg-white origin-center"
-          custom={i}
-          initial="closed"
-          animate={isOpen ? "open" : "closed"}
-          variants={barVariants}
-          transition={{ duration: 0.3, ease: "easeInOut" }}
+          className="block w-6 h-0.5 bg-white rounded-full origin-center"
+          style={{ margin: i === 1 ? "4px 0" : "0" }}
+          animate={{
+            rotate: isOpen ? (i === 0 ? 45 : i === 2 ? -45 : 0) : 0,
+            y: isOpen ? (i === 0 ? 6 : i === 2 ? -6 : 0) : 0,
+            opacity: isOpen && i === 1 ? 0 : 1,
+          }}
+          transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
         />
       ))}
     </motion.button>
@@ -49,191 +43,183 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-      const sections = navLinks.map((link) =>
-        document.getElementById(link.url.substring(1))
-      );
-      let currentSection = "home";
-      sections.forEach((section) => {
-        if (section) {
-          const sectionTop = section.offsetTop - 80;
-          if (window.scrollY >= sectionTop) {
-            currentSection = section.id;
-          }
-        }
+  // Smooth scroll + close menu
+  const scrollToSection = useCallback((url) => {
+    const section = document.querySelector(url);
+    if (section) {
+      const offset = 80;
+      const topPos = section.getBoundingClientRect().top + window.scrollY - offset;
+
+      window.scrollTo({
+        top: topPos,
+        behavior: "smooth",
       });
-      setActiveSection(currentSection);
+    }
+    setIsOpen(false); // Always close mobile menu after click
+  }, []);
+
+  // Scroll handler with throttling for better performance
+  useEffect(() => {
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 20);
+
+          // Active section detection
+          let current = "home";
+          for (const link of navLinks) {
+            const section = document.getElementById(link.url.substring(1));
+            if (section) {
+              const sectionTop = section.offsetTop - 100;
+              if (window.scrollY >= sectionTop) {
+                current = link.url.substring(1);
+              }
+            }
+          }
+          setActiveSection(current);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const toggleMenu = () => setIsOpen(!isOpen);
+  const toggleMenu = () => setIsOpen((prev) => !prev);
+
+  // Close menu on Escape key
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === "Escape" && isOpen) setIsOpen(false);
+    };
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, [isOpen]);
 
   const underlineVariants = {
-    hidden: {
-      scaleX: 0,
-      opacity: 0,
-      transition: { duration: 0.3, ease: "easeInOut" },
-    },
-    visible: {
-      scaleX: 1,
-      opacity: 1,
-      transition: {
-        scaleX: { duration: 0.4, ease: "easeOut" },
-        opacity: { duration: 0.2 },
-      },
-    },
-    exit: {
-      scaleX: 0,
-      opacity: 0,
-      transition: {
-        scaleX: { duration: 0.3, ease: "easeIn" },
-        opacity: { duration: 0.2 },
-      },
+    hidden: { scaleX: 0, originX: 0 },
+    visible: { 
+      scaleX: 1, 
+      transition: { duration: 0.4, ease: "easeOut" } 
     },
   };
 
   const mobileMenuVariants = {
-    closed: { x: "100%", transition: { type: "spring", stiffness: 400, damping: 40 } },
-    open: {
-      x: 0,
-      transition: { type: "spring", stiffness: 400, damping: 40, staggerChildren: 0.1, delayChildren: 0.3 },
+    closed: { 
+      opacity: 0, 
+      x: "100%", 
+      transition: { type: "spring", stiffness: 300, damping: 35 } 
+    },
+    open: { 
+      opacity: 1, 
+      x: 0, 
+      transition: { 
+        type: "spring", 
+        stiffness: 280, 
+        damping: 32,
+        staggerChildren: 0.07,
+        delayChildren: 0.1,
+      } 
     },
   };
 
   const mobileLinkVariants = {
-    closed: { opacity: 0, y: 20, scale: 0.8 },
-    open: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 200, damping: 20 } },
-  };
-
-  const rippleVariants = {
-    initial: { scale: 0, opacity: 0.5 },
-    animate: { scale: 2, opacity: 0, transition: { duration: 0.5, ease: "easeOut" } },
+    closed: { opacity: 0, y: 30, scale: 0.95 },
+    open: { 
+      opacity: 1, 
+      y: 0, 
+      scale: 1,
+      transition: { type: "spring", stiffness: 250, damping: 25 }
+    },
   };
 
   return (
     <>
       <style jsx>{`
         @keyframes flicker {
-          0%, 100% { box-shadow: 0 0 10px rgba(0, 255, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.4); }
-          50% { box-shadow: 0 0 15px rgba(0, 255, 255, 1), 0 0 25px rgba(0, 255, 255, 0.6); }
+          0%, 100% { box-shadow: 0 0 8px rgba(0, 255, 255, 0.7), 0 0 16px rgba(0, 255, 255, 0.3); }
+          50% { box-shadow: 0 0 12px rgba(0, 255, 255, 1), 0 0 22px rgba(0, 255, 255, 0.5); }
         }
-        .flicker {
-          animation: flicker 0.5s infinite alternate;
+        .flicker { animation: flicker 1.2s infinite alternate; }
+
+        .logo-glow {
+          animation: logoGlow 3s ease-in-out infinite;
         }
         @keyframes logoGlow {
-          0%, 100% { text-shadow: 0 0 10px rgba(0, 255, 255, 0.5), 0 0 20px rgba(0, 255, 255, 0.3); }
-          50% { text-shadow: 0 0 20px rgba(0, 255, 255, 0.8), 0 0 30px rgba(0, 255, 255, 0.5); }
+          0%, 100% { text-shadow: 0 0 12px rgba(0, 255, 255, 0.6); }
+          50% { text-shadow: 0 0 25px rgba(0, 255, 255, 0.9), 0 0 35px rgba(0, 255, 255, 0.4); }
         }
-        .logo-glow {
-          animation: logoGlow 2s ease-in-out infinite;
+
+        .scan-line {
+          animation: scan 4s linear infinite;
         }
         @keyframes scan {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
-        }
-        .animate-scan {
-          animation: scan 3s infinite linear;
+          0% { transform: translateX(-120%); }
+          100% { transform: translateX(120%); }
         }
       `}</style>
 
       <nav
         className={`fixed w-full z-50 top-0 transition-all duration-300 ${
           isScrolled
-            ? "bg-gradient-to-r from-slate-900/70 via-cyan-900/30 to-slate-900/70 backdrop-blur-md shadow-[0_6px_30px_rgba(0,191,255,0.4)]"
-            : "bg-transparent shadow-none"
+            ? "bg-gradient-to-r from-slate-950/90 via-cyan-950/70 to-slate-950/90 backdrop-blur-xl shadow-[0_8px_40px_-10px_rgb(0,255,255)] border-b border-cyan-500/10"
+            : "bg-transparent"
         }`}
       >
-        <div className="container mx-auto px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
+            {/* Logo */}
             <a
               href="#home"
-              className="relative overflow-hidden text-3xl font-bold text-cyan-400 tracking-wider uppercase transition-all duration-300 hover:text-cyan-300 transform hover:scale-105 logo-glow"
+              onClick={(e) => { e.preventDefault(); scrollToSection("#home"); }}
+              className="relative text-3xl font-bold text-cyan-400 tracking-[3px] uppercase select-none logo-glow hover:text-cyan-300 transition-colors"
             >
-              {Array.from("SabinK").map((letter, i) => (
-                <motion.span
-                  key={i}
-                  className="inline-block"
-                  custom={i}
-                  initial="hidden"
-                  animate="visible"
-                  variants={{
-                    hidden: { opacity: 0, scale: 0.8, y: 10 },
-                    visible: (i) => ({
-                      opacity: 1,
-                      scale: 1,
-                      y: 0,
-                      transition: { delay: i * 0.1, duration: 0.3, ease: "easeOut" },
-                    }),
-                  }}
-                >
-                  {letter}
-                </motion.span>
-              ))}
-              <span
-                className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,transparent_0%,#00ffff_50%,transparent_100%)] opacity-20 blur-md animate-scan"
-              ></span>
+              SabinK
+              <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent scan-line" />
             </a>
 
-            <ul className="hidden md:flex items-center space-x-8">
+            {/* Desktop Menu */}
+            <ul className="hidden md:flex items-center gap-x-10">
               {navLinks.map((link) => (
                 <motion.li
                   key={link.title}
-                  className="relative"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ duration: 0.2 }}
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.96 }}
                 >
                   <a
                     href={link.url}
                     onClick={(e) => {
                       e.preventDefault();
-                      toggleMenu();
-                      const section = document.querySelector(link.url);
-                      if (section) {
-                        window.scrollTo({
-                          top: section.offsetTop - 80,
-                          behavior: "smooth",
-                        });
-                      }
+                      scrollToSection(link.url);
                     }}
-                    className={`relative text-lg font-medium transition-all duration-300 ${
+                    className={`relative text-lg font-medium tracking-wide transition-all duration-300 pb-1 ${
                       activeSection === link.url.substring(1)
                         ? "text-cyan-400"
-                        : "text-slate-300 hover:text-cyan-400"
+                        : "text-slate-300 hover:text-white"
                     }`}
-                    onFocus={(e) => (e.target.style.textShadow = "0 0 10px rgba(0, 255, 255, 0.8)")}
-                    onBlur={(e) => (e.target.style.textShadow = "none")}
-                    style={{ outline: "none" }}
                   >
                     {link.title}
-                    <motion.div
-                      className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,255,0.3),transparent)] pointer-events-none"
-                      variants={rippleVariants}
-                      initial="initial"
-                      animate="initial"
-                      whileTap="animate"
-                    />
+                    <AnimatePresence mode="wait">
+                      {activeSection === link.url.substring(1) && (
+                        <motion.div
+                          className="absolute bottom-0 left-0 h-[2px] w-full bg-gradient-to-r from-cyan-400 via-cyan-300 to-purple-500 flicker"
+                          variants={underlineVariants}
+                          initial="hidden"
+                          animate="visible"
+                          exit="hidden"
+                        />
+                      )}
+                    </AnimatePresence>
                   </a>
-                  <AnimatePresence>
-                    {activeSection === link.url.substring(1) && (
-                      <motion.div
-                        className="absolute bottom-[-4px] left-0 w-full h-[2px] bg-gradient-to-r from-cyan-400 to-purple-500 flicker"
-                        variants={underlineVariants}
-                        initial="hidden"
-                        animate="visible"
-                        exit="exit"
-                      />
-                    )}
-                  </AnimatePresence>
                 </motion.li>
               ))}
             </ul>
 
+            {/* Mobile Hamburger */}
             <div className="md:hidden">
               <AnimatedHamburgerIcon isOpen={isOpen} toggle={toggleMenu} />
             </div>
@@ -241,70 +227,52 @@ const Navbar = () => {
         </div>
       </nav>
 
+      {/* Mobile Menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="md:hidden fixed inset-0 bg-gradient-to-br from-slate-900 to-cyan-900/40 z-40 flex flex-col items-center justify-center backdrop-blur-md"
+            className="md:hidden fixed inset-0 z-40 bg-slate-950/95 backdrop-blur-2xl flex items-center justify-center overflow-hidden"
             variants={mobileMenuVariants}
             initial="closed"
             animate="open"
             exit="closed"
           >
-            <motion.div
-              className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,255,0.2),transparent)]"
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 3, opacity: 0.5, transition: { duration: 0.5 } }}
-              exit={{ scale: 0, opacity: 0 }}
-            />
-            <motion.ul
-              className="flex flex-col items-center space-y-8"
-              variants={{ open: { transition: { staggerChildren: 0.1, delayChildren: 0.3 } }, closed: {} }}
-            >
-              {navLinks.map((link) => (
-                <motion.li key={link.title} variants={mobileLinkVariants}>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,255,0.08),transparent_70%)]" />
+
+            <motion.ul className="flex flex-col items-center gap-y-10 text-center">
+              {navLinks.map((link, index) => (
+                <motion.li
+                  key={link.title}
+                  variants={mobileLinkVariants}
+                  custom={index}
+                >
                   <a
                     href={link.url}
                     onClick={(e) => {
                       e.preventDefault();
-                      toggleMenu();
-                      const section = document.querySelector(link.url);
-                      if (section) {
-                        window.scrollTo({
-                          top: section.offsetTop - 80,
-                          behavior: "smooth",
-                        });
-                      }
+                      scrollToSection(link.url);
                     }}
-                    className={`relative text-3xl font-semibold transition-all duration-300 ${
+                    className={`text-4xl font-semibold tracking-wider transition-all duration-300 ${
                       activeSection === link.url.substring(1)
                         ? "text-cyan-400"
-                        : "text-slate-100 hover:text-cyan-400"
+                        : "text-white hover:text-cyan-300"
                     }`}
-                    onFocus={(e) => (e.target.style.textShadow = "0 0 10px rgba(0, 255, 255, 0.8)")}
-                    onBlur={(e) => (e.target.style.textShadow = "none")}
-                    style={{ outline: "none" }}
                   >
                     {link.title}
-                    <motion.div
-                      className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,255,0.3),transparent)] pointer-events-none"
-                      variants={rippleVariants}
-                      initial="initial"
-                      animate="initial"
-                      whileTap="animate"
-                    />
-                    {activeSection === link.url.substring(1) && (
-                      <motion.div
-                        className="absolute bottom-[-4px] left-0 w-full h-[2px] bg-gradient-to-r from-cyan-400 to-purple-500 flicker"
-                        variants={underlineVariants}
-                        initial="hidden"
-                        animate="visible"
-                        exit="exit"
-                      />
-                    )}
                   </a>
                 </motion.li>
               ))}
             </motion.ul>
+
+            {/* Optional close hint */}
+            <motion.div
+              className="absolute bottom-12 text-xs uppercase tracking-[2px] text-cyan-400/60"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              Tap anywhere or press ESC to close
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
