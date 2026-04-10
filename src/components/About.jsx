@@ -32,13 +32,14 @@ function AnimatedCounter({ to }) {
 
 const SkillPill = ({ skill }) => (
   <motion.div
-    className="bg-slate-800/80 hover:bg-slate-700 border border-cyan-500/20 text-cyan-300 text-sm font-medium px-5 py-2 rounded-full transition-all"
+    className="bg-slate-800/80 hover:bg-slate-700 border border-cyan-500/20 text-cyan-300 text-sm font-medium px-5 py-2.5 rounded-full transition-all"
     whileHover={{ 
       scale: 1.08, 
       backgroundColor: "#1e293b",
       borderColor: "#67e8f9",
       color: "#ffffff"
     }}
+    whileTap={{ scale: 0.95 }}
     transition={{ duration: 0.2 }}
   >
     {skill}
@@ -55,7 +56,7 @@ const About = () => {
     offset: ["start end", "end start"],
   });
 
-  const imageY = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
+  const imageY = useTransform(scrollYProgress, [0, 1], ["-20%", "20%"]);
 
   const handleDownload = () => {
     if (downloadStatus !== 'idle') return;
@@ -63,7 +64,6 @@ const About = () => {
     setDownloadStatus('downloading');
     setProgress(0);
 
-    // Simulate download progress
     const interval = setInterval(() => {
       setProgress((prev) => {
         const next = prev + Math.random() * 18 + 8;
@@ -80,7 +80,6 @@ const About = () => {
       setProgress(100);
       setDownloadStatus('completed');
 
-      // Actual file download
       const link = document.createElement('a');
       link.href = resume;
       link.download = 'Sabin-Khatri-Resume.pdf';
@@ -88,7 +87,6 @@ const About = () => {
       link.click();
       document.body.removeChild(link);
 
-      // Reset after showing success
       setTimeout(() => {
         setDownloadStatus('idle');
         setProgress(0);
@@ -113,25 +111,30 @@ const About = () => {
       <div className="container mx-auto px-6 lg:px-8 relative z-10 max-w-7xl">
         <div className="grid lg:grid-cols-5 gap-12 lg:gap-20 items-center">
           
-          {/* Profile Image Side */}
+          {/* Profile Image Side - Enhanced Animation */}
           <motion.div 
             className="lg:col-span-2 flex justify-center lg:justify-start"
             style={{ y: imageY }}
-            initial={{ opacity: 0, scale: 0.85 }}
-            whileInView={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, scale: 0.8, x: -40 }}
+            whileInView={{ opacity: 1, scale: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.9, ease: "easeOut" }}
+            transition={{ duration: 1, ease: "easeOut" }}
           >
             <div className="relative group">
               {/* Outer Glow */}
-              <div className="absolute -inset-6 bg-gradient-to-br from-cyan-400/30 via-purple-500/30 to-transparent rounded-[2.5rem] blur-2xl opacity-70 group-hover:opacity-90 transition-all duration-700" />
+              <motion.div 
+                className="absolute -inset-8 bg-gradient-to-br from-cyan-400/30 via-purple-500/30 to-transparent rounded-[3rem] blur-2xl"
+                initial={{ opacity: 0.6 }}
+                whileInView={{ opacity: 0.9 }}
+                transition={{ duration: 1.2 }}
+              />
               
               <div className="relative p-3 bg-gradient-to-br from-cyan-500/10 to-purple-500/10 rounded-3xl">
                 <div className="bg-slate-900 p-2 rounded-2xl overflow-hidden">
                   <img
                     src={profileImage}
                     alt="Sabin Khatri"
-                    className="rounded-2xl w-full max-w-md aspect-square object-cover shadow-2xl"
+                    className="rounded-2xl w-full max-w-md aspect-square object-cover shadow-2xl transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>
               </div>
@@ -139,59 +142,135 @@ const About = () => {
           </motion.div>
 
           {/* Content Side */}
-          <div className="lg:col-span-3 space-y-10 text-center lg:text-left">
-            <div>
-              <h2 className="text-4xl lg:text-6xl font-bold tracking-tight text-white">
+          <div className="lg:col-span-3 space-y-12 text-center lg:text-left">
+            
+            {/* Title with Stagger Animation */}
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={{
+                hidden: { opacity: 0 },
+                visible: { 
+                  opacity: 1, 
+                  transition: { staggerChildren: 0.15 } 
+                }
+              }}
+            >
+              <motion.h2 
+                className="text-4xl lg:text-6xl font-bold tracking-tight text-white"
+                variants={{ hidden: { y: 30, opacity: 0 }, visible: { y: 0, opacity: 1 } }}
+              >
                 About Me
-              </h2>
-              <p className="mt-3 text-xl text-cyan-400 font-medium">
+              </motion.h2>
+              <motion.p 
+                className="mt-3 text-xl text-cyan-400 font-medium"
+                variants={{ hidden: { y: 20, opacity: 0 }, visible: { y: 0, opacity: 1 } }}
+              >
                 Frontend Developer &amp; UI Enthusiast
-              </p>
-            </div>
+              </motion.p>
+            </motion.div>
 
-            <div className="space-y-6 text-lg text-slate-300 leading-relaxed max-w-2xl mx-auto lg:mx-0">
-              <p>
+            {/* Description with Reveal */}
+            <motion.div 
+              className="space-y-6 text-lg text-slate-300 leading-relaxed max-w-2xl mx-auto lg:mx-0"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={{
+                hidden: { opacity: 0 },
+                visible: { 
+                  opacity: 1, 
+                  transition: { staggerChildren: 0.2, delayChildren: 0.1 } 
+                }
+              }}
+            >
+              <motion.p variants={{ hidden: { y: 20, opacity: 0 }, visible: { y: 0, opacity: 1 } }}>
                 Hello! I'm a passionate Frontend Developer who loves turning ideas into 
                 beautiful, intuitive, and high-performance web experiences.
-              </p>
-              <p>
+              </motion.p>
+              <motion.p variants={{ hidden: { y: 20, opacity: 0 }, visible: { y: 0, opacity: 1 } }}>
                 With a strong focus on React, Tailwind CSS, and smooth animations, 
                 I create digital products that not only look great but also provide 
                 exceptional user experiences.
-              </p>
-            </div>
+              </motion.p>
+            </motion.div>
 
-            {/* Skills */}
-            <div className="pt-4">
-              <p className="text-slate-400 font-medium mb-4 text-sm tracking-widest uppercase">My Toolkit</p>
+            {/* Skills Section with Stagger */}
+            <motion.div 
+              className="pt-4"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={{
+                hidden: { opacity: 0 },
+                visible: { 
+                  opacity: 1, 
+                  transition: { staggerChildren: 0.08 } 
+                }
+              }}
+            >
+              <motion.p 
+                className="text-slate-400 font-medium mb-6 text-sm tracking-widest uppercase"
+                variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}
+              >
+                My Toolkit
+              </motion.p>
               <div className="flex flex-wrap justify-center lg:justify-start gap-3">
-                <SkillPill skill="JavaScript (ES6+)" />
-                <SkillPill skill="React.js" />
-                <SkillPill skill="Tailwind CSS" />
-                <SkillPill skill="Framer Motion" />
-                <SkillPill skill="Next.js" />
-                <SkillPill skill="TypeScript" />
+                {["JavaScript (ES6+)", "React.js", "Tailwind CSS", "Framer Motion", "Next.js", "TypeScript"].map((skill, index) => (
+                  <motion.div
+                    key={index}
+                    variants={{
+                      hidden: { opacity: 0, scale: 0.8, y: 20 },
+                      visible: { opacity: 1, scale: 1, y: 0 }
+                    }}
+                  >
+                    <SkillPill skill={skill} />
+                  </motion.div>
+                ))}
               </div>
-            </div>
+            </motion.div>
 
-            {/* Stats */}
-            <div className="flex justify-center lg:justify-start gap-12 pt-8">
-              <div className="text-center">
+            {/* Stats with Animation */}
+            <motion.div 
+              className="flex justify-center lg:justify-start gap-12 pt-8"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={{
+                hidden: { opacity: 0 },
+                visible: { opacity: 1, transition: { staggerChildren: 0.2 } }
+              }}
+            >
+              <motion.div 
+                className="text-center"
+                variants={{ hidden: { y: 30, opacity: 0 }, visible: { y: 0, opacity: 1 } }}
+              >
                 <div className="text-5xl font-bold text-cyan-400">
                   <AnimatedCounter to={2} />+
                 </div>
                 <p className="text-slate-400 mt-2 text-sm">Years Experience</p>
-              </div>
-              <div className="text-center">
+              </motion.div>
+
+              <motion.div 
+                className="text-center"
+                variants={{ hidden: { y: 30, opacity: 0 }, visible: { y: 0, opacity: 1 } }}
+              >
                 <div className="text-5xl font-bold text-cyan-400">
                   <AnimatedCounter to={8} />+
                 </div>
                 <p className="text-slate-400 mt-2 text-sm">Projects Completed</p>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
 
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-5 pt-8 justify-center lg:justify-start">
+            {/* Action Buttons with Hover Animation */}
+            <motion.div 
+              className="flex flex-col sm:flex-row gap-5 pt-8 justify-center lg:justify-start"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+            >
               <motion.button
                 onClick={handleDownload}
                 disabled={downloadStatus !== 'idle'}
@@ -199,7 +278,6 @@ const About = () => {
                 whileHover={downloadStatus === 'idle' ? { scale: 1.05, y: -3 } : {}}
                 whileTap={downloadStatus === 'idle' ? { scale: 0.96 } : {}}
               >
-                {/* Progress Overlay */}
                 <div 
                   className="absolute inset-0 bg-gradient-to-r from-cyan-600 to-purple-600 transition-all duration-300"
                   style={{ width: `${progress}%` }}
@@ -232,7 +310,7 @@ const About = () => {
               >
                 Get In Touch
               </motion.a>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
