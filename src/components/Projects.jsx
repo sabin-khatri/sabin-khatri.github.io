@@ -100,24 +100,33 @@ const ProjectsAndSkills = () => {
           <div className="text-center mb-16">
             <motion.h2 
               className="text-4xl lg:text-6xl font-bold tracking-tight bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent"
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
             >
               Things I've Built
             </motion.h2>
-            <p className="mt-4 text-slate-400 text-lg">Selected projects that showcase my skills and passion</p>
+            <motion.p 
+              className="mt-4 text-slate-400 text-lg"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+            >
+              Selected projects that showcase my skills and passion
+            </motion.p>
           </div>
 
-          <div className="space-y-24 lg:space-y-32">
+          <div className="space-y-28 lg:space-y-36">
             {projects.map((project, index) => (
               <motion.div
                 key={project.id}
-                initial={{ opacity: 0, y: 80 }}
+                initial={{ opacity: 0, y: 100 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: index * 0.1 }}
-                className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center"
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.9, delay: index * 0.15 }}
+                className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center"
               >
                 {/* Text Content */}
                 <div className={index % 2 === 0 ? 'lg:order-1' : 'lg:order-2'}>
@@ -125,29 +134,35 @@ const ProjectsAndSkills = () => {
                     <span className="text-cyan-400 text-sm font-mono tracking-widest">
                       PROJECT {String(index + 1).padStart(2, '0')}
                     </span>
-                    <h3 className="text-3xl lg:text-4xl font-bold text-white mt-2">{project.title}</h3>
+                    <h3 className="text-3xl lg:text-4xl font-bold text-white mt-3">{project.title}</h3>
                   </div>
 
-                  <div className="bg-slate-900/70 border border-slate-700/50 p-7 rounded-2xl mb-8">
+                  <div className="bg-slate-900/80 border border-slate-700/50 p-8 rounded-3xl mb-8">
                     <p className="text-slate-300 leading-relaxed">{project.description}</p>
                   </div>
 
-                  <div className="flex flex-wrap gap-3 mb-8">
-                    {project.tags.map((tag) => (
-                      <div key={tag} className="flex items-center gap-2 bg-slate-800 px-4 py-2 rounded-full text-sm">
+                  <div className="flex flex-wrap gap-3 mb-10">
+                    {project.tags.map((tag, i) => (
+                      <motion.div 
+                        key={tag}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: i * 0.05 }}
+                        className="flex items-center gap-2 bg-slate-800 px-5 py-2 rounded-full text-sm"
+                      >
                         {getIcon(tag)}
                         <span className="text-slate-300">{tag}</span>
-                      </div>
+                      </motion.div>
                     ))}
                   </div>
 
-                  <div className="flex items-center gap-5">
+                  <div className="flex items-center gap-6">
                     <motion.a
                       href={project.githubUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-3xl text-slate-400 hover:text-white transition-colors"
-                      whileHover={{ scale: 1.2, y: -4 }}
+                      whileHover={{ scale: 1.25, y: -5 }}
                       whileTap={{ scale: 0.9 }}
                     >
                       <FaGithub />
@@ -158,9 +173,9 @@ const ProjectsAndSkills = () => {
                         href={project.liveUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-3 px-7 py-3 bg-gradient-to-r from-cyan-400 to-purple-500 text-slate-950 font-semibold rounded-2xl hover:brightness-110 transition-all"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                        className="inline-flex items-center gap-3 px-8 py-3.5 bg-gradient-to-r from-cyan-400 to-purple-500 text-slate-950 font-semibold rounded-2xl hover:brightness-110 transition-all"
+                        whileHover={{ scale: 1.06 }}
+                        whileTap={{ scale: 0.94 }}
                       >
                         <FiExternalLink className="text-lg" />
                         Live Demo
@@ -169,21 +184,21 @@ const ProjectsAndSkills = () => {
                   </div>
                 </div>
 
-                {/* Project Image - Click to enlarge */}
+                {/* Project Image */}
                 <motion.div
                   className={index % 2 === 0 ? 'lg:order-2' : 'lg:order-1'}
-                  whileHover={{ scale: 1.03 }}
-                  transition={{ type: 'spring', stiffness: 300 }}
+                  whileHover={{ scale: 1.04 }}
+                  transition={{ type: 'spring', stiffness: 400 }}
                   onClick={() => setSelectedImage(project.image)}
                 >
                   <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-700/50 cursor-pointer group">
                     <img
                       src={project.image}
                       alt={project.title}
-                      className="w-full h-auto object-cover aspect-video transition-transform duration-500 group-hover:scale-105"
+                      className="w-full h-auto object-cover aspect-video transition-transform duration-700 group-hover:scale-110"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <span className="text-white border border-white/70 px-6 py-2.5 rounded-full text-sm font-medium backdrop-blur-sm">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
+                      <span className="text-white border border-white/80 px-7 py-3 rounded-full text-sm font-medium backdrop-blur-md">
                         Click to enlarge
                       </span>
                     </div>
@@ -201,7 +216,7 @@ const ProjectsAndSkills = () => {
           <div className="text-center mb-14">
             <motion.h2 
               className="text-4xl lg:text-6xl font-bold tracking-tight bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent"
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
@@ -214,7 +229,7 @@ const ProjectsAndSkills = () => {
             <div className="inline-flex bg-slate-800 rounded-2xl p-1">
               <button
                 onClick={() => setActiveTab('frontend')}
-                className={`px-8 py-3 font-semibold rounded-xl transition-all duration-300 ${
+                className={`px-9 py-3 font-semibold rounded-xl transition-all duration-300 ${
                   activeTab === 'frontend'
                     ? 'bg-gradient-to-r from-cyan-400 to-purple-500 text-slate-950 shadow-lg'
                     : 'text-slate-400 hover:text-white'
@@ -224,7 +239,7 @@ const ProjectsAndSkills = () => {
               </button>
               <button
                 onClick={() => setActiveTab('backend')}
-                className={`px-8 py-3 font-semibold rounded-xl transition-all duration-300 ${
+                className={`px-9 py-3 font-semibold rounded-xl transition-all duration-300 ${
                   activeTab === 'backend'
                     ? 'bg-gradient-to-r from-cyan-400 to-purple-500 text-slate-950 shadow-lg'
                     : 'text-slate-400 hover:text-white'
@@ -235,40 +250,40 @@ const ProjectsAndSkills = () => {
             </div>
           </div>
 
-          {/* Skills Grid with Animation */}
+          {/* Skills Grid */}
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -30 }}
+              exit={{ opacity: 0, y: -40 }}
               transition={{ duration: 0.5 }}
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto"
             >
               {skills[activeTab].map((skill, index) => (
                 <motion.div
                   key={skill.name}
-                  initial={{ opacity: 0, scale: 0.85, y: 40 }}
+                  initial={{ opacity: 0, scale: 0.8, y: 50 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{ delay: index * 0.06 }}
-                  className="bg-slate-800/80 border border-slate-700 hover:border-cyan-400/30 p-6 rounded-2xl flex items-center gap-5 group"
-                  whileHover={{ y: -8 }}
+                  transition={{ delay: index * 0.07 }}
+                  whileHover={{ y: -10, transition: { duration: 0.2 } }}
+                  className="bg-slate-800/80 border border-slate-700 hover:border-cyan-400/40 p-7 rounded-3xl flex items-center gap-6 group"
                 >
-                  <div className="text-4xl transition-transform group-hover:scale-110 duration-300">
+                  <div className="text-5xl transition-transform group-hover:scale-110 duration-300">
                     {getIcon(skill.name)}
                   </div>
                   <div className="flex-1">
-                    <div className="font-medium text-lg text-white">{skill.name}</div>
-                    <div className="text-sm text-cyan-400 font-mono tracking-wider">{skill.level}</div>
+                    <div className="font-medium text-xl text-white">{skill.name}</div>
+                    <div className="text-sm text-cyan-400 font-mono tracking-wider mt-1">{skill.level}</div>
                     
-                    <div className="mt-4 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                    <div className="mt-5 h-1.5 bg-slate-700 rounded-full overflow-hidden">
                       <motion.div
                         className="h-full bg-gradient-to-r from-cyan-400 to-purple-500"
                         initial={{ width: 0 }}
                         animate={{
-                          width: skill.level === 'Beginner' ? '45%' : '75%'
+                          width: skill.level === 'Beginner' ? '45%' : '78%'
                         }}
-                        transition={{ duration: 1.4, ease: "easeOut" }}
+                        transition={{ duration: 1.5, ease: "easeOut" }}
                       />
                     </div>
                   </div>
@@ -291,19 +306,21 @@ const ProjectsAndSkills = () => {
           >
             <motion.button
               onClick={() => setSelectedImage(null)}
-              className="absolute top-6 right-6 text-white/70 hover:text-white z-10"
+              className="absolute top-8 right-8 text-white/70 hover:text-white z-10"
               whileHover={{ scale: 1.2, rotate: 90 }}
+              transition={{ duration: 0.2 }}
             >
-              <CgClose size={36} />
+              <CgClose size={38} />
             </motion.button>
 
             <motion.img
               src={selectedImage}
               alt="Project screenshot"
-              className="max-w-full max-h-[92vh] rounded-2xl shadow-2xl"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
+              className="max-w-full max-h-[92vh] rounded-3xl shadow-2xl"
+              initial={{ scale: 0.75, opacity: 0, rotate: -2 }}
+              animate={{ scale: 1, opacity: 1, rotate: 0 }}
+              exit={{ scale: 0.75, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
               onClick={(e) => e.stopPropagation()}
             />
           </motion.div>
