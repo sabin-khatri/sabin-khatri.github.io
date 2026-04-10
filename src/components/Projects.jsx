@@ -88,7 +88,7 @@ const skills = {
 
 const ProjectsAndSkills = () => {
   const [selectedImage, setSelectedImage] = useState(null);
-  const [activeTab, setActiveTab] = useState('frontend'); // 'frontend' or 'backend'
+  const [activeTab, setActiveTab] = useState('frontend');
 
   const getIcon = (name) => iconMap[name] || null;
 
@@ -98,9 +98,14 @@ const ProjectsAndSkills = () => {
       <section id="projects" className="relative bg-slate-950 py-20 lg:py-32 overflow-hidden">
         <div className="container mx-auto px-6 lg:px-8 relative z-10">
           <div className="text-center mb-16">
-            <h2 className="text-4xl lg:text-6xl font-bold tracking-tight bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
+            <motion.h2 
+              className="text-4xl lg:text-6xl font-bold tracking-tight bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
               Things I've Built
-            </h2>
+            </motion.h2>
             <p className="mt-4 text-slate-400 text-lg">Selected projects that showcase my skills and passion</p>
           </div>
 
@@ -108,16 +113,18 @@ const ProjectsAndSkills = () => {
             {projects.map((project, index) => (
               <motion.div
                 key={project.id}
-                initial={{ opacity: 0, y: 60 }}
+                initial={{ opacity: 0, y: 80 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.7, delay: index * 0.1 }}
+                transition={{ duration: 0.8, delay: index * 0.1 }}
                 className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center"
               >
                 {/* Text Content */}
                 <div className={index % 2 === 0 ? 'lg:order-1' : 'lg:order-2'}>
                   <div className="mb-6">
-                    <span className="text-cyan-400 text-sm font-mono tracking-widest">PROJECT {String(index + 1).padStart(2, '0')}</span>
+                    <span className="text-cyan-400 text-sm font-mono tracking-widest">
+                      PROJECT {String(index + 1).padStart(2, '0')}
+                    </span>
                     <h3 className="text-3xl lg:text-4xl font-bold text-white mt-2">{project.title}</h3>
                   </div>
 
@@ -140,7 +147,7 @@ const ProjectsAndSkills = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-3xl text-slate-400 hover:text-white transition-colors"
-                      whileHover={{ scale: 1.2 }}
+                      whileHover={{ scale: 1.2, y: -4 }}
                       whileTap={{ scale: 0.9 }}
                     >
                       <FaGithub />
@@ -162,7 +169,7 @@ const ProjectsAndSkills = () => {
                   </div>
                 </div>
 
-                {/* Project Image */}
+                {/* Project Image - Click to enlarge */}
                 <motion.div
                   className={index % 2 === 0 ? 'lg:order-2' : 'lg:order-1'}
                   whileHover={{ scale: 1.03 }}
@@ -192,9 +199,14 @@ const ProjectsAndSkills = () => {
       <section id="skills" className="bg-slate-900 py-20 lg:py-28 border-t border-slate-800">
         <div className="container mx-auto px-6 lg:px-8">
           <div className="text-center mb-14">
-            <h2 className="text-4xl lg:text-6xl font-bold tracking-tight bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
+            <motion.h2 
+              className="text-4xl lg:text-6xl font-bold tracking-tight bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
               My Tech Stack
-            </h2>
+            </motion.h2>
           </div>
 
           {/* Tab Buttons */}
@@ -223,40 +235,40 @@ const ProjectsAndSkills = () => {
             </div>
           </div>
 
-          {/* Skills Grid */}
+          {/* Skills Grid with Animation */}
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.4 }}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-5xl mx-auto"
+              exit={{ opacity: 0, y: -30 }}
+              transition={{ duration: 0.5 }}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto"
             >
               {skills[activeTab].map((skill, index) => (
                 <motion.div
                   key={skill.name}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: index * 0.05 }}
+                  initial={{ opacity: 0, scale: 0.85, y: 40 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ delay: index * 0.06 }}
                   className="bg-slate-800/80 border border-slate-700 hover:border-cyan-400/30 p-6 rounded-2xl flex items-center gap-5 group"
-                  whileHover={{ y: -6 }}
+                  whileHover={{ y: -8 }}
                 >
-                  <div className="text-4xl transition-transform group-hover:scale-110">
+                  <div className="text-4xl transition-transform group-hover:scale-110 duration-300">
                     {getIcon(skill.name)}
                   </div>
                   <div className="flex-1">
                     <div className="font-medium text-lg text-white">{skill.name}</div>
                     <div className="text-sm text-cyan-400 font-mono tracking-wider">{skill.level}</div>
                     
-                    <div className="mt-3 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                    <div className="mt-4 h-1.5 bg-slate-700 rounded-full overflow-hidden">
                       <motion.div
                         className="h-full bg-gradient-to-r from-cyan-400 to-purple-500"
                         initial={{ width: 0 }}
                         animate={{
-                          width: skill.level === 'Beginner' ? '45%' : skill.level === 'Intermediate' ? '75%' : '95%'
+                          width: skill.level === 'Beginner' ? '45%' : '75%'
                         }}
-                        transition={{ duration: 1.2, ease: "easeOut" }}
+                        transition={{ duration: 1.4, ease: "easeOut" }}
                       />
                     </div>
                   </div>
@@ -289,9 +301,9 @@ const ProjectsAndSkills = () => {
               src={selectedImage}
               alt="Project screenshot"
               className="max-w-full max-h-[92vh] rounded-2xl shadow-2xl"
-              initial={{ scale: 0.7, opacity: 0 }}
+              initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.7, opacity: 0 }}
+              exit={{ scale: 0.8, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
             />
           </motion.div>
