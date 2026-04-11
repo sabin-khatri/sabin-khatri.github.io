@@ -51,12 +51,6 @@ const Hero = () => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  const smoothX = useSpring(mouseX, { stiffness: 50, damping: 30 });
-  const smoothY = useSpring(mouseY, { stiffness: 50, damping: 30 });
-
-  const parallaxX = useTransform(smoothX, [0, window.innerWidth || 1920], [-20, 20]);
-  const parallaxY = useTransform(smoothY, [0, window.innerHeight || 1080], [-20, 20]);
-
   useEffect(() => {
     const handleMouseMove = (e) => {
       mouseX.set(e.clientX);
@@ -84,11 +78,11 @@ const Hero = () => {
       <div className="container mx-auto max-w-6xl relative z-10 flex-grow flex items-center">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center w-full">
           
-          {/* Left Content - More Balanced Size */}
+          {/* Left Content */}
           <motion.div
-            className="text-center lg:text-left space-y-8"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
+            className="text-center lg:text-left space-y-8 order-2 lg:order-1"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.9, ease: "easeOut" }}
           >
             <div className="space-y-4">
@@ -118,18 +112,15 @@ const Hero = () => {
               I build beautiful, responsive, and high-performance web experiences with modern technologies.
             </p>
 
-            {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center gap-5 pt-4 justify-center lg:justify-start">
               <motion.a
                 href="#projects"
                 className="group relative inline-flex items-center gap-3 px-8 py-4 text-lg font-semibold bg-gradient-to-r from-cyan-400 to-purple-600 rounded-2xl overflow-hidden shadow-xl shadow-cyan-500/30"
                 whileHover={{ scale: 1.05, y: -4 }}
                 whileTap={{ scale: 0.96 }}
-                transition={{ type: "spring", stiffness: 400, damping: 25 }}
               >
                 <span className="relative z-10">View My Projects</span>
                 <HiOutlineArrowRight className="w-5 h-5 group-hover:rotate-45 transition-transform" />
-
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12"
                   initial={{ x: "-150%" }}
@@ -156,46 +147,59 @@ const Hero = () => {
             </div>
           </motion.div>
 
-          {/* Profile Image - Responsive Size */}
-          <motion.div 
-            className="flex justify-center lg:justify-end"
-            style={{ x: parallaxX, y: parallaxY }}
-          >
+          {/* Right Content - Hanging ID Card Animation */}
+          <div className="flex justify-center lg:justify-end order-1 lg:order-2 perspective-1000">
             <motion.div
-              className="relative"
-              whileHover={{ scale: 1.03 }}
-              transition={{ type: "spring", stiffness: 300 }}
+              className="relative flex flex-col items-center"
+              initial={{ y: -200, opacity: 0 }}
+              animate={{ 
+                y: 0, 
+                opacity: 1,
+                rotate: [-4, 4, -4] // The Swing Motion
+              }}
+              style={{ transformOrigin: "top center" }} // Critical for "hanging" look
+              transition={{ 
+                y: { duration: 1.5, ease: "easeOut" },
+                rotate: { duration: 5, repeat: Infinity, ease: "easeInOut" }
+              }}
             >
-              {/* Glow Ring */}
-              <div className="absolute -inset-8 bg-gradient-to-br from-cyan-400/30 via-purple-500/30 to-transparent rounded-full blur-3xl opacity-70" />
+              {/* The String / Rope */}
+              <div className="w-[3px] h-24 bg-gradient-to-b from-slate-700 via-cyan-500/50 to-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.4)]" />
+              
+              {/* Connection Ring */}
+              <div className="w-4 h-4 bg-slate-800 border-2 border-cyan-400 rounded-full -mt-2 z-20 shadow-lg" />
 
+              {/* ID Card Frame */}
               <motion.div
-                className="relative rounded-full overflow-hidden border border-cyan-400/20 shadow-2xl shadow-cyan-500/40"
-                animate={{ 
-                  boxShadow: [
-                    "0 0 50px rgba(34, 211, 238, 0.4)",
-                    "0 0 80px rgba(168, 85, 247, 0.5)",
-                    "0 0 50px rgba(34, 211, 238, 0.4)"
-                  ]
-                }}
-                transition={{ duration: 4.5, repeat: Infinity }}
+                className="relative mt-0 group"
+                whileHover={{ scale: 1.02 }}
               >
-                <img
-                  src={profilePic}
-                  alt="Sabin Khatri"
-                  className="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-96 lg:h-96 object-cover rounded-full"
-                  loading="eager"
-                />
-              </motion.div>
+                {/* Glow behind the card */}
+                <div className="absolute -inset-4 bg-cyan-500/20 rounded-3xl blur-2xl group-hover:bg-cyan-500/30 transition-colors" />
+                
+                <div className="relative p-3 bg-slate-900/90 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
+                  {/* Internal ID Card Design */}
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 to-purple-500" />
+                  
+                  <img
+                    src={profilePic}
+                    alt="Sabin Khatri"
+                    className="w-64 h-80 sm:w-72 sm:h-96 object-cover rounded-lg grayscale-[20%] group-hover:grayscale-0 transition-all duration-500"
+                  />
+                  
+                  {/* Card Badge Text */}
+                  <div className="mt-4 pb-2 text-center">
+                    <h3 className="text-cyan-400 font-mono text-xs tracking-widest uppercase opacity-70">
+                      Access Granted / Developer
+                    </h3>
+                  </div>
+                </div>
 
-              {/* Rotating Border */}
-              <motion.div
-                className="absolute -inset-3 border border-cyan-400/30 rounded-full"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-              />
+                {/* Glossy Plastic Reflection Effect */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-transparent pointer-events-none rounded-2xl" />
+              </motion.div>
             </motion.div>
-          </motion.div>
+          </div>
         </div>
       </div>
 

@@ -6,7 +6,6 @@ const navLinks = [
   { title: "Home", url: "#home" },
   { title: "About", url: "#about" },
   { title: "Projects", url: "#projects" },
-  { title: "Skills", url: "#skills" },
   { title: "Contact", url: "#contact" },
 ];
 
@@ -16,9 +15,9 @@ const AnimatedHamburgerIcon = ({ isOpen, toggle }) => {
       onClick={toggle}
       aria-label="Toggle mobile menu"
       aria-expanded={isOpen}
-      className="text-white focus:outline-none w-8 h-8 flex flex-col justify-center items-center z-50 relative"
+      className="text-white focus:outline-none w-9 h-9 flex flex-col justify-center items-center z-50 relative"
       whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.95 }}
+      whileTap={{ scale: 0.92 }}
       transition={{ duration: 0.2 }}
     >
       {[0, 1, 2].map((i) => (
@@ -43,7 +42,7 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
 
-  // Smooth scroll + close menu
+  // Smooth scroll + close mobile menu
   const scrollToSection = useCallback((url) => {
     const section = document.querySelector(url);
     if (section) {
@@ -55,10 +54,10 @@ const Navbar = () => {
         behavior: "smooth",
       });
     }
-    setIsOpen(false); // Always close mobile menu after click
+    setIsOpen(false);
   }, []);
 
-  // Scroll handler with throttling for better performance
+  // Scroll handler with throttling
   useEffect(() => {
     let ticking = false;
 
@@ -67,7 +66,6 @@ const Navbar = () => {
         window.requestAnimationFrame(() => {
           setIsScrolled(window.scrollY > 20);
 
-          // Active section detection
           let current = "home";
           for (const link of navLinks) {
             const section = document.getElementById(link.url.substring(1));
@@ -112,7 +110,7 @@ const Navbar = () => {
     closed: { 
       opacity: 0, 
       x: "100%", 
-      transition: { type: "spring", stiffness: 300, damping: 35 } 
+      transition: { type: "spring", stiffness: 320, damping: 35 } 
     },
     open: { 
       opacity: 1, 
@@ -120,8 +118,8 @@ const Navbar = () => {
       transition: { 
         type: "spring", 
         stiffness: 280, 
-        damping: 32,
-        staggerChildren: 0.07,
+        damping: 30,
+        staggerChildren: 0.08,
         delayChildren: 0.1,
       } 
     },
@@ -133,50 +131,27 @@ const Navbar = () => {
       opacity: 1, 
       y: 0, 
       scale: 1,
-      transition: { type: "spring", stiffness: 250, damping: 25 }
+      transition: { type: "spring", stiffness: 280, damping: 22 }
     },
   };
 
   return (
     <>
-      <style jsx>{`
-        @keyframes flicker {
-          0%, 100% { box-shadow: 0 0 8px rgba(0, 255, 255, 0.7), 0 0 16px rgba(0, 255, 255, 0.3); }
-          50% { box-shadow: 0 0 12px rgba(0, 255, 255, 1), 0 0 22px rgba(0, 255, 255, 0.5); }
-        }
-        .flicker { animation: flicker 1.2s infinite alternate; }
-
-        .logo-glow {
-          animation: logoGlow 3s ease-in-out infinite;
-        }
-        @keyframes logoGlow {
-          0%, 100% { text-shadow: 0 0 12px rgba(0, 255, 255, 0.6); }
-          50% { text-shadow: 0 0 25px rgba(0, 255, 255, 0.9), 0 0 35px rgba(0, 255, 255, 0.4); }
-        }
-
-        .scan-line {
-          animation: scan 4s linear infinite;
-        }
-        @keyframes scan {
-          0% { transform: translateX(-120%); }
-          100% { transform: translateX(120%); }
-        }
-      `}</style>
-
       <nav
         className={`fixed w-full z-50 top-0 transition-all duration-300 ${
           isScrolled
-            ? "bg-gradient-to-r from-slate-950/90 via-cyan-950/70 to-slate-950/90 backdrop-blur-xl shadow-[0_8px_40px_-10px_rgb(0,255,255)] border-b border-cyan-500/10"
+            ? "bg-gradient-to-r from-slate-950/95 via-cyan-950/80 to-slate-950/95 backdrop-blur-2xl shadow-[0_8px_40px_-10px_rgb(0,255,255)] border-b border-cyan-500/10"
             : "bg-transparent"
         }`}
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
+            
             {/* Logo */}
             <a
               href="#home"
               onClick={(e) => { e.preventDefault(); scrollToSection("#home"); }}
-              className="relative text-3xl font-bold text-cyan-400 tracking-[3px] uppercase select-none logo-glow hover:text-cyan-300 transition-colors"
+              className="relative text-3xl font-bold text-cyan-400 tracking-[3px] uppercase select-none hover:text-cyan-300 transition-colors logo-glow"
             >
               SabinK
               <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent scan-line" />
@@ -206,7 +181,7 @@ const Navbar = () => {
                     <AnimatePresence mode="wait">
                       {activeSection === link.url.substring(1) && (
                         <motion.div
-                          className="absolute bottom-0 left-0 h-[2px] w-full bg-gradient-to-r from-cyan-400 via-cyan-300 to-purple-500 flicker"
+                          className="absolute bottom-0 left-0 h-[2px] w-full bg-gradient-to-r from-cyan-400 via-cyan-300 to-purple-500"
                           variants={underlineVariants}
                           initial="hidden"
                           animate="visible"
@@ -264,7 +239,6 @@ const Navbar = () => {
               ))}
             </motion.ul>
 
-            {/* Optional close hint */}
             <motion.div
               className="absolute bottom-12 text-xs uppercase tracking-[2px] text-cyan-400/60"
               initial={{ opacity: 0 }}
@@ -276,6 +250,25 @@ const Navbar = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Logo Glow & Scan Line Animation */}
+      <style jsx>{`
+        @keyframes logoGlow {
+          0%, 100% { text-shadow: 0 0 12px rgba(0, 255, 255, 0.6); }
+          50% { text-shadow: 0 0 25px rgba(0, 255, 255, 0.9), 0 0 35px rgba(0, 255, 255, 0.4); }
+        }
+        .logo-glow {
+          animation: logoGlow 3s ease-in-out infinite;
+        }
+
+        .scan-line {
+          animation: scan 4s linear infinite;
+        }
+        @keyframes scan {
+          0% { transform: translateX(-120%); }
+          100% { transform: translateX(120%); }
+        }
+      `}</style>
     </>
   );
 };
