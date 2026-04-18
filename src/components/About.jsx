@@ -1,6 +1,8 @@
+'use client';   // ← Add this at the top if using Next.js App Router
+
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useRef, useState } from 'react';
-import { motion, animate, useScroll, useTransform } from 'framer-motion';
+import { motion, animate } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { FaDownload, FaCheckCircle } from 'react-icons/fa';
 import profileImage from '../assets/about.avif';
@@ -50,14 +52,6 @@ const About = () => {
   const [downloadStatus, setDownloadStatus] = useState('idle');
   const [progress, setProgress] = useState(0);
 
-  const sectionRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
-  });
-
-  const imageY = useTransform(scrollYProgress, [0, 1], ["-20%", "20%"]);
-
   const handleDownload = () => {
     if (downloadStatus !== 'idle') return;
 
@@ -97,8 +91,7 @@ const About = () => {
   return (
     <section 
       id="about" 
-      ref={sectionRef}
-      className="relative bg-gradient-to-br from-slate-950 via-slate-900 to-cyan-950/30 py-20 lg:py-32 overflow-hidden text-white"
+      className="relative bg-gradient-to-br from-slate-950 via-slate-900 to-cyan-950/30 py-16 lg:py-32 overflow-hidden text-white"
     >
       {/* Subtle grid background */}
       <div className="absolute inset-0 z-0 opacity-10" 
@@ -109,19 +102,17 @@ const About = () => {
       />
 
       <div className="container mx-auto px-6 lg:px-8 relative z-10 max-w-7xl">
-        <div className="grid lg:grid-cols-5 gap-12 lg:gap-20 items-center">
+        <div className="grid lg:grid-cols-5 gap-10 lg:gap-20 items-center">
           
-          {/* Profile Image Side - Enhanced Animation */}
+          {/* Profile Image - Hidden on Mobile */}
           <motion.div 
-            className="lg:col-span-2 flex justify-center lg:justify-start"
-            style={{ y: imageY }}
-            initial={{ opacity: 0, scale: 0.8, x: -40 }}
+            className="hidden lg:col-span-2 lg:flex justify-center lg:justify-start"
+            initial={{ opacity: 0, scale: 0.85, x: -50 }}
             whileInView={{ opacity: 1, scale: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 1, ease: "easeOut" }}
+            transition={{ duration: 1.1, ease: "easeOut" }}
           >
             <div className="relative group">
-              {/* Outer Glow */}
               <motion.div 
                 className="absolute -inset-8 bg-gradient-to-br from-cyan-400/30 via-purple-500/30 to-transparent rounded-[3rem] blur-2xl"
                 initial={{ opacity: 0.6 }}
@@ -141,24 +132,20 @@ const About = () => {
             </div>
           </motion.div>
 
-          {/* Content Side */}
-          <div className="lg:col-span-3 space-y-12 text-center lg:text-left">
+          {/* Content Side - Better Mobile Experience */}
+          <div className="lg:col-span-3 space-y-10 lg:space-y-12 text-center lg:text-left">
             
-            {/* Title with Stagger Animation */}
             <motion.div
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
               variants={{
                 hidden: { opacity: 0 },
-                visible: { 
-                  opacity: 1, 
-                  transition: { staggerChildren: 0.15 } 
-                }
+                visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
               }}
             >
               <motion.h2 
-                className="text-4xl lg:text-6xl font-bold tracking-tight text-white"
+                className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white"
                 variants={{ hidden: { y: 30, opacity: 0 }, visible: { y: 0, opacity: 1 } }}
               >
                 About Me
@@ -171,18 +158,14 @@ const About = () => {
               </motion.p>
             </motion.div>
 
-            {/* Description with Reveal */}
             <motion.div 
-              className="space-y-6 text-lg text-slate-300 leading-relaxed max-w-2xl mx-auto lg:mx-0"
+              className="space-y-6 text-[17px] sm:text-lg text-slate-300 leading-relaxed max-w-3xl mx-auto lg:mx-0"
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
               variants={{
                 hidden: { opacity: 0 },
-                visible: { 
-                  opacity: 1, 
-                  transition: { staggerChildren: 0.2, delayChildren: 0.1 } 
-                }
+                visible: { opacity: 1, transition: { staggerChildren: 0.2, delayChildren: 0.1 } }
               }}
             >
               <motion.p variants={{ hidden: { y: 20, opacity: 0 }, visible: { y: 0, opacity: 1 } }}>
@@ -196,19 +179,13 @@ const About = () => {
               </motion.p>
             </motion.div>
 
-            {/* Skills Section with Stagger */}
+            {/* Skills */}
             <motion.div 
               className="pt-4"
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
-              variants={{
-                hidden: { opacity: 0 },
-                visible: { 
-                  opacity: 1, 
-                  transition: { staggerChildren: 0.08 } 
-                }
-              }}
+              variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.08 } } }}
             >
               <motion.p 
                 className="text-slate-400 font-medium mb-6 text-sm tracking-widest uppercase"
@@ -231,9 +208,9 @@ const About = () => {
               </div>
             </motion.div>
 
-            {/* Stats with Animation */}
+            {/* Stats */}
             <motion.div 
-              className="flex justify-center lg:justify-start gap-12 pt-8"
+              className="flex justify-center lg:justify-start gap-12 pt-6 lg:pt-8"
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
@@ -263,7 +240,7 @@ const About = () => {
               </motion.div>
             </motion.div>
 
-            {/* Action Buttons with Hover Animation */}
+            {/* Buttons */}
             <motion.div 
               className="flex flex-col sm:flex-row gap-5 pt-8 justify-center lg:justify-start"
               initial={{ opacity: 0, y: 30 }}
