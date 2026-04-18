@@ -1,6 +1,4 @@
 /* eslint-disable no-unused-vars */
-'use client';
-
 import React, { useMemo, useState, useEffect } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useTypewriter, Cursor } from "react-simple-typewriter";
@@ -54,7 +52,7 @@ const BackgroundParticles = ({ count = 50 }) => {
 
 const Hero = () => {
   const [text] = useTypewriter({
-    words: ["Frontend Developer", "React Enthusiast", "UI/UX Creator"],
+    words: ["Frontend Developer", "React Enthusiast",],
     loop: true,
     typeSpeed: 80,
     deleteSpeed: 50,
@@ -67,8 +65,8 @@ const Hero = () => {
   const smoothX = useSpring(mouseX, { stiffness: 50, damping: 30 });
   const smoothY = useSpring(mouseY, { stiffness: 50, damping: 30 });
 
-  const parallaxX = useTransform(smoothX, [0, typeof window !== "undefined" ? window.innerWidth : 1920], [-25, 25]);
-  const parallaxY = useTransform(smoothY, [0, typeof window !== "undefined" ? window.innerHeight : 1080], [-25, 25]);
+  const parallaxX = useTransform(smoothX, [0, 1920], [-25, 25]);
+  const parallaxY = useTransform(smoothY, [0, 1080], [-25, 25]);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -99,35 +97,35 @@ const Hero = () => {
           
           {/* Left Content */}
           <motion.div
-            className="text-center lg:text-left space-y-8"
+            className="text-center lg:text-left space-y-7"
             initial={{ opacity: 0, x: -80 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1.1, ease: "easeOut" }}
           >
-            <div className="space-y-6">
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tighter leading-none">
+            <div className="space-y-5">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tighter leading-none">
                 Hi, I'm{" "}
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-purple-400 to-cyan-300">
                   Sabin Khatri
                 </span>
               </h1>
 
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl text-slate-200 font-light min-h-[4.5rem] font-mono tracking-wide">
+              <h2 className="text-xl sm:text-2xl lg:text-3xl text-slate-200 font-light min-h-[3.5rem] font-mono tracking-wide">
                 {text}
                 <Cursor cursorColor="#22d3ee" cursorStyle="|" />
               </h2>
             </div>
 
-            <p className="text-lg sm:text-xl text-slate-400 max-w-lg mx-auto lg:mx-0 leading-relaxed">
+            <p className="text-base sm:text-lg text-slate-400 max-w-lg mx-auto lg:mx-0 leading-relaxed">
               Crafting beautiful, high-performance web experiences with React, 
               Tailwind &amp; Framer Motion.
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row items-center gap-6 pt-4 justify-center lg:justify-start">
+            <div className="flex flex-col sm:flex-row items-center gap-6 pt-6 justify-center lg:justify-start">
               <motion.a
                 href="#projects"
-                className="group relative inline-flex items-center gap-3 px-10 py-4.5 text-lg font-semibold bg-gradient-to-r from-cyan-400 to-purple-600 rounded-2xl overflow-hidden shadow-2xl shadow-cyan-500/40 hover:shadow-cyan-500/60 transition-shadow"
+                className="group relative inline-flex items-center gap-3 px-9 py-4 text-base sm:text-lg font-semibold bg-gradient-to-r from-cyan-400 to-purple-600 rounded-2xl overflow-hidden shadow-2xl shadow-cyan-500/40"
                 whileHover={{ scale: 1.05, y: -4 }}
                 whileTap={{ scale: 0.96 }}
               >
@@ -142,7 +140,7 @@ const Hero = () => {
                 />
               </motion.a>
 
-              <div className="flex gap-7 text-4xl">
+              <div className="flex gap-7 text-3xl sm:text-4xl">
                 {socialLinks.map((link, i) => (
                   <motion.a
                     key={i}
@@ -196,7 +194,7 @@ const Hero = () => {
                 {/* Status Badge */}
                 <div className="absolute bottom-6 left-6 bg-black/70 backdrop-blur-md px-5 py-1.5 rounded-full text-xs font-mono text-emerald-400 border border-emerald-400/50 flex items-center gap-2">
                   <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-                  Error 404: persons-are-not-found
+                  Error 404: not found
                 </div>
 
                 {/* Subtle Gloss */}
