@@ -4,7 +4,7 @@ import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useTypewriter, Cursor } from "react-simple-typewriter";
 import { HiOutlineArrowRight, HiOutlineChevronDoubleDown } from "react-icons/hi";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-import profilePic from "../assets/profile.jpg";
+import profilePic from "../assets/p1.jpeg";
 
 const socialLinks = [
   { name: "GitHub", icon: <FaGithub />, url: "https://github.com/sabin-khatri" },
@@ -13,12 +13,12 @@ const socialLinks = [
 
 const Particle = ({ left, size, duration, delay }) => (
   <motion.div
-    className="absolute rounded-full bg-gradient-to-b from-cyan-400/40 to-purple-500/30"
+    className="absolute rounded-full bg-gradient-to-b from-amber-400/30 to-orange-500/20"
     style={{ left, width: size, height: size }}
     initial={{ y: "110vh", opacity: 0 }}
     animate={{ 
       y: "-15vh", 
-      opacity: [0, 0.7, 0.4, 0] 
+      opacity: [0, 0.6, 0.3, 0] 
     }}
     transition={{ 
       duration, 
@@ -30,14 +30,14 @@ const Particle = ({ left, size, duration, delay }) => (
   />
 );
 
-const BackgroundParticles = ({ count = 50 }) => {
+const BackgroundParticles = ({ count = 40 }) => {
   const particles = useMemo(() => 
     Array.from({ length: count }).map((_, i) => ({
       id: i,
       left: `${Math.random() * 100}%`,
-      size: Math.random() * 4 + 2,
-      duration: Math.random() * 18 + 14,
-      delay: Math.random() * -20,
+      size: Math.random() * 3 + 1.5,
+      duration: Math.random() * 22 + 16,
+      delay: Math.random() * -25,
     })), 
   [count]);
 
@@ -52,21 +52,21 @@ const BackgroundParticles = ({ count = 50 }) => {
 
 const Hero = () => {
   const [text] = useTypewriter({
-    words: ["Frontend Developer", "React Enthusiast",],
+    words: ["Frontend Developer", "React Developer", "UI/UX Enthusiast"],
     loop: true,
     typeSpeed: 80,
     deleteSpeed: 50,
-    delaySpeed: 2000,
+    delaySpeed: 2200,
   });
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  const smoothX = useSpring(mouseX, { stiffness: 50, damping: 30 });
-  const smoothY = useSpring(mouseY, { stiffness: 50, damping: 30 });
+  const smoothX = useSpring(mouseX, { stiffness: 40, damping: 25 });
+  const smoothY = useSpring(mouseY, { stiffness: 40, damping: 25 });
 
-  const parallaxX = useTransform(smoothX, [0, 1920], [-25, 25]);
-  const parallaxY = useTransform(smoothY, [0, 1080], [-25, 25]);
+  const parallaxX = useTransform(smoothX, [0, 1920], [-20, 20]);
+  const parallaxY = useTransform(smoothY, [0, 1080], [-20, 20]);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -80,140 +80,158 @@ const Hero = () => {
   return (
     <section
       id="home"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-cyan-950/20 text-white"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden 
+                 bg-[#0a0a0a] text-white"
     >
-      {/* Dynamic Mouse Glow */}
+      {/* Subtle constellation background effect */}
+      <div className="absolute inset-0 bg-[radial-gradient(#f59e0b_0.8px,transparent_1px)] 
+                      [background-size:60px_60px] opacity-20" />
+
+      <BackgroundParticles count={45} />
+
+      {/* Mouse Glow (Golden) */}
       <motion.div
         className="absolute inset-0 z-0 pointer-events-none"
         style={{
-          background: `radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(34, 211, 238, 0.15), transparent 70%)`,
+          background: `radial-gradient(700px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(245, 158, 11, 0.12), transparent 70%)`,
         }}
       />
 
-      <BackgroundParticles count={50} />
-
-      <div className="container mx-auto max-w-6xl relative z-10 px-6 pt-20 pb-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+      <div className="container mx-auto max-w-7xl relative z-10 px-6 pt-20 pb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           
-          {/* Left Content */}
+          {/* Left Content - Chiloane Style */}
           <motion.div
-            className="text-center lg:text-left space-y-7"
-            initial={{ opacity: 0, x: -80 }}
+            className="text-center lg:text-left space-y-8"
+            initial={{ opacity: 0, x: -60 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1.1, ease: "easeOut" }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
           >
-            <div className="space-y-5">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tighter leading-none">
-                Hi, I'm{" "}
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-purple-400 to-cyan-300">
-                  Sabin Khatri
-                </span>
+            <div>
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tighter leading-none">
+                <span className="text-[#f59e0b]">Sabin</span> Khatri
               </h1>
-
-              <h2 className="text-xl sm:text-2xl lg:text-3xl text-slate-200 font-light min-h-[3.5rem] font-mono tracking-wide">
+              <p className="text-2xl sm:text-3xl text-slate-300 mt-3 font-light tracking-wide">
                 {text}
-                <Cursor cursorColor="#22d3ee" cursorStyle="|" />
-              </h2>
+                <Cursor cursorColor="#f59e0b" cursorStyle="|" />
+              </p>
             </div>
 
-            <p className="text-base sm:text-lg text-slate-400 max-w-lg mx-auto lg:mx-0 leading-relaxed">
-              Crafting beautiful, high-performance web experiences with React, 
-              Tailwind &amp; Framer Motion.
+            <p className="text-lg text-slate-400 max-w-md mx-auto lg:mx-0 leading-relaxed">
+              Building elegant digital experiences with modern web technologies. 
+              Passionate about clean code, smooth animations, and meaningful interfaces.
             </p>
 
-            {/* CTA Buttons */}
+            {/* CTA Buttons - Chiloane Style */}
             <div className="flex flex-col sm:flex-row items-center gap-6 pt-6 justify-center lg:justify-start">
               <motion.a
                 href="#projects"
-                className="group relative inline-flex items-center gap-3 px-9 py-4 text-base sm:text-lg font-semibold bg-gradient-to-r from-cyan-400 to-purple-600 rounded-2xl overflow-hidden shadow-2xl shadow-cyan-500/40"
-                whileHover={{ scale: 1.05, y: -4 }}
-                whileTap={{ scale: 0.96 }}
+                className="group relative inline-flex items-center justify-center gap-3 px-10 py-4 
+                           text-lg font-semibold bg-[#f59e0b] hover:bg-amber-500 
+                           text-black rounded-xl overflow-hidden transition-all duration-300"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.97 }}
               >
-                <span className="relative z-10">View My Work</span>
-                <HiOutlineArrowRight className="w-5 h-5 group-hover:rotate-45 transition-transform duration-300" />
-
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12"
-                  initial={{ x: "-150%" }}
-                  whileHover={{ x: "150%" }}
-                  transition={{ duration: 0.8 }}
-                />
+                <span>Explore My Work</span>
+                <HiOutlineArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </motion.a>
 
-              <div className="flex gap-7 text-3xl sm:text-4xl">
-                {socialLinks.map((link, i) => (
-                  <motion.a
-                    key={i}
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-slate-400 hover:text-white transition-colors"
-                    whileHover={{ scale: 1.4, y: -6, rotate: 10 }}
-                    whileTap={{ scale: 0.9 }}
-                  >
-                    {link.icon}
-                  </motion.a>
-                ))}
-              </div>
+              <motion.a
+                href="#contact"
+                className="px-10 py-4 text-lg font-medium border border-amber-400/70 
+                           hover:border-amber-400 rounded-xl transition-all duration-300
+                           hover:bg-white/5"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.97 }}
+              >
+                Get In Touch
+              </motion.a>
+            </div>
+
+            {/* Social Links */}
+            <div className="flex gap-8 justify-center lg:justify-start text-4xl text-slate-400 pt-4">
+              {socialLinks.map((link, i) => (
+                <motion.a
+                  key={i}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.3, color: "#f59e0b" }}
+                  transition={{ type: "spring", stiffness: 400 }}
+                >
+                  {link.icon}
+                </motion.a>
+              ))}
             </div>
           </motion.div>
 
-          {/* Right Side - Floating Profile Card */}
+          {/* Right Side - Large Golden Circle (Chiloane Style) */}
           <motion.div 
             className="flex justify-center lg:justify-end"
             style={{ x: parallaxX, y: parallaxY }}
           >
             <motion.div
-              className="relative"
-              initial={{ y: -100, rotate: -8 }}
-              animate={{ 
-                y: 0, 
-                rotate: [-4, 4, -4] 
-              }}
-              transition={{ 
-                y: { duration: 1.2, ease: "easeOut" },
-                rotate: { duration: 8, repeat: Infinity, ease: "easeInOut" }
-              }}
+              className="relative w-[380px] h-[380px] lg:w-[460px] lg:h-[460px]"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 1.4, ease: "easeOut" }}
             >
-              {/* Hanging Rope Effect */}
-              <div className="absolute left-1/2 -top-16 w-0.5 h-16 bg-gradient-to-b from-transparent via-cyan-400/70 to-cyan-400 mx-auto" />
+              {/* Large Golden Circle */}
+              <div className="absolute inset-0 rounded-full border border-amber-400/30 
+                              bg-gradient-to-br from-amber-900/30 to-transparent 
+                              backdrop-blur-3xl shadow-2xl shadow-amber-500/10" />
 
-              <motion.div
-                className="relative bg-slate-900/90 border border-cyan-400/30 backdrop-blur-xl rounded-3xl p-3 shadow-2xl overflow-hidden"
-                whileHover={{ scale: 1.03, rotate: 1.5 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 via-purple-500 to-cyan-400" />
+              {/* Inner Glow Ring */}
+              <div className="absolute inset-8 rounded-full border border-amber-400/20" />
 
-                <img
-                  src={profilePic}
-                  alt="Sabin Khatri"
-                  className="w-80 h-96 sm:w-96 sm:h-[26rem] object-cover rounded-2xl shadow-inner"
-                />
-
-                {/* Status Badge */}
-                <div className="absolute bottom-6 left-6 bg-black/70 backdrop-blur-md px-5 py-1.5 rounded-full text-xs font-mono text-emerald-400 border border-emerald-400/50 flex items-center gap-2">
-                  <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-                  Error 404: not found
+              {/* Your Logo / Initials / Profile */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="relative">
+                  <img
+                    src={profilePic}
+                    alt="Sabin Khatri"
+                    className="w-64 h-64 lg:w-80 lg:h-80 rounded-full object-cover border-8 border-amber-400/30 
+                               shadow-2xl shadow-black/80"
+                  />
+                  
+                  {/* Golden Hexagon Overlay (Chiloane inspired) */}
+                  <div className="absolute -inset-6 border-2 border-amber-400/40 rounded-[3rem] rotate-12 
+                                  pointer-events-none" />
                 </div>
+              </div>
 
-                {/* Subtle Gloss */}
-                <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent rounded-3xl pointer-events-none" />
+              {/* Subtle orbiting dots */}
+              <motion.div 
+                className="absolute inset-0"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+              >
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="absolute w-1.5 h-1.5 bg-amber-400 rounded-full"
+                    style={{
+                      top: "50%",
+                      left: "50%",
+                      transform: `rotate(${i * 45}deg) translateY(-170px)`,
+                    }}
+                  />
+                ))}
               </motion.div>
             </motion.div>
           </motion.div>
         </div>
       </div>
 
-      {/* Scroll Down Indicator */}
+      {/* Scroll Indicator */}
       <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-20"
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-20"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 2.5 }}
+        transition={{ delay: 2.8 }}
       >
-        <span className="text-xs font-mono tracking-[3px] text-slate-500">SCROLL TO EXPLORE</span>
-        <HiOutlineChevronDoubleDown className="h-8 w-8 text-cyan-400 animate-bounce" />
+        <span className="text-xs font-mono tracking-widest text-amber-400/70">SCROLL TO DISCOVER</span>
+        <HiOutlineChevronDoubleDown className="h-7 w-7 text-amber-400 animate-bounce" />
       </motion.div>
     </section>
   );

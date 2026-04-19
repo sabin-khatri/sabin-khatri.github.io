@@ -95,9 +95,7 @@ const Footer = () => {
             </div>
 
             <div className="text-slate-500 text-sm flex flex-col sm:flex-row items-center gap-2 sm:gap-6">
-              <p>
-                Crafted with <span className="text-red-500">❤</span> using React & Tailwind
-              </p>
+              
               <div className="hidden sm:block w-1 h-1 bg-slate-700 rounded-full" />
               <a 
                 href="mailto:sabinkhatri77312@gmail.com" 
