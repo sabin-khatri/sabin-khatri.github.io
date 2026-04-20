@@ -1,274 +1,233 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { HiMenuAlt3, HiX } from "react-icons/hi";
+import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 const navLinks = [
-  { title: "Home", url: "#home" },
-  { title: "About", url: "#about" },
-  { title: "Projects", url: "#projects" },
-  { title: "Contact", url: "#contact" },
+  { label: "Home", href: "#home" },
+  { label: "About", href: "#about" },
+  { label: "Projects", href: "#projects" },
+  { label: "Contact", href: "#contact" },
 ];
 
-const AnimatedHamburgerIcon = ({ isOpen, toggle }) => {
-  return (
-    <motion.button
-      onClick={toggle}
-      aria-label="Toggle mobile menu"
-      aria-expanded={isOpen}
-      className="text-white focus:outline-none w-9 h-9 flex flex-col justify-center items-center z-50 relative"
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.92 }}
-      transition={{ duration: 0.2 }}
-    >
-      {[0, 1, 2].map((i) => (
-        <motion.span
-          key={i}
-          className="block w-6 h-0.5 bg-white rounded-full origin-center"
-          style={{ margin: i === 1 ? "4px 0" : "0" }}
-          animate={{
-            rotate: isOpen ? (i === 0 ? 45 : i === 2 ? -45 : 0) : 0,
-            y: isOpen ? (i === 0 ? 6 : i === 2 ? -6 : 0) : 0,
-            opacity: isOpen && i === 1 ? 0 : 1,
-          }}
-          transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-        />
-      ))}
-    </motion.button>
-  );
-};
-
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState("home");
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [active, setActive] = useState("Home");
 
-  // Smooth scroll + close mobile menu
-  const scrollToSection = useCallback((url) => {
-    const section = document.querySelector(url);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const onResize = () => {
+      if (window.innerWidth >= 768) setMenuOpen(false);
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
+
+  const handleNavClick = (link) => {
+    setActive(link.label);
+    setMenuOpen(false);
+    const section = document.querySelector(link.href);
     if (section) {
-      const offset = 80;
-      const topPos = section.getBoundingClientRect().top + window.scrollY - offset;
-
-      window.scrollTo({
-        top: topPos,
-        behavior: "smooth",
-      });
+      const topPos = section.getBoundingClientRect().top + window.scrollY - 85;
+      window.scrollTo({ top: topPos, behavior: "smooth" });
     }
-    setIsOpen(false);
-  }, []);
-
-  // Scroll handler with throttling
-  useEffect(() => {
-    let ticking = false;
-
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          setIsScrolled(window.scrollY > 20);
-
-          let current = "home";
-          for (const link of navLinks) {
-            const section = document.getElementById(link.url.substring(1));
-            if (section) {
-              const sectionTop = section.offsetTop - 100;
-              if (window.scrollY >= sectionTop) {
-                current = link.url.substring(1);
-              }
-            }
-          }
-          setActiveSection(current);
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const toggleMenu = () => setIsOpen((prev) => !prev);
-
-  // Close menu on Escape key
-  useEffect(() => {
-    const handleEsc = (e) => {
-      if (e.key === "Escape" && isOpen) setIsOpen(false);
-    };
-    window.addEventListener("keydown", handleEsc);
-    return () => window.removeEventListener("keydown", handleEsc);
-  }, [isOpen]);
-
-  const underlineVariants = {
-    hidden: { scaleX: 0, originX: 0 },
-    visible: { 
-      scaleX: 1, 
-      transition: { duration: 0.4, ease: "easeOut" } 
-    },
-  };
-
-  const mobileMenuVariants = {
-    closed: { 
-      opacity: 0, 
-      x: "100%", 
-      transition: { type: "spring", stiffness: 320, damping: 35 } 
-    },
-    open: { 
-      opacity: 1, 
-      x: 0, 
-      transition: { 
-        type: "spring", 
-        stiffness: 280, 
-        damping: 30,
-        staggerChildren: 0.08,
-        delayChildren: 0.1,
-      } 
-    },
-  };
-
-  const mobileLinkVariants = {
-    closed: { opacity: 0, y: 30, scale: 0.95 },
-    open: { 
-      opacity: 1, 
-      y: 0, 
-      scale: 1,
-      transition: { type: "spring", stiffness: 280, damping: 22 }
-    },
   };
 
   return (
     <>
-      <nav
-        className={`fixed w-full z-50 top-0 transition-all duration-300 ${
-          isScrolled
-            ? "bg-gradient-to-r from-slate-950/95 via-cyan-950/80 to-slate-950/95 backdrop-blur-2xl shadow-[0_8px_40px_-10px_rgb(0,255,255)] border-b border-cyan-500/10"
+      {/* ─────────────────────────────────────────────
+          NAVBAR BAR  (always on top, z-[100])
+      ───────────────────────────────────────────── */}
+      <motion.nav
+        initial={{ y: -90, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+        className={`fixed top-0 left-0 right-0 z-[100] px-4 sm:px-6 transition-all duration-500 ${
+          scrolled
+            ? "bg-[#0a0a0a]/95 backdrop-blur-2xl border-b border-amber-400/15 shadow-2xl shadow-black/50"
             : "bg-transparent"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
-            
-            {/* Logo */}
-            <a
-              href="#home"
-              onClick={(e) => { e.preventDefault(); scrollToSection("#home"); }}
-              className="relative text-3xl font-bold text-cyan-400 tracking-[3px] uppercase select-none hover:text-cyan-300 transition-colors logo-glow"
-            >
-              SabinK
-              <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent scan-line" />
-            </a>
+        <div className="max-w-7xl mx-auto flex items-center justify-between h-[68px] sm:h-[74px]">
 
-            {/* Desktop Menu */}
-            <ul className="hidden md:flex items-center gap-x-10">
-              {navLinks.map((link) => (
-                <motion.li
-                  key={link.title}
-                  whileHover={{ y: -2 }}
-                  whileTap={{ scale: 0.96 }}
-                >
-                  <a
-                    href={link.url}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      scrollToSection(link.url);
-                    }}
-                    className={`relative text-lg font-medium tracking-wide transition-all duration-300 pb-1 ${
-                      activeSection === link.url.substring(1)
-                        ? "text-cyan-400"
-                        : "text-slate-300 hover:text-white"
-                    }`}
-                  >
-                    {link.title}
-                    <AnimatePresence mode="wait">
-                      {activeSection === link.url.substring(1) && (
-                        <motion.div
-                          className="absolute bottom-0 left-0 h-[2px] w-full bg-gradient-to-r from-cyan-400 via-cyan-300 to-purple-500"
-                          variants={underlineVariants}
-                          initial="hidden"
-                          animate="visible"
-                          exit="hidden"
-                        />
-                      )}
-                    </AnimatePresence>
-                  </a>
-                </motion.li>
-              ))}
-            </ul>
-
-            {/* Mobile Hamburger */}
-            <div className="md:hidden">
-              <AnimatedHamburgerIcon isOpen={isOpen} toggle={toggleMenu} />
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            className="md:hidden fixed inset-0 z-40 bg-slate-950/95 backdrop-blur-2xl flex items-center justify-center overflow-hidden"
-            variants={mobileMenuVariants}
-            initial="closed"
-            animate="open"
-            exit="closed"
+          {/* Logo */}
+          <motion.a
+            href="#home"
+            onClick={(e) => {
+              e.preventDefault();
+              handleNavClick({ label: "Home", href: "#home" });
+            }}
+            className="flex items-center gap-2.5 no-underline select-none"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.97 }}
           >
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,255,0.08),transparent_70%)]" />
+            <motion.span
+              className="w-[10px] h-[10px] rounded-full bg-[#f59e0b] flex-shrink-0"
+              animate={{ scale: [1, 0.75, 1], opacity: [1, 0.5, 1] }}
+              transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <span className="text-[22px] sm:text-[24px] font-bold tracking-tighter text-white leading-none">
+              Sabin<span className="text-[#f59e0b]">.</span>
+            </span>
+          </motion.a>
 
-            <motion.ul className="flex flex-col items-center gap-y-10 text-center">
-              {navLinks.map((link, index) => (
-                <motion.li
-                  key={link.title}
-                  variants={mobileLinkVariants}
-                  custom={index}
-                >
-                  <a
-                    href={link.url}
+          {/* ── Desktop Pill Nav ── */}
+          <div className="hidden md:block">
+            <motion.div
+              className="relative px-2 py-1.5 rounded-[28px] bg-white/[0.03] backdrop-blur-xl border border-white/[0.06]"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25, duration: 0.55, ease: "easeOut" }}
+            >
+              <ul className="flex items-center gap-0.5 list-none m-0 p-0">
+                {navLinks.map((link) => {
+                  const isActive = active === link.label;
+                  return (
+                    <li key={link.label} className="relative">
+                      <a
+                        href={link.href}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleNavClick(link);
+                        }}
+                        className="relative block px-6 py-2.5 text-[14px] font-medium no-underline group"
+                      >
+                        {isActive && (
+                          <motion.div
+                            layoutId="pill-bg"
+                            className="absolute inset-0 bg-amber-400/10 rounded-[20px]"
+                            transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                          />
+                        )}
+                        <span
+                          className={`relative z-10 transition-colors duration-200 ${
+                            isActive
+                              ? "text-[#f59e0b]"
+                              : "text-slate-400 group-hover:text-white"
+                          }`}
+                        >
+                          {link.label}
+                        </span>
+                        {isActive && (
+                          <motion.div
+                            layoutId="tube-light"
+                            className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[2.5px] w-3/5 rounded-full"
+                            style={{
+                              background: "linear-gradient(90deg, transparent, #f59e0b, transparent)",
+                              boxShadow: "0 0 10px #f59e0b, 0 0 22px #f59e0b88",
+                            }}
+                            transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                          />
+                        )}
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            </motion.div>
+          </div>
+
+         
+        </div>
+      </motion.nav>
+
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            key="mobile-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="fixed inset-0 z-[99] md:hidden"
+            style={{ background: "rgba(5,5,8,0.97)", backdropFilter: "blur(24px)" }}
+          >
+           
+            <div
+              className="absolute inset-0"
+              onClick={() => setMenuOpen(false)}
+            />
+
+            {/* Menu Content */}
+            <div className="relative z-10 flex flex-col h-full pt-[88px] pb-10 px-6">
+
+              {/* Nav links — vertically centered */}
+              <div className="flex-1 flex flex-col justify-center gap-2">
+                {navLinks.map((link, i) => (
+                  <motion.a
+                    key={link.label}
+                    href={link.href}
+                    initial={{ opacity: 0, y: 32 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    transition={{ delay: 0.05 + i * 0.07, duration: 0.38, ease: "easeOut" }}
                     onClick={(e) => {
                       e.preventDefault();
-                      scrollToSection(link.url);
+                      handleNavClick(link);
                     }}
-                    className={`text-4xl font-semibold tracking-wider transition-all duration-300 ${
-                      activeSection === link.url.substring(1)
-                        ? "text-cyan-400"
-                        : "text-white hover:text-cyan-300"
+                    className={`relative flex items-center gap-4 px-6 py-5 rounded-3xl text-[22px]
+                               font-semibold no-underline transition-all duration-200
+                               active:scale-[0.98] ${
+                      active === link.label
+                        ? "text-white bg-white/[0.07]"
+                        : "text-slate-400 hover:text-white hover:bg-white/[0.04]"
                     }`}
                   >
-                    {link.title}
-                  </a>
-                </motion.li>
-              ))}
-            </motion.ul>
+                    {/* Amber glow bar */}
+                    {active === link.label && (
+                      <motion.div
+                        layoutId="mob-glow-bar"
+                        className="absolute left-0 top-1/2 -translate-y-1/2 w-[4px] h-[44px] rounded-r-full bg-[#f59e0b]"
+                        style={{ boxShadow: "0 0 14px #f59e0b, 0 0 28px #f59e0b66" }}
+                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                      />
+                    )}
 
-            <motion.div
-              className="absolute bottom-12 text-xs uppercase tracking-[2px] text-cyan-400/60"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              Tap anywhere or press ESC to close
-            </motion.div>
+                    {/* Number */}
+                    <span className="text-[13px] font-mono text-slate-600 w-5 flex-shrink-0">
+                      0{navLinks.indexOf(link) + 1}
+                    </span>
+
+                    {link.label}
+
+                    {/* Active dot */}
+                    {active === link.label && (
+                      <motion.span
+                        className="ml-auto w-2 h-2 rounded-full bg-[#f59e0b]"
+                        animate={{ scale: [1, 0.7, 1], opacity: [1, 0.5, 1] }}
+                        transition={{ duration: 1.8, repeat: Infinity }}
+                      />
+                    )}
+                  </motion.a>
+                ))}
+              </div>
+
+              {/* Bottom section */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.38, duration: 0.4 }}
+                className="flex flex-col gap-5"
+              >
+              </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Logo Glow & Scan Line Animation */}
-      <style jsx>{`
-        @keyframes logoGlow {
-          0%, 100% { text-shadow: 0 0 12px rgba(0, 255, 255, 0.6); }
-          50% { text-shadow: 0 0 25px rgba(0, 255, 255, 0.9), 0 0 35px rgba(0, 255, 255, 0.4); }
-        }
-        .logo-glow {
-          animation: logoGlow 3s ease-in-out infinite;
-        }
-
-        .scan-line {
-          animation: scan 4s linear infinite;
-        }
-        @keyframes scan {
-          0% { transform: translateX(-120%); }
-          100% { transform: translateX(120%); }
-        }
-      `}</style>
     </>
   );
 };
