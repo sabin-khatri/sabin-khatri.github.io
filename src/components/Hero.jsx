@@ -223,16 +223,7 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Scroll Indicator */}
-      <motion.div
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-20"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2.8 }}
-      >
-        <span className="text-xs font-mono tracking-widest text-amber-400/70">SCROLL TO DISCOVER</span>
-        <HiOutlineChevronDoubleDown className="h-7 w-7 text-amber-400 animate-bounce" />
-      </motion.div>
+    
     </section>
   );
 };
