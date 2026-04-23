@@ -85,8 +85,8 @@ const About = () => {
         <div className="grid lg:grid-cols-12 gap-16 items-center">
           
           {/* Left Side: Orbiting Skills (Hero Image Style) */}
-          <motion.div 
-            className="lg:col-span-5 order-2 lg:order-1 flex justify-center"
+          <motion.div  
+              className="lg:col-span-5 order-2 lg:order-1 flex justify-center"
             style={{ x: parallaxX, y: parallaxY }}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={isInView ? { opacity: 1, scale: 1 } : {}}
@@ -94,10 +94,10 @@ const About = () => {
           >
             <div className="relative w-[320px] h-[320px] md:w-[420px] md:h-[420px]">
                {/* Decorative Ring matching Hero Style */}
-               <div className="absolute inset-0 rounded-full border border-amber-400/20 bg-gradient-to-br from-amber-900/10 to-transparent backdrop-blur-sm" />
-               <div className="absolute inset-8 rounded-full border border-amber-400/10" />
+               <div/>
+               <div  />
                
-               <div className="absolute inset-0 flex items-center justify-center scale-90 md:scale-100">
+               <div>
                   <OrbitingSkills />
                </div>
 
