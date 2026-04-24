@@ -102,7 +102,7 @@ const Hero = () => {
           
           {/* Left Content - Chiloane Style */}
           <motion.div
-            className="text-center lg:text-left space-y-8"
+            className="text-center lg:text-left space-y-8 order-2 lg:order-1"
             initial={{ opacity: 0, x: -60 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1.2, ease: "easeOut" }}
@@ -167,7 +167,7 @@ const Hero = () => {
 
           {/* Right Side - Large Golden Circle (Chiloane Style) */}
           <motion.div 
-            className="flex justify-center lg:justify-end"
+            className="flex justify-center lg:justify-end order- 1 lg:order-2"
             style={{ x: parallaxX, y: parallaxY }}
           >
             <motion.div
