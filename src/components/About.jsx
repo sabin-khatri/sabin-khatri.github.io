@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+// eslint-disable-next-line no-unused-vars
 import { motion, useInView, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { FaDownload, FaCheckCircle, FaRocket } from 'react-icons/fa';
 import OrbitingSkills from './ui/orbiting-skills';
@@ -95,7 +96,7 @@ const About = () => {
           
           {/* Left Side: Orbiting Skills (Clean Floating Version) */}
           <motion.div  
-            className="lg:col-span-5 order-2 lg:order-1 flex justify-center relative"
+            className="hidden lg:flex lg:col-span-5 order-2 lg:order-1 justify-center relative"
             style={{ x: parallaxX, y: parallaxY }}
             initial={{ opacity: 0, scale: 0.8 }}
             animate={isInView ? { opacity: 1, scale: 1 } : {}}
@@ -148,7 +149,7 @@ const About = () => {
                 <span className="text-[11px] text-slate-500 tracking-[0.2em] font-mono mt-2 uppercase">Years Experience</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-5xl font-bold text-amber-500 tracking-tighter">
+              <span className="text-5xl font-bold text-amber-500 tracking-tighter">
                   <AnimatedCounter to={5} trigger={isInView} />
                 </span>
                 <span className="text-[11px] text-slate-500 tracking-[0.2em] font-mono mt-2 uppercase">Projects Delivered</span>
