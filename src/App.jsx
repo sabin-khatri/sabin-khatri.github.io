@@ -7,6 +7,7 @@ import Footer from './components/Footer'
 import About from './components/About'
 import Projects from './components/Projects'
 import Contact from './components/Contact'
+import Skills from './components/Skills'
 function App() {
   return (
     <div className="bg-slate-900 min-h-screen text-white">
@@ -16,6 +17,7 @@ function App() {
         <Hero />
         <About />
         <Projects />
+        <Skills />
         <Contact />
         
        
