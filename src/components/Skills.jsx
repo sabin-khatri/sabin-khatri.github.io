@@ -1,4 +1,3 @@
-
 import * as THREE from "three";
 import React, { useRef, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
@@ -11,18 +10,30 @@ import {
   CylinderCollider,
 } from "@react-three/rapier";
 
+/* ── import images directly — hosting ma pani kaam garcha ── */
+import imgNext       from "../assets/image/next2.webp";
+import imgNode       from "../assets/image/node2.webp";
+import imgExpress    from "../assets/image/express.webp";
+import imgMongo      from "../assets/image/mongo.webp";
+import imgMysql      from "../assets/image/mysql.webp";
+import imgTypescript from "../assets/image/typescript.webp";
+import imgJavascript from "../assets/image/javascript.webp";
+import imgReact      from "../assets/image/react.webp";
+import imgTailwind   from "../assets/image/tailwind.png";
+
+/* ── ordered list — import URLs use garnu ── */
 const imageUrls = [
-  "src/assets/image/react.webp",
-  "src/assets/image/next2.webp",
-  "src/assets/image/node2.webp",
-  "src/assets/image/express.webp",
-  "src/assets/image/mongo.webp",
-  "src/assets/image/mysql.webp",
-  "src/assets/image/typescript.webp",
-  "src/assets/image/javascript.webp",
-  "src/assets/image/react.webp",
-  "src/assets/image/typescript.webp",
-  "src/assets/image/tailwind.png"
+  imgNext,
+  imgNext,
+  imgNode,
+  imgExpress,
+  imgMongo,
+  imgMysql,
+  imgTypescript,
+  imgJavascript,
+  imgReact,
+  imgTypescript,
+  imgTailwind,
 ];
 
 const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
@@ -73,13 +84,7 @@ function SphereGeo({ vec = new THREE.Vector3(), scale, material, position }) {
         position={[0, 0, 1.2 * scale]}
         args={[0.15 * scale, 0.275 * scale]}
       />
-      {/* FIX: Use meshStandardMaterial directly on mesh for reliable texture display */}
-      <mesh
-        castShadow
-        receiveShadow
-        scale={scale}
-        geometry={sphereGeometry}
-      >
+      <mesh castShadow receiveShadow scale={scale} geometry={sphereGeometry}>
         <meshStandardMaterial
           map={material.map}
           emissive={new THREE.Color("#ffffff")}
@@ -122,7 +127,6 @@ function Pointer({ vec = new THREE.Vector3() }) {
   );
 }
 
-// FIX: Load textures inside the component using useLoader pattern
 function Scene({ materials }) {
   return (
     <>
@@ -152,26 +156,19 @@ function Scene({ materials }) {
 }
 
 const TechStack = () => {
-  // FIX: Create textures with proper settings inside useMemo
   const materials = useMemo(() => {
     return imageUrls.map((url) => {
       const texture = new THREE.TextureLoader().load(
         url,
         (tex) => {
-          // Called when texture loads successfully
           tex.colorSpace = THREE.SRGBColorSpace;
           tex.needsUpdate = true;
         },
         undefined,
-        (err) => {
-          console.error(`Failed to load texture: ${url}`, err);
-        }
+        (err) => console.error(`Failed to load texture: ${url}`, err)
       );
       texture.colorSpace = THREE.SRGBColorSpace;
-
-      return {
-        map: texture,
-      };
+      return { map: texture };
     });
   }, []);
 
@@ -191,11 +188,11 @@ const TechStack = () => {
 
       <Canvas
         shadows
-        gl={{ 
+        gl={{
           antialias: true,
           toneMapping: THREE.ACESFilmicToneMapping,
           toneMappingExposure: 1.2,
-          outputColorSpace: THREE.SRGBColorSpace, 
+          outputColorSpace: THREE.SRGBColorSpace,
         }}
         camera={{ position: [0, 0, 20], fov: 32.5, near: 1, far: 100 }}
       >
