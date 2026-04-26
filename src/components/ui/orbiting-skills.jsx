@@ -43,7 +43,7 @@ const iconComponents = {
     color: '#339933',
     component: () => (
       <svg viewBox="0 0 24 24" fill="currentColor" className="w-full h-full">
-        <path d="M11.998 24c-.321 0-.641-.084-.922-.247l-2.936-1.737c-.438-.245-.224-.332-.08-.383.585-.203.703-.25 1.328-.602.065-.037.151-.023.218.017l2.256 1.339c.082.045.198.045.275 0l8.795-5.076c.082-.047.135-.141.135-.241V6.921c0-.103-.055-.198-.137-.246l-8.791-5.072c-.081-.047-.189-.047-.273 0L2.075 6.675c-.084.048-.139.144-.139.246v10.146c0 .1.055.194.139.241l2.409 1.392c1.307.654 2.108-.116 2.108-.89V7.787c0-.142.114-.253.256-.253h1.115c.139 0 .255.112.255.253v10.021c0 1.745-.95 2.745-2.604 2.745-.508 0-.909 0-2.026-.551L1.352 18.675C.533 18.215 0 17.352 0 16.43V6.284c0-.922.533-1.786 1.352-2.245L10.147-.963c.8-.452 1.866-.452 2.657 0l8.796 5.002c.819.459 1.352 1.323 1.352 2.245v10.146c0 .922-.533 1.783-1.352 2.245l-8.796 5.078c-.28.163-.601.247-.926.247zm2.717-6.993c-3.849 0-4.654-1.766-4.654-3.246 0-.14.114-.253.256-.253h1.136c.127 0 .232.091.252.215.173 1.164.686 1.752 3.01 1.752 1.852 0 2.639-.419 2.639-1.401 0-.566-.224-1.03-3.099-1.249-2.404-.184-3.89-.768-3.89-2.689 0-1.771 1.491-2.825 3.991-2.825 2.808 0 4.199.975 4.377 3.068.007.072-.019.141-.065.193-.047.049-.111.077-.178.077h-1.14c-.119 0-.225-.083-.248-.196-.276-1.224-.944-1.616-2.746-1.616-2.023 0-2.259.705-2.259 1.234 0 .641.278.827 3.006 1.19 2.7.359 3.982.866 3.982 2.771 0 1.922-1.603 3.024-4.399 3.024z" fill="#339933"/>
+        <path d="M11.998 24c-.321 0-.641-.084-.922-.247l-2.936-1.737c-.438-.245-.224-.332-.08-.383.585-.203.703-.25 1.328-.602.065-.037.151-.023.218.017l2.256 1.339c.082.045.198.045.275 0l8.795-5.076c.082-.047.135-.141.135-.241V6.921c0-.103-.055-.198-.137-.246l-8.791-5.072c-.081-.047-.189-.047-.273 0L2.075 6.675c-.084.048-.139.144-.139.246v10.146c0 .1.055.194.139.241l2.409 1.392c1.307.654 2.108-.116 2.108-.89V7.787c0-.142.114-.253.256-.253h1.115c.139 0 .255.112.255.253v10.021c0 1.745-.95 2.745-2.604 2.745-.508 0-.909 0-2.026-.551L1.352 18.675C.533 18.215 0 17.352 0 16.43V6.284c0-.922.533-1.786 1.352-2.245L10.147.961c.8-.452 1.866-.452 2.657 0l8.796 5.002c.819.459 1.352 1.323 1.352 2.245v10.146c0 .922-.533 1.783-1.352 2.245l-8.796 5.078c-.28.163-.601.247-.926.247zm2.717-6.993c-3.849 0-4.654-1.766-4.654-3.246 0-.14.114-.253.256-.253h1.136c.127 0 .232.091.252.215.173 1.164.686 1.752 3.01 1.752 1.852 0 2.639-.419 2.639-1.401 0-.566-.224-1.03-3.099-1.249-2.404-.184-3.89-.768-3.89-2.689 0-1.771 1.491-2.825 3.991-2.825 2.808 0 4.199.975 4.377 3.068.007.072-.019.141-.065.193-.047.049-.111.077-.178.077h-1.14c-.119 0-.225-.083-.248-.196-.276-1.224-.944-1.616-2.746-1.616-2.023 0-2.259.705-2.259 1.234 0 .641.278.827 3.006 1.19 2.7.359 3.982.866 3.982 2.771 0 1.922-1.603 3.024-4.399 3.024z" fill="#339933"/>
       </svg>
     )
   },
@@ -55,41 +55,87 @@ const iconComponents = {
       </svg>
     )
   },
-  typescript: {
-    color: '#3178C6',
-    component: () => (
-      <svg viewBox="0 0 24 24" fill="#3178C6" className="w-full h-full">
-        <path d="M0 0h24v24H0V0zm22.034 18.276c-.175-1.095-.888-2.015-3.003-2.873-.736-.345-1.554-.585-1.797-1.14-.091-.33-.105-.51-.046-.705.15-.646.915-.84 1.515-.66.39.12.75.42.976.9 1.034-.676 1.034-.676 1.755-1.125-.27-.42-.404-.601-.586-.78-.63-.705-1.469-1.065-2.834-1.034l-.705.089c-.676.165-1.32.525-1.71 1.005-1.14 1.291-.811 3.541.569 4.471 1.365 1.02 3.361 1.244 3.616 2.205.24 1.17-.87 1.545-1.966 1.41-.811-.18-1.26-.586-1.755-1.336l-1.83 1.051c.21.48.45.689.81 1.109 1.74 1.756 6.09 1.666 6.871-1.004.029-.09.24-.705.074-1.65l.046.067z" fill="white" />
-        <path d="M12.91 18.276h2.248v-6.179h-2.248v6.179z" fill="white" />
-      </svg>
-    )
-  },
+typescript: {
+  color: '#3178C6',
+  component: () => (
+    <svg viewBox="0 0 128 128" className="w-full h-full">
+      <path fill="#3178C6" d="M0 0h128v128H0z"/>
+      <path fill="#FFF" d="M28.3 53.5v9.2h18.4v52.8h10.7V62.7h18.4v-9.2H28.3zm67.3 0c-9.8 0-16.2 5.3-16.2 13.4 0 7.6 4.5 11.2 14.5 13.5 7.7 1.7 9.3 3.1 9.3 6.1 0 3.1-2.6 5.2-7 5.2-5.6 0-9.7-2.1-13.9-5.7l-6.4 7.7c5.4 4.8 12.4 7.3 20.1 7.3 10.7 0 17.7-5.5 17.7-14.2 0-8-4.7-11.6-14.9-13.8-7.4-1.6-8.9-3-8.9-5.8 0-2.7 2.4-4.8 6.6-4.8 4.2 0 7.9 1.5 12 4.6l5.6-8.2c-4.9-3.9-10.8-5.8-18.5-5.8z"/>
+    </svg>
+  )
+}
 };
+
+const OrbitRing = ({ radius, dashed }) => (
+  <div
+    className="absolute top-1/2 left-1/2 rounded-full border pointer-events-none"
+    style={{
+      width: radius * 2,
+      height: radius * 2,
+      transform: 'translate(-50%, -50%)',
+      borderColor: 'rgba(245,158,11,0.12)',
+      borderStyle: dashed ? 'dashed' : 'solid',
+      borderWidth: '1px',
+    }}
+  />
+);
 
 const OrbitItem = memo(({ config, angle, radius }) => {
   const [isHovered, setIsHovered] = useState(false);
   const x = Math.cos(angle) * radius;
   const y = Math.sin(angle) * radius;
+  const Icon = iconComponents[config.iconType];
 
   return (
     <div
-      className="absolute top-1/2 left-1/2 transition-all duration-300 ease-out"
+      className="absolute top-1/2 left-1/2"
       style={{
         width: `${config.size}px`,
         height: `${config.size}px`,
         transform: `translate(calc(${x}px - 50%), calc(${y}px - 50%))`,
         zIndex: isHovered ? 40 : 10,
+        transition: 'z-index 0s',
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <div
-        className={`w-full h-full bg-gray-900/95 backdrop-blur-md rounded-full flex items-center justify-center p-2 border border-white/10 cursor-pointer transition-all ${isHovered ? 'scale-125 shadow-2xl' : 'shadow-lg'}`}
-        style={{ boxShadow: isHovered ? `0 0 30px ${iconComponents[config.iconType].color}50` : undefined }}
+        className="w-full h-full rounded-full flex items-center justify-center cursor-pointer"
+        style={{
+          background: 'rgba(15,15,15,0.95)',
+          backdropFilter: 'blur(12px)',
+          border: isHovered
+            ? `1.5px solid ${Icon.color}60`
+            : '1px solid rgba(255,255,255,0.08)',
+          transform: isHovered ? 'scale(1.3)' : 'scale(1)',
+          transition: 'transform 0.3s cubic-bezier(0.34,1.56,0.64,1), border 0.3s ease, box-shadow 0.3s ease',
+          boxShadow: isHovered
+            ? `0 0 24px ${Icon.color}50, 0 0 8px ${Icon.color}30`
+            : '0 4px 20px rgba(0,0,0,0.4)',
+          padding: '20%',
+        }}
       >
-        {iconComponents[config.iconType].component()}
+        {Icon.component()}
+
+        {/* Tooltip */}
         {isHovered && (
-          <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-3 py-1 bg-zinc-900 text-xs text-white rounded-full border border-amber-400/30 whitespace-nowrap">
+          <div
+            className="absolute pointer-events-none whitespace-nowrap"
+            style={{
+              bottom: `calc(100% + 10px)`,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              background: 'rgba(10,10,10,0.95)',
+              border: `1px solid ${Icon.color}40`,
+              color: Icon.color,
+              fontSize: '10px',
+              fontFamily: 'monospace',
+              letterSpacing: '0.08em',
+              padding: '4px 10px',
+              borderRadius: '20px',
+              fontWeight: 600,
+            }}
+          >
             {config.label}
           </div>
         )}
@@ -101,20 +147,21 @@ const OrbitItem = memo(({ config, angle, radius }) => {
 export default function OrbitingSkills() {
   const [time, setTime] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const [dimensions, setDimensions] = useState({ inner: 88, outer: 158, container: 360 });
+  const [dims, setDims] = useState({ inner: 115, outer: 205, container: 480, core: 80, coreIcon: 52 });
 
   useEffect(() => {
     const updateSize = () => {
-      const width = window.innerWidth;
-      if (width < 480) {
-        setDimensions({ inner: 68, outer: 118, container: 280 });
-      } else if (width < 768) {
-        setDimensions({ inner: 78, outer: 138, container: 320 });
+      const w = window.innerWidth;
+      if (w < 400) {
+        setDims({ inner: 75, outer: 135, container: 310, core: 56, coreIcon: 36 });
+      } else if (w < 640) {
+        setDims({ inner: 90, outer: 160, container: 370, core: 64, coreIcon: 42 });
+      } else if (w < 1024) {
+        setDims({ inner: 105, outer: 185, container: 430, core: 72, coreIcon: 48 });
       } else {
-        setDimensions({ inner: 88, outer: 158, container: 360 });
+        setDims({ inner: 115, outer: 205, container: 480, core: 80, coreIcon: 52 });
       }
     };
-
     updateSize();
     window.addEventListener('resize', updateSize);
     return () => window.removeEventListener('resize', updateSize);
@@ -124,64 +171,88 @@ export default function OrbitingSkills() {
     if (isPaused) return;
     let raf;
     let last = performance.now();
-
     const animate = (now) => {
       const delta = (now - last) / 1000;
       last = now;
-      setTime(prev => prev + delta * 0.72);
+      setTime(prev => prev + delta * 0.65);
       raf = requestAnimationFrame(animate);
     };
-
     raf = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(raf);
   }, [isPaused]);
 
   const innerSkills = [
-    { id: 'html', iconType: 'html', size: 38, phase: 0, label: 'HTML5' },
-    { id: 'css', iconType: 'css', size: 40, phase: (2 * Math.PI) / 3, label: 'CSS3' },
-    { id: 'js', iconType: 'javascript', size: 38, phase: (4 * Math.PI) / 3, label: 'JavaScript' },
+    { id: 'html',       iconType: 'html',       size: dims.inner * 0.42, phase: 0,                    label: 'HTML5' },
+    { id: 'css',        iconType: 'css',        size: dims.inner * 0.44, phase: (2 * Math.PI) / 3,    label: 'CSS3' },
+    { id: 'js',         iconType: 'javascript', size: dims.inner * 0.42, phase: (4 * Math.PI) / 3,    label: 'JavaScript' },
   ];
 
   const outerSkills = [
-    { id: 'react', iconType: 'react', size: 48, phase: 0, label: 'React' },
-    { id: 'node', iconType: 'node', size: 46, phase: (2 * Math.PI) / 3, label: 'Node.js' },
-    { id: 'tailwind', iconType: 'tailwind', size: 44, phase: (4 * Math.PI) / 3, label: 'Tailwind' },
+    { id: 'react',      iconType: 'react',      size: dims.outer * 0.3,  phase: 0,                    label: 'React' },
+    { id: 'node',       iconType: 'node',       size: dims.outer * 0.28, phase: (2 * Math.PI) / 3,    label: 'Node.js' },
+    { id: 'tailwind',   iconType: 'tailwind',   size: dims.outer * 0.27, phase: (4 * Math.PI) / 3,    label: 'Tailwind' },
+    { id: 'typescript', iconType: 'typescript', size: dims.outer * 0.27, phase: Math.PI / 3,          label: 'TypeScript' },
   ];
 
   return (
-    <div 
-      className="relative w-full h-full flex items-center justify-center overflow-hidden"
+    <div
+      className="relative w-full h-full flex items-center justify-center"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      <div 
-        className="relative"
-        style={{ width: dimensions.container, height: dimensions.container }}
+      <div
+        className="relative flex items-center justify-center"
+        style={{ width: dims.container, height: dims.container }}
       >
-        {/* Central Core */}
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-gradient-to-br from-zinc-900 to-black rounded-full flex items-center justify-center z-30 shadow-2xl ring-1 ring-amber-400/30">
-          <div className="w-12 h-12 bg-gradient-to-br from-amber-400 via-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
-            <span className="text-black font-black text-3xl tracking-tighter">SK</span>
+        {/* Orbit rings */}
+        <OrbitRing radius={dims.inner} />
+        <OrbitRing radius={dims.outer} dashed />
+
+        {/* Central core */}
+        <div
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-30 rounded-full flex items-center justify-center"
+          style={{
+            width: dims.core,
+            height: dims.core,
+            background: 'radial-gradient(circle at 35% 35%, #1a1a1a, #000)',
+            boxShadow: '0 0 0 1px rgba(245,158,11,0.25), 0 0 40px rgba(245,158,11,0.1)',
+          }}
+        >
+          <div
+            className="rounded-full flex items-center justify-center"
+            style={{
+              width: dims.coreIcon,
+              height: dims.coreIcon,
+              background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+              boxShadow: '0 0 20px rgba(245,158,11,0.5)',
+            }}
+          >
+            <span
+              className="text-black font-black"
+              style={{ fontSize: dims.coreIcon * 0.42, letterSpacing: '-0.05em' }}
+            >
+              SK
+            </span>
           </div>
         </div>
 
-        {/* Inner Orbit */}
+        {/* Inner orbit items */}
         {innerSkills.map(skill => (
-          <OrbitItem 
-            key={skill.id} 
-            config={skill} 
-            radius={dimensions.inner} 
-            angle={time * 0.85 + skill.phase} 
+          <OrbitItem
+            key={skill.id}
+            config={skill}
+            radius={dims.inner}
+            angle={time * 0.85 + skill.phase}
           />
         ))}
 
-        {/* Outer Orbit */}
+        {/* Outer orbit items */}
         {outerSkills.map(skill => (
-          <OrbitItem 
-            key={skill.id} 
-            config={skill} 
-            radius={dimensions.outer} 
-            angle={time * -0.48 + skill.phase} 
+          <OrbitItem
+            key={skill.id}
+            config={skill}
+            radius={dims.outer}
+            angle={time * -0.48 + skill.phase}
           />
         ))}
       </div>
