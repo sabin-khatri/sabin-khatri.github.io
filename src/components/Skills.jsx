@@ -12,16 +12,17 @@ import {
 } from "@react-three/rapier";
 
 const imageUrls = [
-  "public/image/react.webp",
-  "public/image/next2.webp",
-  "public/image/node2.webp",
-  "public/image/express.webp",
-  "public/image/mongo.webp",
-  "public/image/mysql.webp",
-  "public/image/typescript.webp",
-  "public/image/javascript.webp",
-  "public/image/react.webp",
-  "public/image/typescript.webp",
+  "src/assets/image/react.webp",
+  "src/assets/image/next2.webp",
+  "src/assets/image/node2.webp",
+  "src/assets/image/express.webp",
+  "src/assets/image/mongo.webp",
+  "src/assets/image/mysql.webp",
+  "src/assets/image/typescript.webp",
+  "src/assets/image/javascript.webp",
+  "src/assets/image/react.webp",
+  "src/assets/image/typescript.webp",
+  "src/assets/image/tailwind.png"
 ];
 
 const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
