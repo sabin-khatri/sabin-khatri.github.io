@@ -1,333 +1,291 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  FaGithub,
-  FaHtml5,
-  FaCss3Alt,
-  FaJsSquare,
-  FaReact,
-  FaBootstrap,
-  FaPhp,
-} from 'react-icons/fa';
-import { FiExternalLink } from 'react-icons/fi';
-import { CgClose } from 'react-icons/cg';
-import { SiTailwindcss, SiMysql } from 'react-icons/si';
+import React, { useState, useRef, useMemo } from "react";
+import { motion, AnimatePresence, useInView } from "framer-motion";
+import { FaGithub, FaHtml5, FaCss3Alt, FaJsSquare, FaReact, FaBootstrap, FaPhp } from "react-icons/fa";
+import { FiExternalLink, FiArrowRight } from "react-icons/fi";
+import { SiTailwindcss, SiMysql } from "react-icons/si";
+import { CgClose } from "react-icons/cg";
 
-import chiyaghar from '../assets/projects/chiyaghar.png';
-import trekking from '../assets/projects/trekking.png';
-import driving from '../assets/projects/travel.png';
-import carrental from '../assets/projects/carrental.png';
+// Assets
+import chiyaghar from "../assets/projects/chiyaghar.png";
+import trekking from "../assets/projects/trekking.png";
+import driving from "../assets/projects/travel.png";
+import carrental from "../assets/projects/carrental.png";
 
-const iconMap = {
-  HTML: <FaHtml5 className="text-orange-500" />,
-  CSS: <FaCss3Alt className="text-blue-500" />,
-  JavaScript: <FaJsSquare className="text-yellow-400" />,
+const TAG_ICONS = {
+  HTML: <FaHtml5 className="text-orange-400" />,
+  CSS: <FaCss3Alt className="text-blue-400" />,
+  JavaScript: <FaJsSquare className="text-amber-400" />,
   React: <FaReact className="text-cyan-400" />,
-  'Tailwind CSS': <SiTailwindcss className="text-sky-400" />,
-  Bootstrap: <FaBootstrap className="text-purple-600" />,
+  "Tailwind CSS": <SiTailwindcss className="text-sky-400" />,
+  Bootstrap: <FaBootstrap className="text-purple-400" />,
   PHP: <FaPhp className="text-indigo-400" />,
   MySQL: <SiMysql className="text-blue-300" />,
-  'Git & GitHub': <FaGithub className="text-slate-300" />,
 };
 
-const projects = [
+const PROJECTS = [
   {
     id: 1,
-    title: 'Chiya Ghar',
-    description: 'A visually appealing and fully responsive landing page for a local Nepali tea café. Built with HTML, Tailwind CSS, and vanilla JavaScript.',
+    num: "01",
+    title: "Chiya Ghar",
+    subtitle: "Premium Tea Experience",
+    description: "A visually stunning landing page for a Nepali tea café. Featuring smooth parallax effects and a warm, inviting aesthetic that captures the essence of local tea culture.",
     image: chiyaghar,
-    tags: ['HTML', 'Tailwind CSS', 'JavaScript'],
-    liveUrl: 'https://bespoke-twilight-0dc185.netlify.app/',
-    githubUrl: 'https://github.com/sabin-khatri/ChiyaAdda',
+    tags: ["HTML", "Tailwind CSS", "JavaScript"],
+    liveUrl: "https://bespoke-twilight-0dc185.netlify.app/",
+    githubUrl: "https://github.com/sabin-khatri/ChiyaAdda",
   },
   {
     id: 2,
-    title: 'Trekking Website',
-    description: 'A promotional tourism website showcasing trekking adventures in Nepal. Designed with mobile-first approach using Tailwind CSS and JavaScript.',
+    num: "02",
+    title: "Trekking Nepal",
+    subtitle: "Adventure Expedition",
+    description: "An immersive tourism platform designed to showcase the majestic Himalayas. Built with a focus on high-resolution imagery and fluid storytelling transitions.",
     image: trekking,
-    tags: ['HTML', 'Tailwind CSS', 'JavaScript'],
-    liveUrl: 'https://sabintrek.netlify.app/',
-    githubUrl: 'https://github.com/sabin-khatri/Trekking-Web',
+    tags: ["HTML", "Tailwind CSS", "JavaScript"],
+    liveUrl: "https://sabintrek.netlify.app/",
+    githubUrl: "https://github.com/sabin-khatri/Trekking-Web",
   },
   {
     id: 3,
-    title: 'Travel Web App',
-    description: 'A dynamic single-page travel agency application built with React and Tailwind CSS, featuring smooth animations and responsive design.',
+    num: "03",
+    title: "Travel App",
+    subtitle: "Modern Travel Agency",
+    description: "A dynamic Single Page Application (SPA) built for travel enthusiasts. Features advanced filtering, category exploration, and sleek motion components.",
     image: driving,
-    tags: ['React', 'Tailwind CSS', 'JavaScript'],
-    liveUrl: 'https://travel-web-zeta-livid.vercel.app/',
-    githubUrl: 'https://github.com/sabin-khatri/Travel-web',
+    tags: ["React", "Tailwind CSS", "JavaScript"],
+    liveUrl: "https://travel-web-zeta-livid.vercel.app/",
+    githubUrl: "https://github.com/sabin-khatri/Travel-web",
   },
   {
     id: 4,
-    title: 'Car Rental System',
-    description: 'A feature-rich car rental platform with search, filtering, and booking functionality. Built using React with clean state management.',
+    num: "04",
+    title: "Gadi Rental",
+    subtitle: "Automotive Booking",
+    description: "A full-scale car rental solution with a focus on User Experience. Includes a sophisticated booking flow and a modern, responsive dashboard-style interface.",
     image: carrental,
-    tags: ['React', 'Tailwind CSS', 'JavaScript'],
-    liveUrl: 'https://gadi-rental.netlify.app/',
-    githubUrl: 'https://github.com/sabin-khatri/Car-Rental',
+    tags: ["React", "Tailwind CSS", "JavaScript"],
+    liveUrl: "https://gadi-rental.netlify.app/",
+    githubUrl: "https://github.com/sabin-khatri/Car-Rental",
   },
 ];
 
-const skills = {
-  frontend: [
-    { name: 'HTML', level: 'Intermediate' },
-    { name: 'CSS', level: 'Intermediate' },
-    { name: 'JavaScript', level: 'Intermediate' },
-    { name: 'React', level: 'Intermediate' },
-    { name: 'Tailwind CSS', level: 'Intermediate' },
-    { name: 'Bootstrap', level: 'Beginner' },
-  ],
-  backend: [
-    { name: 'PHP', level: 'Intermediate' },
-    { name: 'MySQL', level: 'Intermediate' },
-    { name: 'Git & GitHub', level: 'Intermediate' },
-  ],
-};
-
-const ProjectsAndSkills = () => {
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [activeTab, setActiveTab] = useState('frontend');
-
-  const getIcon = (name) => iconMap[name] || null;
+/* --- Small Decorative Particle Component --- */
+const FloatingParticle = ({ count = 15 }) => {
+  const particles = useMemo(() => 
+    Array.from({ length: count }).map((_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+      size: Math.random() * 2 + 1,
+      duration: Math.random() * 5 + 5,
+    })), [count]);
 
   return (
-    <>
-      {/* ====================== PROJECTS SECTION ====================== */}
-      <section id="projects" className="relative bg-slate-950 py-20 lg:py-32 overflow-hidden">
-        <div className="container mx-auto px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-16">
-            <motion.h2 
-              className="text-4xl lg:text-6xl font-bold tracking-tight bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent"
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {particles.map((p) => (
+        <motion.div
+          key={p.id}
+          className="absolute rounded-full bg-amber-500/20"
+          style={{ left: p.left, top: p.top, width: p.size, height: p.size }}
+          animate={{ y: [0, -40, 0], opacity: [0.2, 0.5, 0.2] }}
+          transition={{ duration: p.duration, repeat: Infinity, ease: "linear" }}
+        />
+      ))}
+    </div>
+  );
+};
+
+/* --- Project Card Component --- */
+const ProjectCard = ({ project, index, onImageClick }) => {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-100px" });
+  const isEven = index % 2 === 0;
+
+  return (
+    <motion.article
+      ref={ref}
+      initial={{ opacity: 0, y: 50 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.8, ease: [0.25, 1, 0.5, 1] }}
+      className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center"
+    >
+      {/* Content Side */}
+      <div className={`${isEven ? "lg:order-1" : "lg:order-2"} space-y-6`}>
+        <div className="flex items-center gap-4">
+          <span className="text-amber-500 font-mono text-lg font-bold tracking-widest">{project.num}</span>
+          <div className="h-[1px] w-12 bg-amber-500/50" />
+          <span className="text-slate-400 uppercase tracking-[0.3em] text-xs font-semibold">{project.subtitle}</span>
+        </div>
+
+        <h3 className="text-4xl lg:text-5xl font-bold text-white tracking-tighter">
+          {project.title}
+        </h3>
+
+        <p className="text-slate-400 text-lg leading-relaxed max-w-xl">
+          {project.description}
+        </p>
+
+        {/* Tags with Staggered Entrance */}
+        <div className="flex flex-wrap gap-3">
+          {project.tags.map((tag, i) => (
+            <motion.span
+              key={tag}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={inView ? { opacity: 1, scale: 1 } : {}}
+              transition={{ delay: 0.3 + (i * 0.1) }}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-slate-300 text-sm font-medium hover:border-amber-500/50 transition-colors"
             >
-              Things I've Built
-            </motion.h2>
-            <motion.p 
-              className="mt-4 text-slate-400 text-lg"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-            >
-              Selected projects that showcase my skills and passion
-            </motion.p>
-          </div>
+              {TAG_ICONS[tag]} {tag}
+            </motion.span>
+          ))}
+        </div>
 
-          <div className="space-y-28 lg:space-y-36">
-            {projects.map((project, index) => (
-              <motion.div
-                key={project.id}
-                initial={{ opacity: 0, y: 100 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.9, delay: index * 0.15 }}
-                className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center"
-              >
-                {/* Text Content */}
-                <div className={index % 2 === 0 ? 'lg:order-1' : 'lg:order-2'}>
-                  <div className="mb-6">
-                    <span className="text-cyan-400 text-sm font-mono tracking-widest">
-                      PROJECT {String(index + 1).padStart(2, '0')}
-                    </span>
-                    <h3 className="text-3xl lg:text-4xl font-bold text-white mt-3">{project.title}</h3>
-                  </div>
+        {/* Action Buttons */}
+        <div className="flex items-center gap-6 pt-4">
+          <motion.a
+            href={project.liveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            whileHover={{ y: -3 }}
+            className="group flex items-center gap-2 text-white font-bold text-sm bg-amber-500 px-6 py-3 rounded-xl hover:bg-amber-400 transition-all"
+          >
+            Live Preview <FiExternalLink />
+          </motion.a>
+          <motion.a
+            href={project.githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            whileHover={{ y: -3 }}
+            className="flex items-center gap-2 text-slate-400 hover:text-amber-500 font-bold text-sm transition-all"
+          >
+            <FaGithub size={20} /> View Code
+          </motion.a>
+        </div>
+      </div>
 
-                  <div className="bg-slate-900/80 border border-slate-700/50 p-8 rounded-3xl mb-8">
-                    <p className="text-slate-300 leading-relaxed">{project.description}</p>
-                  </div>
-
-                  <div className="flex flex-wrap gap-3 mb-10">
-                    {project.tags.map((tag, i) => (
-                      <motion.div 
-                        key={tag}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: i * 0.05 }}
-                        className="flex items-center gap-2 bg-slate-800 px-5 py-2 rounded-full text-sm"
-                      >
-                        {getIcon(tag)}
-                        <span className="text-slate-300">{tag}</span>
-                      </motion.div>
-                    ))}
-                  </div>
-
-                  <div className="flex items-center gap-6">
-                    <motion.a
-                      href={project.githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-3xl text-slate-400 hover:text-white transition-colors"
-                      whileHover={{ scale: 1.25, y: -5 }}
-                      whileTap={{ scale: 0.9 }}
-                    >
-                      <FaGithub />
-                    </motion.a>
-
-                    {project.liveUrl && (
-                      <motion.a
-                        href={project.liveUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-3 px-8 py-3.5 bg-gradient-to-r from-cyan-400 to-purple-500 text-slate-950 font-semibold rounded-2xl hover:brightness-110 transition-all"
-                        whileHover={{ scale: 1.06 }}
-                        whileTap={{ scale: 0.94 }}
-                      >
-                        <FiExternalLink className="text-lg" />
-                        Live Demo
-                      </motion.a>
-                    )}
-                  </div>
-                </div>
-
-                {/* Project Image */}
-                <motion.div
-                  className={index % 2 === 0 ? 'lg:order-2' : 'lg:order-1'}
-                  whileHover={{ scale: 1.04 }}
-                  transition={{ type: 'spring', stiffness: 400 }}
-                  onClick={() => setSelectedImage(project.image)}
-                >
-                  <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-700/50 cursor-pointer group">
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="w-full h-auto object-cover aspect-video transition-transform duration-700 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
-                      <span className="text-white border border-white/80 px-7 py-3 rounded-full text-sm font-medium backdrop-blur-md">
-                        Click to enlarge
-                      </span>
-                    </div>
-                  </div>
-                </motion.div>
-              </motion.div>
-            ))}
+      {/* Image Side */}
+      <motion.div
+        className={`${isEven ? "lg:order-2" : "lg:order-1"} relative group`}
+        whileHover={{ scale: 1.02 }}
+        transition={{ duration: 0.4 }}
+      >
+        <div 
+          className="relative overflow-hidden rounded-2xl border border-white/10 cursor-pointer shadow-2xl"
+          onClick={() => onImageClick(project.image)}
+        >
+          {/* Overlay Glow */}
+          <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          
+          <img
+            src={project.image}
+            alt={project.title}
+            className="w-full aspect-video object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+          />
+          
+          {/* Click to View Indicator */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-[2px]">
+            <span className="px-5 py-2 bg-white text-black rounded-full font-bold text-sm">Expand Project</span>
           </div>
         </div>
-      </section>
 
-      {/* ====================== SKILLS SECTION ====================== */}
-      <section id="skills" className="bg-slate-900 py-20 lg:py-28 border-t border-slate-800">
-        <div className="container mx-auto px-6 lg:px-8">
-          <div className="text-center mb-14">
-            <motion.h2 
-              className="text-4xl lg:text-6xl font-bold tracking-tight bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent"
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              My Tech Stack
-            </motion.h2>
-          </div>
+        {/* Geometric Decoration */}
+        <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl -z-10" />
+      </motion.div>
+    </motion.article>
+  );
+};
 
-          {/* Tab Buttons */}
-          <div className="flex justify-center mb-12">
-            <div className="inline-flex bg-slate-800 rounded-2xl p-1">
-              <button
-                onClick={() => setActiveTab('frontend')}
-                className={`px-9 py-3 font-semibold rounded-xl transition-all duration-300 ${
-                  activeTab === 'frontend'
-                    ? 'bg-gradient-to-r from-cyan-400 to-purple-500 text-slate-950 shadow-lg'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                Frontend
-              </button>
-              <button
-                onClick={() => setActiveTab('backend')}
-                className={`px-9 py-3 font-semibold rounded-xl transition-all duration-300 ${
-                  activeTab === 'backend'
-                    ? 'bg-gradient-to-r from-cyan-400 to-purple-500 text-slate-950 shadow-lg'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                Backend
-              </button>
-            </div>
-          </div>
+const Projects = () => {
+  const [lightboxSrc, setLightboxSrc] = useState(null);
 
-          {/* Skills Grid */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -40 }}
-              transition={{ duration: 0.5 }}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto"
-            >
-              {skills[activeTab].map((skill, index) => (
-                <motion.div
-                  key={skill.name}
-                  initial={{ opacity: 0, scale: 0.8, y: 50 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{ delay: index * 0.07 }}
-                  whileHover={{ y: -10, transition: { duration: 0.2 } }}
-                  className="bg-slate-800/80 border border-slate-700 hover:border-cyan-400/40 p-7 rounded-3xl flex items-center gap-6 group"
-                >
-                  <div className="text-5xl transition-transform group-hover:scale-110 duration-300">
-                    {getIcon(skill.name)}
-                  </div>
-                  <div className="flex-1">
-                    <div className="font-medium text-xl text-white">{skill.name}</div>
-                    <div className="text-sm text-cyan-400 font-mono tracking-wider mt-1">{skill.level}</div>
-                    
-                    <div className="mt-5 h-1.5 bg-slate-700 rounded-full overflow-hidden">
-                      <motion.div
-                        className="h-full bg-gradient-to-r from-cyan-400 to-purple-500"
-                        initial={{ width: 0 }}
-                        animate={{
-                          width: skill.level === 'Beginner' ? '45%' : '78%'
-                        }}
-                        transition={{ duration: 1.5, ease: "easeOut" }}
-                      />
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      </section>
+  return (
+    <section id="projects" className="relative bg-[#0a0a0a] py-24 lg:py-40 overflow-hidden">
+      {/* Shared Background with Hero */}
+      <div className="absolute inset-0 bg-[radial-gradient(#f59e0b_0.8px,transparent_1px)] [background-size:60px_60px] opacity-10" />
+      <FloatingParticle />
 
-      {/* ====================== IMAGE MODAL ====================== */}
-      <AnimatePresence>
-        {selectedImage && (
+      <div className="container mx-auto max-w-7xl px-6 relative z-10">
+        {/* Section Header */}
+        <div className="text-center lg:text-left mb-24 space-y-4">
           <motion.div
-            className="fixed inset-0 bg-black/95 z-[100] flex items-center justify-center p-4"
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="flex items-center gap-3 justify-center lg:justify-start"
+          >
+            <span className="w-12 h-[2px] bg-amber-500" />
+            <span className="text-amber-500 font-mono tracking-widest text-sm uppercase font-bold">Portfolio</span>
+          </motion.div>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-5xl lg:text-7xl font-bold text-white tracking-tighter"
+          >
+            Selected <span className="text-amber-500">Works</span>
+          </motion.h2>
+        </div>
+
+        {/* Projects List */}
+        <div className="space-y-32 lg:space-y-48">
+          {PROJECTS.map((project, index) => (
+            <ProjectCard
+              key={project.id}
+              project={project}
+              index={index}
+              onImageClick={setLightboxSrc}
+            />
+          ))}
+        </div>
+
+        {/* View More Call to Action */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mt-32 text-center py-16 rounded-3xl bg-white/[0.02] border border-white/5 backdrop-blur-xl"
+        >
+          <h4 className="text-2xl font-bold text-white mb-6">Want to see more?</h4>
+          <motion.a
+            href="https://github.com/sabin-khatri"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-3 px-8 py-4 bg-transparent border border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-black font-bold rounded-xl transition-all duration-300"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Explore My GitHub <FiArrowRight />
+          </motion.a>
+        </motion.div>
+      </div>
+
+      {/* Lightbox Modal */}
+      <AnimatePresence>
+        {lightboxSrc && (
+          <motion.div
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4 backdrop-blur-md"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setSelectedImage(null)}
+            onClick={() => setLightboxSrc(null)}
           >
-            <motion.button
-              onClick={() => setSelectedImage(null)}
-              className="absolute top-8 right-8 text-white/70 hover:text-white z-10"
-              whileHover={{ scale: 1.2, rotate: 90 }}
-              transition={{ duration: 0.2 }}
-            >
-              <CgClose size={38} />
-            </motion.button>
-
+            <button className="absolute top-8 right-8 text-white/50 hover:text-white transition-colors">
+              <CgClose size={40} />
+            </button>
             <motion.img
-              src={selectedImage}
-              alt="Project screenshot"
-              className="max-w-full max-h-[92vh] rounded-3xl shadow-2xl"
-              initial={{ scale: 0.75, opacity: 0, rotate: -2 }}
-              animate={{ scale: 1, opacity: 1, rotate: 0 }}
-              exit={{ scale: 0.75, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              onClick={(e) => e.stopPropagation()}
+              src={lightboxSrc}
+              className="max-w-full max-h-[85vh] rounded-xl shadow-2xl border border-white/10"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
             />
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </section>
   );
 };
 
-export default ProjectsAndSkills;
+export default Projects;
