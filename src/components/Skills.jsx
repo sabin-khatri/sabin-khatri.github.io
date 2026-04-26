@@ -1,295 +1,209 @@
-/* eslint-disable no-unused-vars */
-import * as THREE from "three";
-import React, { useRef, useMemo, useState, useEffect, Suspense } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { Environment } from "@react-three/drei";
-import { EffectComposer, N8AO } from "@react-three/postprocessing";
-import { BallCollider, Physics, RigidBody, CylinderCollider } from "@react-three/rapier";
-import { motion, useInView } from "framer-motion";
 
-import imgNext       from "../assets/image/next2.webp";
-import imgNode       from "../assets/image/node2.webp";
-import imgExpress    from "../assets/image/express.webp";
-import imgMongo      from "../assets/image/mongo.webp";
-import imgMysql      from "../assets/image/mysql.webp";
+import * as THREE from "three";
+import React, { useRef, useMemo, Suspense } from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { 
+  Environment, 
+  Text, 
+  useTexture, 
+  Float, 
+  PerspectiveCamera,
+  PerformanceMonitor
+} from "@react-three/drei";
+import { EffectComposer, N8AO, Bloom } from "@react-three/postprocessing";
+import { BallCollider, Physics, RigidBody, CuboidCollider } from "@react-three/rapier";
+// eslint-disable-next-line no-unused-vars
+import { motion } from "framer-motion";
+
+// Assets
+import imgNext from "../assets/image/next2.webp";
+import imgNode from "../assets/image/node2.webp";
+import imgExpress from "../assets/image/express.webp";
+import imgMongo from "../assets/image/mongo.webp";
+import imgMysql from "../assets/image/mysql.webp";
 import imgTypescript from "../assets/image/typescript.webp";
 import imgJavascript from "../assets/image/javascript.webp";
-import imgReact      from "../assets/image/react.webp";
-import imgTailwind   from "../assets/image/tailwind.png";
+import imgReact from "../assets/image/react.webp";
+import imgTailwind from "../assets/image/tailwind.png";
 
 const IMAGE_URLS = [
   imgNext, imgNode, imgExpress, imgMongo, imgMysql,
   imgTypescript, imgJavascript, imgReact, imgTailwind,
 ];
 
-/* ── sphere count — fewer = faster ── */
-const SPHERE_COUNT    = 18; // was 30
-const SPHERE_GEOMETRY = new THREE.SphereGeometry(1, 24, 24); // was 32,32
+/* ── Configuration ── */
+const SPHERE_COUNT = 20; 
+const SPHERE_GEOMETRY = new THREE.IcosahedronGeometry(1, 3); // smoother & lighter than SphereGeo
 
-/* stable random array — created once outside component */
-const SPHERES = [...Array(SPHERE_COUNT)].map((_, i) => ({
-  scale:         [0.7, 1, 0.8, 1, 0.9][i % 5],
-  materialIndex: i % IMAGE_URLS.length,
-  position: [
-    THREE.MathUtils.randFloatSpread(18),
-    THREE.MathUtils.randFloatSpread(18) - 22,
-    THREE.MathUtils.randFloatSpread(14) - 8,
-  ],
-}));
+/* ── Invisible Walls to keep balls inside screen ── */
+function Borders() {
+  const { viewport } = useThree();
+  return (
+    <RigidBody type="fixed" colliders={false}>
+      <CuboidCollider args={[viewport.width / 2, 1, 10]} position={[0, -viewport.height / 2 - 1, 0]} /> {/* Floor */}
+      <CuboidCollider args={[viewport.width / 2, 1, 10]} position={[0, viewport.height / 2 + 1, 0]} />  {/* Ceiling */}
+      <CuboidCollider args={[1, viewport.height / 2, 10]} position={[-viewport.width / 2 - 1, 0, 0]} /> {/* Left */}
+      <CuboidCollider args={[1, viewport.height / 2, 10]} position={[viewport.width / 2 + 1, 0, 0]} />  {/* Right */}
+    </RigidBody>
+  );
+}
 
-/* ── Single sphere ───────────────────────────────────────────────────────── */
-const vecPool = new THREE.Vector3();
-const mulVec  = new THREE.Vector3();
-
-function SphereGeo({ scale, material, position }) {
-  const api = useRef(null);
-
-  useFrame((_, delta) => {
+/* ── Individual Tech Sphere ── */
+function Sphere({ vec = new THREE.Vector3(), scale, texture, ...props }) {
+  const api = useRef();
+  
+  useFrame((state, delta) => {
     if (!api.current) return;
-    const d = Math.min(0.1, delta);
-    api.current.applyImpulse(
-      vecPool
-        .copy(api.current.translation())
-        .normalize()
-        .multiply(mulVec.set(-50 * d * scale, -150 * d * scale, -50 * d * scale)),
-      true
-    );
+    // Gentle gravity toward center to keep them clustered
+    const impulse = vec.copy(api.current.translation()).negate().multiplyScalar(10 * delta);
+    api.current.applyImpulse(impulse, true);
   });
 
   return (
-    <RigidBody
-      linearDamping={0.75}
-      angularDamping={0.15}
-      friction={0.2}
-      position={position}
-      ref={api}
-      colliders={false}
+    <RigidBody 
+      ref={api} 
+      colliders={false} 
+      linearDamping={0.5} 
+      angularDamping={0.5} 
+      {...props}
     >
       <BallCollider args={[scale]} />
-      <CylinderCollider
-        rotation={[Math.PI / 2, 0, 0]}
-        position={[0, 0, 1.2 * scale]}
-        args={[0.15 * scale, 0.275 * scale]}
-      />
-      <mesh castShadow receiveShadow scale={scale} geometry={SPHERE_GEOMETRY}>
-        <meshStandardMaterial
-          map={material.map}
-          emissive={new THREE.Color("#ffffff")}
-          emissiveMap={material.map}
-          emissiveIntensity={0.12}
-          metalness={0.1}
-          roughness={0.45}
+      <mesh scale={scale} geometry={SPHERE_GEOMETRY} castShadow>
+        <meshStandardMaterial 
+          map={texture} 
+          metalness={0.2} 
+          roughness={0.2} 
+          emissive="#ffffff"
+          emissiveIntensity={0.1}
+          emissiveMap={texture}
         />
       </mesh>
     </RigidBody>
   );
 }
 
-/* ── Mouse pointer collider ──────────────────────────────────────────────── */
-const pVec = new THREE.Vector3();
+/* ── Interactive Pointer ── */
 function Pointer() {
-  const ref = useRef(null);
-  useFrame(({ pointer, viewport }) => {
+  const ref = useRef();
+  const vec = new THREE.Vector3();
+  const { viewport, pointer } = useThree();
+
+  useFrame(() => {
     if (!ref.current) return;
-    ref.current.setNextKinematicTranslation(
-      pVec.lerp(
-        new THREE.Vector3(
-          (pointer.x * viewport.width)  / 2,
-          (pointer.y * viewport.height) / 2,
-          0
-        ),
-        0.2
-      )
-    );
+    // Map mouse/touch to 3D space
+    vec.set((pointer.x * viewport.width) / 2, (pointer.y * viewport.height) / 2, 0);
+    ref.current.setNextKinematicTranslation(vec);
   });
+
   return (
-    <RigidBody position={[100, 100, 100]} type="kinematicPosition" colliders={false} ref={ref}>
-      <BallCollider args={[2]} />
+    <RigidBody type="kinematicPosition" colliders={false} ref={ref}>
+      <BallCollider args={[1.5]} />
     </RigidBody>
   );
 }
 
-/* ── 3-D Scene ───────────────────────────────────────────────────────────── */
-function Scene({ materials }) {
+/* ── Scene Components ── */
+function Scene() {
+  const textures = useTexture(IMAGE_URLS);
+  const { viewport } = useThree();
+  
+  // Adjust scale based on screen size
+  const isMobile = viewport.width < 10;
+  const sphereScale = isMobile ? 0.8 : 1.2;
+
+  const spheres = useMemo(() => {
+    return [...Array(SPHERE_COUNT)].map((_, i) => ({
+      texture: textures[i % textures.length],
+      scale: (0.6 + Math.random() * 0.5) * sphereScale,
+      position: [
+        THREE.MathUtils.randFloatSpread(10),
+        THREE.MathUtils.randFloatSpread(10),
+        THREE.MathUtils.randFloatSpread(5)
+      ]
+    }));
+  }, [textures, sphereScale]);
+
   return (
     <>
-      <ambientLight intensity={1.0} />
-      <spotLight position={[20, 20, 25]} penumbra={1} angle={0.2} castShadow={false} intensity={1.8} />
-      <directionalLight position={[-10, 10, 5]} intensity={0.8} />
+      <ambientLight intensity={0.5} />
+      <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={2} castShadow />
+      <pointLight position={[-10, -10, -10]} intensity={1} color="#f59e0b" />
 
       <Physics gravity={[0, 0, 0]}>
         <Pointer />
-        {SPHERES.map((s, i) => (
-          <SphereGeo key={i} scale={s.scale} position={s.position} material={materials[s.materialIndex]} />
+        <Borders />
+        {spheres.map((props, i) => (
+          <Sphere key={i} {...props} />
         ))}
       </Physics>
 
-      {/* lighter preset = faster load */}
-      <Environment preset="sunset" />
-
-      <EffectComposer disableNormalPass>
-        <N8AO color="#f59e0b" aoRadius={1.5} intensity={0.8} />
+      <Environment preset="night" />
+      
+      <EffectComposer multisampling={0} disableNormalPass>
+        <N8AO aoRadius={0.5} intensity={1} color="#f59e0b" />
+        <Bloom luminanceThreshold={1} intensity={0.5} levels={9} mipmapBlur />
       </EffectComposer>
     </>
   );
 }
 
-/* ── Loading placeholder ─────────────────────────────────────────────────── */
-const Loader = () => (
-  <div className="absolute inset-0 flex items-center justify-center">
-    <div className="flex flex-col items-center gap-4">
-      <div className="w-12 h-12 rounded-full border-2 border-amber-500/30 border-t-amber-400 animate-spin" />
-      <p className="text-slate-500 text-xs font-mono tracking-widest">Loading 3D scene…</p>
-    </div>
-  </div>
-);
-
-/* ── Mobile fallback grid ────────────────────────────────────────────────── */
-const TECH_NAMES = [
-  "Next.js","Node.js","Express","MongoDB",
-  "MySQL","TypeScript","JavaScript","React","Tailwind",
-];
-const MobileFallback = ({ images }) => (
-  <div className="grid grid-cols-3 gap-4 px-4 py-8">
-    {images.map((src, i) => (
-      <motion.div
-        key={i}
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: i * 0.06, duration: 0.4 }}
-        className="flex flex-col items-center gap-2"
-      >
-        <div className="w-16 h-16 rounded-2xl bg-white/[0.06] border border-white/10
-                        flex items-center justify-center p-3 hover:border-amber-400/30
-                        transition-colors duration-300">
-          <img src={src} alt={TECH_NAMES[i]} className="w-full h-full object-contain" />
-        </div>
-        <span className="text-[10px] text-slate-500 font-mono">{TECH_NAMES[i]}</span>
-      </motion.div>
-    ))}
-  </div>
-);
-
-/* ── Main Section ────────────────────────────────────────────────────────── */
+/* ── Main Component ── */
 const TechStack = () => {
-  const [isMobile, setIsMobile] = useState(false);
-  const [show3D,   setShow3D]   = useState(false);
-  const sectionRef = useRef(null);
-  const inView     = useInView(sectionRef, { once: true, amount: 0.1 });
-
-  /* detect mobile */
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-
-  /* lazy-mount canvas only when section is visible */
-  useEffect(() => {
-    if (inView && !isMobile) setShow3D(true);
-  }, [inView, isMobile]);
-
-  /* textures — created once */
-  const materials = useMemo(() =>
-    IMAGE_URLS.map((url) => {
-      const tex = new THREE.TextureLoader().load(url, (t) => {
-        t.colorSpace = THREE.SRGBColorSpace;
-        t.needsUpdate = true;
-      });
-      tex.colorSpace = THREE.SRGBColorSpace;
-      return { map: tex };
-    }),
-  []);
-
   return (
-    <section
-      id="skills"
-      ref={sectionRef}
-      className="relative w-full bg-[#0a0a0a] overflow-hidden"
-      style={{ minHeight: isMobile ? "auto" : "100vh" }}
-    >
-      {/* dot-grid */}
-      <div className="absolute inset-0 bg-[radial-gradient(#f59e0b_0.8px,transparent_1px)]
-                      [background-size:60px_60px] opacity-10 pointer-events-none" />
-
-      {/* Section heading */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.5 }}
-        className="relative z-10 pt-20 pb-4 text-center pointer-events-none"
-      >
-        <p className="text-amber-500 font-mono tracking-[0.4em] text-xs font-bold uppercase mb-3">
-          Stack Playground
-        </p>
-        <h2 className="text-4xl sm:text-5xl lg:text-7xl font-black text-white tracking-tighter">
-          TECH <span className="text-amber-500">Stack</span>
-        </h2>
-      </motion.div>
-
-      {/* ── MOBILE: icon grid ── */}
-      {isMobile && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="relative z-10 pb-16"
+    <section id="skills" className="relative w-full h-screen bg-[#060606] overflow-hidden">
+      
+      {/* HUD / UI Layer */}
+      <div className="absolute inset-0 z-10 pointer-events-none flex flex-col items-center justify-between py-12 px-6">
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          className="text-center"
         >
-          <MobileFallback images={IMAGE_URLS} />
+          <p className="text-amber-500 font-mono tracking-[0.5em] text-[10px] sm:text-xs font-bold uppercase mb-2">
+            Skill Laboratory
+          </p>
+          <h2 className="text-5xl sm:text-7xl lg:text-8xl font-black text-white tracking-tighter">
+            TECH <span className="text-amber-500 transition-all duration-500 hover:italic">STACK</span>
+          </h2>
         </motion.div>
-      )}
 
-      {/* ── DESKTOP: 3-D canvas ── */}
-      {!isMobile && (
-        <div className="relative" style={{ height: "calc(100vh - 140px)" }}>
-          {/* show loader until canvas mounts */}
-          {!show3D && <Loader />}
+        {/* Bottom Description */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="flex flex-wrap justify-center gap-3 max-w-2xl"
+        >
+          {["React", "Next.js", "Node.js", "MongoDB", "Tailwind"].map((tech) => (
+            <span key={tech} className="px-4 py-1 rounded-full border border-white/10 bg-white/5 text-white/40 font-mono text-[10px] uppercase tracking-widest">
+              {tech}
+            </span>
+          ))}
+        </motion.div>
+      </div>
 
-          {show3D && (
-            <Canvas
-              shadows={false}          /* shadows off = big perf win */
-              frameloop="demand"       /* only render when something changes */
-              dpr={[1, 1.5]}           /* cap pixel ratio */
-              gl={{
-                antialias:          true,
-                toneMapping:        THREE.ACESFilmicToneMapping,
-                toneMappingExposure:1.1,
-                outputColorSpace:   THREE.SRGBColorSpace,
-                powerPreference:    "high-performance",
-              }}
-              camera={{ position: [0, 0, 20], fov: 32.5, near: 1, far: 100 }}
-            >
-              <Suspense fallback={null}>
-                <Scene materials={materials} />
-              </Suspense>
-            </Canvas>
-          )}
-        </div>
-      )}
+      {/* 3D Context */}
+      <div className="absolute inset-0 cursor-grab active:cursor-grabbing">
+        <Canvas
+          shadows
+          dpr={[1, 2]} // Performance optimization for high-res screens
+          gl={{ 
+            antialias: false, // Turned off because EffectComposer handles it
+            powerPreference: "high-performance" 
+          }}
+          camera={{ position: [0, 0, 20], fov: 35 }}
+        >
+          <Suspense fallback={null}>
+            <Scene />
+          </Suspense>
+        </Canvas>
+      </div>
 
-      {/* bottom stats row */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.5, delay: 0.3 }}
-        className="relative z-10 grid grid-cols-2 md:grid-cols-3 gap-4
-                   px-6 pb-16 max-w-4xl mx-auto"
-      >
-        {[
-          { label: "Frontend",     value: "React · Next.js · Tailwind" },
-          { label: "Backend",      value: "Node.js · MongoDB" },
-          { label: "Tools & DB",   value: "TypeScript · MySQL · Git"   },
-        ].map((s, i) => (
-          <div key={i}
-            className="p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06]
-                       hover:border-amber-500/30 transition-colors text-center"
-          >
-            <div className="text-amber-500 font-semibold text-xs sm:text-sm mb-1">{s.value}</div>
-            <div className="text-slate-500 text-[10px] uppercase tracking-widest font-mono">{s.label}</div>
-          </div>
-        ))}
-      </motion.div>
+      {/* Decorative Background Grid */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
+      
+      {/* Background Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-amber-500/10 blur-[120px] rounded-full pointer-events-none" />
     </section>
   );
 };
