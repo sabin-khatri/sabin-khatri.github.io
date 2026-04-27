@@ -1,9 +1,8 @@
 /* eslint-disable no-unused-vars */
-import React, { useMemo, useEffect, useRef, useState } from "react";
+import React, { useMemo, useEffect, useRef, useState, useCallback } from "react";
 import {
   motion,
   useMotionValue, useSpring, useTransform,
-  useAnimationFrame, useMotionTemplate,
 } from "framer-motion";
 import { useTypewriter, Cursor } from "react-simple-typewriter";
 import { HiOutlineArrowRight } from "react-icons/hi";
@@ -15,27 +14,37 @@ const socialLinks = [
   { name: "LinkedIn", icon: <FaLinkedin />, url: "https://www.linkedin.com/in/sabin-khatri-25460b26a/" },
 ];
 
-/* ── Floating particles ──────────────────────────────────────────────────── */
+/* ─────────────────────────────────────────────────────────────────────────────
+   FLOATING PARTICLES
+───────────────────────────────────────────────────────────────────────────── */
 const Particle = ({ left, size, duration, delay }) => (
   <motion.div
-    className="absolute rounded-full bg-gradient-to-b from-amber-400/30 to-orange-500/20"
-    style={{ left, width: size, height: size }}
+    className="absolute rounded-full"
+    style={{
+      left,
+      width: size,
+      height: size,
+      background: "radial-gradient(circle, rgba(245,158,11,0.55) 0%, rgba(251,146,60,0.15) 100%)",
+      filter: "blur(0.5px)",
+    }}
     initial={{ y: "110vh", opacity: 0 }}
-    animate={{ y: "-15vh", opacity: [0, 0.6, 0.3, 0] }}
+    animate={{ y: "-15vh", opacity: [0, 0.7, 0.4, 0] }}
     transition={{ duration, delay, repeat: Infinity, repeatType: "loop", ease: "linear" }}
   />
 );
 
-const BackgroundParticles = ({ count = 40 }) => {
-  const particles = useMemo(() =>
-    Array.from({ length: count }).map((_, i) => ({
-      id: i,
-      left:     `${Math.random() * 100}%`,
-      size:     Math.random() * 3 + 1.5,
-      duration: Math.random() * 22 + 16,
-      delay:    Math.random() * -25,
-    })),
-  [count]);
+const BackgroundParticles = ({ count = 45 }) => {
+  const particles = useMemo(
+    () =>
+      Array.from({ length: count }).map((_, i) => ({
+        id: i,
+        left:     `${Math.random() * 100}%`,
+        size:     Math.random() * 3 + 1.5,
+        duration: Math.random() * 22 + 16,
+        delay:    Math.random() * -28,
+      })),
+    [count]
+  );
   return (
     <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
       {particles.map((p) => <Particle key={p.id} {...p} />)}
@@ -43,133 +52,204 @@ const BackgroundParticles = ({ count = 40 }) => {
   );
 };
 
-/* ── Moving Border ───────────────────────────────────────────────────────── */
-const MovingBorder = ({ children, duration = 2000, rx, ry, ...rest }) => {
-  const pathRef   = useRef(null);
-  const progress  = useMotionValue(0);
-
-  useAnimationFrame((time) => {
-    const len = pathRef.current?.getTotalLength();
-    if (len) progress.set((time * (len / duration)) % len);
-  });
-
-  const x = useTransform(progress, (v) => pathRef.current?.getPointAtLength(v).x);
-  const y = useTransform(progress, (v) => pathRef.current?.getPointAtLength(v).y);
-  const transform = useMotionTemplate`translateX(${x}px) translateY(${y}px) translateX(-50%) translateY(-50%)`;
-
-  return (
-    <>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        preserveAspectRatio="none"
-        className="absolute h-full w-full"
-        width="100%" height="100%"
-        {...rest}
-      >
-        <rect fill="none" width="100%" height="100%" rx={rx} ry={ry} ref={pathRef} />
-      </svg>
-      <motion.div style={{ position: "absolute", top: 0, left: 0, display: "inline-block", transform }}>
-        {children}
-      </motion.div>
-    </>
-  );
-};
-
+/* ─────────────────────────────────────────────────────────────────────────────
+   MOVING BORDER BUTTON
+   Fix: use performance.now() + perimeter math directly — no getTotalLength()
+   so the dot never stutters or pauses.
+───────────────────────────────────────────────────────────────────────────── */
 const MovingBorderBtn = ({
   href,
   children,
-  duration      = 2000,
+  duration      = 3000,
   borderRadius  = "0.75rem",
-  borderClass   = "",
+  glowColor     = "rgba(245,158,11,0.55)",
   innerClass    = "",
   hoverShadow   = "",
 }) => {
+  const dotRef   = useRef(null);
+  const rafRef   = useRef(null);
+  const wrapRef  = useRef(null);
+  const startRef = useRef(null);
   const [hovered, setHovered] = useState(false);
+
+  const animate = useCallback((ts) => {
+    if (startRef.current === null) startRef.current = ts;
+    const elapsed = ts - startRef.current;
+
+    const el = wrapRef.current;
+    const dot = dotRef.current;
+    if (!el || !dot) { rafRef.current = requestAnimationFrame(animate); return; }
+
+    const W = el.offsetWidth;
+    const H = el.offsetHeight;
+    const perimeter = 2 * (W + H);
+    const progress  = (elapsed % duration) / duration; // 0 → 1
+    const dist      = progress * perimeter;
+
+    let x, y;
+    if (dist < W) {                    // top edge →
+      x = dist;           y = 0;
+    } else if (dist < W + H) {         // right edge ↓
+      x = W;              y = dist - W;
+    } else if (dist < 2 * W + H) {     // bottom edge ←
+      x = W - (dist - W - H); y = H;
+    } else {                           // left edge ↑
+      x = 0;              y = H - (dist - 2 * W - H);
+    }
+
+    dot.style.transform = `translate(${x - 7}px, ${y - 7}px)`;
+    rafRef.current = requestAnimationFrame(animate);
+  }, [duration]);
+
+  useEffect(() => {
+    rafRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [animate]);
+
   return (
-    <a
+    <motion.a
       href={href}
+      ref={wrapRef}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="relative overflow-hidden p-[1.5px] inline-flex"
+      whileHover={{ y: -3, scale: 1.04 }}
+      whileTap={{ scale: 0.97 }}
+      transition={{ type: "spring", stiffness: 380, damping: 28 }}
+      className="relative overflow-hidden inline-flex cursor-pointer no-underline"
       style={{
         borderRadius,
         boxShadow: hovered ? hoverShadow : "none",
-        transform: hovered ? "translateY(-3px) scale(1.04)" : "translateY(0) scale(1)",
-        transition: "box-shadow 0.3s ease, transform 0.3s ease",
+        transition: "box-shadow 0.3s ease",
+        padding: "1.5px",
       }}
     >
-      {/* animated border dot */}
-      <div className="absolute inset-0" style={{ borderRadius }}>
-        <MovingBorder duration={duration} rx="30%" ry="30%">
-          <div className={`h-14 w-14 opacity-90 ${borderClass}`} />
-        </MovingBorder>
-      </div>
-
-      {/* button content */}
+      {/* Animated border glow dot */}
       <div
-        className={`relative z-10 flex items-center gap-2.5 px-8 py-3.5 text-base font-semibold backdrop-blur-xl ${innerClass}`}
-        style={{ borderRadius: `calc(${borderRadius} * 0.96)` }}
+        ref={dotRef}
+        className="absolute pointer-events-none z-0"
+        style={{
+          width: 14,
+          height: 14,
+          borderRadius: "50%",
+          background: glowColor,
+          filter: `blur(5px)`,
+          opacity: 0.9,
+          top: 0,
+          left: 0,
+        }}
+      />
+
+      {/* Subtle border outline */}
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{
+          borderRadius,
+          border: "1px solid rgba(245,158,11,0.22)",
+        }}
+      />
+
+      {/* Content */}
+      <div
+        className={`relative z-10 flex items-center gap-2.5 px-7 py-3.5 text-base font-semibold backdrop-blur-xl ${innerClass}`}
+        style={{ borderRadius: `calc(${borderRadius} - 1.5px)` }}
       >
         {children}
       </div>
-    </a>
+    </motion.a>
   );
 };
 
-/* ── Hero ────────────────────────────────────────────────────────────────── */
+/* ─────────────────────────────────────────────────────────────────────────────
+   HERO SECTION
+───────────────────────────────────────────────────────────────────────────── */
 const Hero = () => {
   const [text] = useTypewriter({
     words: ["Frontend Developer", "React Developer", "UI/UX Enthusiast"],
     loop: true, typeSpeed: 80, deleteSpeed: 50, delaySpeed: 2200,
   });
 
-  const mouseX   = useMotionValue(0);
-  const mouseY   = useMotionValue(0);
-  const smoothX  = useSpring(mouseX, { stiffness: 40, damping: 25 });
-  const smoothY  = useSpring(mouseY, { stiffness: 40, damping: 25 });
-  const parallaxX = useTransform(smoothX, [0, 1920], [-20, 20]);
-  const parallaxY = useTransform(smoothY, [0, 1080], [-20, 20]);
+  const mouseX  = useMotionValue(0);
+  const mouseY  = useMotionValue(0);
+  const smoothX = useSpring(mouseX, { stiffness: 40, damping: 25 });
+  const smoothY = useSpring(mouseY, { stiffness: 40, damping: 25 });
+  const parallaxX = useTransform(smoothX, [0, 1920], [-18, 18]);
+  const parallaxY = useTransform(smoothY, [0, 1080], [-18, 18]);
 
   useEffect(() => {
     const handle = (e) => { mouseX.set(e.clientX); mouseY.set(e.clientY); };
-    window.addEventListener("mousemove", handle);
+    window.addEventListener("mousemove", handle, { passive: true });
     return () => window.removeEventListener("mousemove", handle);
   }, [mouseX, mouseY]);
+
+  /* stagger helper */
+  const fadeUp = (delay = 0) => ({
+    initial: { opacity: 0, y: 28 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] },
+  });
 
   return (
     <section
       id="home"
       className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#0a0a0a] text-white"
     >
-      {/* dot-grid */}
-      <div className="absolute inset-0 bg-[radial-gradient(#f59e0b_0.8px,transparent_1px)] [background-size:60px_60px] opacity-20" />
-
-      <BackgroundParticles count={45} />
-
-      {/* mouse glow — desktop only */}
-      <motion.div
-        className="absolute inset-0 z-0 pointer-events-none hidden lg:block"
+      {/* dot-grid overlay */}
+      <div
+        className="absolute inset-0 opacity-[0.18] pointer-events-none"
         style={{
-          background: `radial-gradient(700px circle at var(--mouse-x,50%) var(--mouse-y,50%), rgba(245,158,11,0.12), transparent 70%)`,
+          backgroundImage: "radial-gradient(#f59e0b 0.8px, transparent 1px)",
+          backgroundSize: "58px 58px",
         }}
       />
 
-      <div className="container mx-auto max-w-7xl relative z-10 px-5 sm:px-6 pt-24 pb-16">
-        <div className="flex flex-col lg:grid lg:grid-cols-2 lg:gap-24 items-center gap-10">
+      <BackgroundParticles count={48} />
 
-          {/* ── IMAGE — top on mobile, right on desktop ── */}
+      {/* ambient mouse glow */}
+      <motion.div
+        className="absolute inset-0 z-0 pointer-events-none hidden lg:block"
+        style={{
+          background: "radial-gradient(600px circle at 50% 50%, rgba(245,158,11,0.11), transparent 70%)",
+        }}
+      />
+
+      {/* large ambient orbs */}
+      <div
+        className="absolute top-[-8%] left-[-12%] w-[480px] h-[480px] rounded-full pointer-events-none"
+        style={{
+          background: "radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%)",
+          filter: "blur(60px)",
+        }}
+      />
+      <div
+        className="absolute bottom-[-10%] right-[-8%] w-[400px] h-[400px] rounded-full pointer-events-none"
+        style={{
+          background: "radial-gradient(circle, rgba(251,146,60,0.07) 0%, transparent 70%)",
+          filter: "blur(60px)",
+        }}
+      />
+
+      <div className="container mx-auto max-w-7xl relative z-10 px-5 sm:px-6 pt-28 pb-16">
+        <div className="flex flex-col lg:grid lg:grid-cols-2 lg:gap-20 items-center gap-12">
+
+          {/* ── PROFILE IMAGE ── right on desktop, top on mobile */}
           <motion.div
             className="flex justify-center lg:justify-end lg:order-2 w-full"
             style={{ x: parallaxX, y: parallaxY }}
-            initial={{ scale: 0.8, opacity: 0 }}
+            initial={{ scale: 0.82, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 1.4, ease: "easeOut" }}
+            transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
           >
             <div className="relative w-[240px] h-[240px] sm:w-[300px] sm:h-[300px] lg:w-[460px] lg:h-[460px]">
-              <div className="absolute inset-0 rounded-full border border-amber-400/30
-                              bg-gradient-to-br from-amber-900/30 to-transparent
+
+              {/* outer ring */}
+              <div className="absolute inset-0 rounded-full border border-amber-400/25
+                              bg-gradient-to-br from-amber-900/20 to-transparent
                               backdrop-blur-3xl shadow-2xl shadow-amber-500/10" />
-              <div className="absolute inset-5 lg:inset-8 rounded-full border border-amber-400/20" />
+
+              {/* middle ring */}
+              <div className="absolute inset-5 lg:inset-8 rounded-full border border-amber-400/15" />
+
+              {/* photo */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="relative">
                   <img
@@ -177,17 +257,20 @@ const Hero = () => {
                     alt="Sabin Khatri"
                     className="w-44 h-44 sm:w-56 sm:h-56 lg:w-80 lg:h-80
                                rounded-full object-cover
-                               border-4 lg:border-8 border-amber-400/30
+                               border-4 lg:border-[6px] border-amber-400/35
                                shadow-2xl shadow-black/80"
                   />
-                  <div className="absolute -inset-4 lg:-inset-6 border-2 border-amber-400/40
+                  {/* rotated corner frame */}
+                  <div className="absolute -inset-4 lg:-inset-6 border-2 border-amber-400/35
                                   rounded-[2rem] lg:rounded-[3rem] rotate-12 pointer-events-none" />
                 </div>
               </div>
+
+              {/* orbiting dots — slow, continuous */}
               <motion.div
                 className="absolute inset-0"
                 animate={{ rotate: 360 }}
-                transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+                transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
               >
                 {Array.from({ length: 8 }).map((_, i) => (
                   <div
@@ -195,47 +278,83 @@ const Hero = () => {
                     className="absolute w-1 h-1 lg:w-1.5 lg:h-1.5 bg-amber-400 rounded-full"
                     style={{
                       top: "50%", left: "50%",
-                      transform: `rotate(${i * 45}deg) translateY(-110px)`,
+                      transform: `rotate(${i * 45}deg) translateY(-112px)`,
+                      boxShadow: "0 0 6px #f59e0b",
                     }}
                   />
                 ))}
               </motion.div>
+
+              {/* counter-rotating ring */}
+              <motion.div
+                className="absolute inset-2 lg:inset-4 rounded-full"
+                style={{ border: "1px dashed rgba(245,158,11,0.18)" }}
+                animate={{ rotate: -360 }}
+                transition={{ duration: 80, repeat: Infinity, ease: "linear" }}
+              />
             </div>
           </motion.div>
 
-          {/* ── TEXT — bottom on mobile, left on desktop ── */}
-          <motion.div
-            className="lg:order-1 text-center lg:text-left space-y-6 lg:space-y-8 w-full"
-            initial={{ opacity: 0, x: -60 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
-          >
+          {/* ── TEXT CONTENT ── left on desktop, bottom on mobile */}
+          <div className="lg:order-1 text-center lg:text-left space-y-6 lg:space-y-8 w-full">
+
+            {/* badge */}
+            <motion.div
+              {...fadeUp(0.1)}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full
+                         border border-amber-400/20 bg-amber-400/[0.06] backdrop-blur-sm
+                         text-amber-400 text-xs font-semibold tracking-widest uppercase mx-auto lg:mx-0"
+              style={{ fontFamily: "'Syne', sans-serif" }}
+            >
+              <span
+                className="w-1.5 h-1.5 rounded-full bg-amber-400"
+                style={{ boxShadow: "0 0 6px #f59e0b" }}
+              />
+              Available for opportunities
+            </motion.div>
+
             {/* name */}
-            <div>
-              <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tighter leading-none">
-                <span className="text-[#f59e0b]">Sabin</span> Khatri
+            <motion.div {...fadeUp(0.2)}>
+              <h1
+                className="text-4xl sm:text-5xl lg:text-[4.5rem] font-black tracking-tighter leading-[1.0]"
+                style={{ fontFamily: "'Syne', sans-serif" }}
+              >
+                <span style={{ color: "#f59e0b", textShadow: "0 0 40px rgba(245,158,11,0.3)" }}>
+                  Sabin
+                </span>{" "}
+                Khatri
               </h1>
-              <p className="text-lg sm:text-2xl lg:text-3xl text-slate-300 mt-2 lg:mt-3 font-light tracking-wide min-h-[2rem]">
+              <p
+                className="text-lg sm:text-2xl lg:text-3xl text-slate-300 mt-2 lg:mt-3 font-light tracking-wide min-h-[2.25rem]"
+                style={{ fontFamily: "'DM Sans', sans-serif" }}
+              >
                 {text}
                 <Cursor cursorColor="#f59e0b" cursorStyle="|" />
               </p>
-            </div>
+            </motion.div>
 
             {/* description */}
-            <p className="text-sm sm:text-base lg:text-lg text-slate-400 max-w-sm mx-auto lg:mx-0 leading-relaxed">
+            <motion.p
+              {...fadeUp(0.32)}
+              className="text-sm sm:text-base lg:text-[1.05rem] text-slate-400 max-w-sm
+                         mx-auto lg:mx-0 leading-relaxed"
+              style={{ fontFamily: "'DM Sans', sans-serif" }}
+            >
               Building elegant digital experiences with modern web technologies.
               Passionate about clean code, smooth animations, and meaningful interfaces.
-            </p>
+            </motion.p>
 
-            {/* ── Moving Border CTA Buttons ── */}
-            <div className="flex flex-wrap items-center gap-4 justify-center lg:justify-start pt-2">
-
+            {/* CTA buttons */}
+            <motion.div
+              {...fadeUp(0.44)}
+              className="flex flex-wrap items-center gap-4 justify-center lg:justify-start pt-1"
+            >
               <MovingBorderBtn
                 href="#projects"
-                duration={2500}
-                borderClass="bg-[radial-gradient(#f59e0b_40%,transparent_60%)]"
-                innerClass="bg-amber-400/10 border border-amber-400/30 text-white hover:text-amber-300"
-                hoverShadow="0 8px 30px rgba(245,158,11,0.4), 0 0 0 1px rgba(245,158,11,0.25)"
+                duration={2800}
+                glowColor="rgba(245,158,11,0.7)"
+                innerClass="bg-amber-400/10 text-white hover:text-amber-300"
+                hoverShadow="0 8px 36px rgba(245,158,11,0.38), 0 0 0 1px rgba(245,158,11,0.22)"
               >
                 Explore My Work
                 <HiOutlineArrowRight className="w-4 h-4" />
@@ -243,33 +362,42 @@ const Hero = () => {
 
               <MovingBorderBtn
                 href="#contact"
-                duration={3200}
-                borderClass="bg-[radial-gradient(#fb923c_40%,transparent_60%)]"
-                innerClass="bg-white/[0.03] border border-white/15 text-slate-300 hover:text-white"
-                hoverShadow="0 8px 30px rgba(251,146,60,0.25)"
+                duration={3800}
+                glowColor="rgba(251,146,60,0.65)"
+                innerClass="bg-white/[0.03] text-slate-300 hover:text-white"
+                hoverShadow="0 8px 30px rgba(251,146,60,0.22)"
               >
                 Get In Touch
               </MovingBorderBtn>
-
-            </div>
+            </motion.div>
 
             {/* social links */}
-            <div className="flex gap-6 justify-center lg:justify-start text-3xl lg:text-4xl text-slate-400">
+            <motion.div
+              {...fadeUp(0.56)}
+              className="flex gap-5 justify-center lg:justify-start"
+            >
               {socialLinks.map((link, i) => (
                 <motion.a
                   key={i}
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  whileHover={{ scale: 1.3, color: "#f59e0b" }}
-                  transition={{ type: "spring", stiffness: 400 }}
+                  aria-label={link.name}
+                  className="w-11 h-11 flex items-center justify-center rounded-xl
+                             text-[20px] text-slate-500
+                             border border-white/[0.08] bg-white/[0.03]
+                             hover:text-amber-400 hover:border-amber-400/40
+                             transition-colors duration-250"
+                  whileHover={{ scale: 1.18, y: -3 }}
+                  whileTap={{ scale: 0.92 }}
+                  transition={{ type: "spring", stiffness: 420, damping: 24 }}
                 >
                   {link.icon}
                 </motion.a>
               ))}
-            </div>
-          </motion.div>
+            </motion.div>
 
+          </div>
         </div>
       </div>
     </section>
