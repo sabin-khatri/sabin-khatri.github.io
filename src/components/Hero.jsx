@@ -14,9 +14,7 @@ const socialLinks = [
   { name: "LinkedIn", icon: <FaLinkedin />, url: "https://www.linkedin.com/in/sabin-khatri-25460b26a/" },
 ];
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   FLOATING PARTICLES
-───────────────────────────────────────────────────────────────────────────── */
+/*FLOATING PARTICLES */
 const Particle = ({ left, size, duration, delay }) => (
   <motion.div
     className="absolute rounded-full"
@@ -52,11 +50,6 @@ const BackgroundParticles = ({ count = 45 }) => {
   );
 };
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   MOVING BORDER BUTTON
-   Fix: use performance.now() + perimeter math directly — no getTotalLength()
-   so the dot never stutters or pauses.
-───────────────────────────────────────────────────────────────────────────── */
 const MovingBorderBtn = ({
   href,
   children,
