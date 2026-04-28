@@ -324,10 +324,10 @@ const Navbar = () => {
               {menuOpen ? (
                 <motion.span
                   key="close"
-                  initial={{ opacity: 0, rotate: -60, scale: 0.7 }}
-                  animate={{ opacity: 1, rotate: 0,   scale: 1   }}
-                  exit={  { opacity: 0, rotate:  60, scale: 0.7 }}
-                  transition={{ duration: 0.18, ease: "easeOut" }}
+                  initial={{ opacity: 0, scale: 0.6 }}
+                  animate={{ opacity: 1, scale: 1   }}
+                  exit={  { opacity: 0, scale: 0.6 }}
+                  transition={{ duration: 0.15, ease: "easeOut" }}
                   style={{ display: "flex", willChange: "transform, opacity" }}
                 >
                   <HiX style={{ fontSize: 22 }} />
@@ -335,10 +335,10 @@ const Navbar = () => {
               ) : (
                 <motion.span
                   key="menu"
-                  initial={{ opacity: 0, rotate:  60, scale: 0.7 }}
-                  animate={{ opacity: 1, rotate: 0,   scale: 1   }}
-                  exit={  { opacity: 0, rotate: -60, scale: 0.7 }}
-                  transition={{ duration: 0.18, ease: "easeOut" }}
+                  initial={{ opacity: 0, scale: 0.6 }}
+                  animate={{ opacity: 1, scale: 1   }}
+                  exit={  { opacity: 0, scale: 0.6 }}
+                  transition={{ duration: 0.15, ease: "easeOut" }}
                   style={{ display: "flex", willChange: "transform, opacity" }}
                 >
                   <HiMenuAlt3 style={{ fontSize: 22 }} />
