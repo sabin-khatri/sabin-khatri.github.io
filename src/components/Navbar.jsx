@@ -118,7 +118,6 @@ const DrawerLink = ({ link, index, isActive, onClick }) => {
       }}
       whileHover={!isActive ? { backgroundColor: "rgba(255,255,255,0.04)", color: "#fff" } : {}}
       whileTap={{ scale: 0.97 }}
-      transition={SPRING_FAST}
     >
       {isActive && (
         <motion.div
