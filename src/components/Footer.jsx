@@ -4,9 +4,9 @@ import { FaGithub, FaLinkedin, FaFacebook } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const socialLinks = [
-  { name: 'GitHub',   icon: <FaGithub />,  url: 'https://github.com' },
-  { name: 'LinkedIn', icon: <FaLinkedin />, url: 'https://linkedin.com' },
-  { name: 'Facebook', icon: <FaFacebook />, url: 'https://facebook.com' },
+  { name: 'GitHub',   icon: <FaGithub />,  url: 'https://github.com/sabin-khatri' },
+  { name: 'LinkedIn', icon: <FaLinkedin />, url: 'https://www.linkedin.com/in/sabin-khatri-25460b26a/' },
+  { name: 'Facebook', icon: <FaFacebook />, url: 'https://www.facebook.com/sabin.khatri.77312/' },
 ];
 
 const Rocket = () => {
@@ -134,9 +134,6 @@ const Footer = () => {
             <a href="#home" className="text-3xl font-black tracking-tighter text-white">
               SABIN<span className="text-amber-500">.</span>
             </a>
-            <p className="text-amber-500/60 text-[10px] font-mono tracking-[0.3em] uppercase mt-1">
-              Creative Developer
-            </p>
           </div>
 
         
