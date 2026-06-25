@@ -1,6 +1,6 @@
 
 import * as THREE from "three";
-import React, { useRef, useMemo, Suspense } from "react";
+import React, { useRef, useMemo, Suspense, useState, useEffect } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { 
   Environment, 
@@ -8,12 +8,12 @@ import {
   useTexture, 
   Float, 
   PerspectiveCamera,
-  PerformanceMonitor
 } from "@react-three/drei";
 import { EffectComposer, N8AO, Bloom } from "@react-three/postprocessing";
 import { BallCollider, Physics, RigidBody, CuboidCollider } from "@react-three/rapier";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
+import { useSettings } from '../lib/SettingsContext';
 
 // Assets
 import imgNext from "../assets/image/next2.webp";
@@ -32,8 +32,9 @@ const IMAGE_URLS = [
 ];
 
 /* ── Configuration ── */
-const SPHERE_COUNT = 20; 
-const SPHERE_GEOMETRY = new THREE.IcosahedronGeometry(1, 3); // smoother & lighter than SphereGeo
+const SPHERE_COUNT_DESKTOP = 16;
+const SPHERE_COUNT_MOBILE = 8;
+const SPHERE_GEOMETRY = new THREE.IcosahedronGeometry(1, 2);
 
 /* ── Invisible Walls to keep balls inside screen ── */
 function Borders() {
@@ -103,16 +104,15 @@ function Pointer() {
 }
 
 /* ── Scene Components ── */
-function Scene() {
+function Scene({ sphereCount, lowFx, accentColor }) {
   const textures = useTexture(IMAGE_URLS);
   const { viewport } = useThree();
   
-  // Adjust scale based on screen size
   const isMobile = viewport.width < 10;
   const sphereScale = isMobile ? 0.8 : 1.2;
 
   const spheres = useMemo(() => {
-    return [...Array(SPHERE_COUNT)].map((_, i) => ({
+    return [...Array(sphereCount)].map((_, i) => ({
       texture: textures[i % textures.length],
       scale: (0.6 + Math.random() * 0.5) * sphereScale,
       position: [
@@ -121,13 +121,13 @@ function Scene() {
         THREE.MathUtils.randFloatSpread(5)
       ]
     }));
-  }, [textures, sphereScale]);
+  }, [textures, sphereScale, sphereCount]);
 
   return (
     <>
       <ambientLight intensity={0.5} />
       <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={2} castShadow />
-      <pointLight position={[-10, -10, -10]} intensity={1} color="#f59e0b" />
+      <pointLight position={[-10, -10, -10]} intensity={1} color={accentColor} />
 
       <Physics gravity={[0, 0, 0]}>
         <Pointer />
@@ -137,20 +137,56 @@ function Scene() {
         ))}
       </Physics>
 
-      <Environment preset="night" />
+      {!lowFx && <Environment preset="night" />}
       
-      <EffectComposer multisampling={0} disableNormalPass>
-        <N8AO aoRadius={0.5} intensity={1} color="#f59e0b" />
-        <Bloom luminanceThreshold={1} intensity={0.5} levels={9} mipmapBlur />
-      </EffectComposer>
+      {!lowFx && (
+        <EffectComposer multisampling={0} disableNormalPass>
+          <N8AO aoRadius={0.5} intensity={0.8} color={accentColor} />
+          <Bloom luminanceThreshold={1.2} intensity={0.35} levels={5} mipmapBlur />
+        </EffectComposer>
+      )}
     </>
   );
 }
 
 /* ── Main Component ── */
 const TechStack = () => {
+  const { theme, accent } = useSettings();
+  const sectionRef = useRef(null);
+  const [canvasReady, setCanvasReady] = useState(false);
+  const [sphereCount, setSphereCount] = useState(SPHERE_COUNT_DESKTOP);
+  const [lowFx, setLowFx] = useState(false);
+  const [accentColor, setAccentColor] = useState('#f59e0b');
+
+  useEffect(() => {
+    const color = getComputedStyle(document.documentElement).getPropertyValue('--os-accent').trim();
+    if (color) setAccentColor(color);
+  }, [theme, accent]);
+
+  useEffect(() => {
+    const updateCount = () => {
+      const mobile = window.innerWidth < 768;
+      setSphereCount(mobile ? SPHERE_COUNT_MOBILE : SPHERE_COUNT_DESKTOP);
+      setLowFx(mobile || window.innerWidth < 1024);
+    };
+    updateCount();
+    window.addEventListener('resize', updateCount, { passive: true });
+    return () => window.removeEventListener('resize', updateCount);
+  }, []);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setCanvasReady(true); },
+      { rootMargin: '150px' }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
   return (
-    <section id="skills" className="relative w-full h-screen bg-[#060606] overflow-hidden">
+    <section ref={sectionRef} id="skills" className="relative w-full h-screen bg-section overflow-hidden">
       
       {/* HUD / UI Layer */}
       <div className="absolute inset-0 z-10 pointer-events-none flex flex-col items-center justify-between py-12 px-6">
@@ -159,11 +195,11 @@ const TechStack = () => {
           whileInView={{ opacity: 1, y: 0 }}
           className="text-center"
         >
-          <p className="text-amber-500 font-mono tracking-[0.5em] text-[10px] sm:text-xs font-bold uppercase mb-2">
+          <p className="text-accent font-mono tracking-[0.5em] text-[10px] sm:text-xs font-bold uppercase mb-2">
             Skill Laboratory
           </p>
-          <h2 className="text-5xl sm:text-7xl lg:text-8xl font-black text-white tracking-tighter">
-            TECH <span className="text-amber-500 transition-all duration-500 hover:italic">STACK</span>
+          <h2 className="text-5xl sm:text-7xl lg:text-8xl font-black text-os-text tracking-tighter">
+            TECH <span className="text-accent transition-all duration-500 hover:italic">STACK</span>
           </h2>
         </motion.div>
 
@@ -182,28 +218,34 @@ const TechStack = () => {
         </motion.div>
       </div>
 
-      {/* 3D Context */}
+      {/* 3D Context — only mounts when section is near viewport */}
       <div className="absolute inset-0 cursor-grab active:cursor-grabbing">
-        <Canvas
-          shadows
-          dpr={[1, 2]} // Performance optimization for high-res screens
-          gl={{ 
-            antialias: false, // Turned off because EffectComposer handles it
-            powerPreference: "high-performance" 
-          }}
-          camera={{ position: [0, 0, 20], fov: 35 }}
-        >
-          <Suspense fallback={null}>
-            <Scene />
-          </Suspense>
-        </Canvas>
+        {canvasReady ? (
+          <Canvas
+            shadows
+            dpr={[1, 1.5]}
+            gl={{
+              antialias: false,
+              powerPreference: 'high-performance',
+            }}
+            camera={{ position: [0, 0, 20], fov: 35 }}
+          >
+            <Suspense fallback={null}>
+              <Scene sphereCount={sphereCount} lowFx={lowFx} accentColor={accentColor} />
+            </Suspense>
+          </Canvas>
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="w-8 h-8 rounded-full animate-spin spinner-accent" />
+          </div>
+        )}
       </div>
 
       {/* Decorative Background Grid */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
       
       {/* Background Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-amber-500/10 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] blur-[120px] rounded-full pointer-events-none" style={{ background: 'rgba(var(--accent-rgb), 0.1)' }} />
     </section>
   );
 };
