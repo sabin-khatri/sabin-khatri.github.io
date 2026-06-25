@@ -1,284 +1,284 @@
-/* eslint-disable no-unused-vars */
-import React, { useState, useMemo } from "react";
-import { motion } from "framer-motion";
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Toaster, toast } from "react-hot-toast";
-import Swal from "sweetalert2";
-import {
-  FaUser, FaEnvelope, FaRegCommentDots,
-  FaPaperPlane, FaSpinner, FaGithub, FaLinkedin,
-} from "react-icons/fa";
+import { FaTerminal, FaGithub, FaLinkedin, FaEnvelope, FaPlay, FaCheckCircle } from "react-icons/fa";
 
-/* ─── particles (exact copy from Hero) ──────────────────────────────────── */
-const Particle = ({ left, size, duration, delay }) => (
-  <motion.div
-    className="absolute rounded-full bg-gradient-to-b from-amber-400/30 to-orange-500/20"
-    style={{ left, width: size, height: size }}
-    initial={{ y: "110vh", opacity: 0 }}
-    animate={{ y: "-15vh", opacity: [0, 0.6, 0.3, 0] }}
-    transition={{ duration, delay, repeat: Infinity, repeatType: "loop", ease: "linear" }}
-  />
-);
-
-const BackgroundParticles = ({ count = 30 }) => {
-  const particles = useMemo(() =>
-    Array.from({ length: count }).map((_, i) => ({
-      id: i,
-      left:     `${Math.random() * 100}%`,
-      size:     Math.random() * 3 + 1.5,
-      duration: Math.random() * 22 + 16,
-      delay:    Math.random() * -25,
-    })),
-  [count]);
-
-  return (
-    <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-      {particles.map((p) => <Particle key={p.id} {...p} />)}
-    </div>
-  );
-};
-
-/* ─── reusable input ─────────────────────────────────────────────────────── */
-const Field = ({ id, label, type = "text", placeholder, icon, value, onChange, error }) => (
-  <div className="flex flex-col gap-1.5">
-    <label htmlFor={id} className="text-xs font-mono tracking-widest text-slate-500 uppercase">
-      {label}
-    </label>
-    <div className="relative group">
-      <span className="absolute inset-y-0 left-4 flex items-center text-slate-600
-                       group-focus-within:text-amber-400 transition-colors duration-300 text-sm">
-        {icon}
-      </span>
-      <input
-        id={id} name={id} type={type} value={value}
-        onChange={onChange} placeholder={placeholder} required
-        className={`w-full bg-white/[0.03] border rounded-xl py-3.5 pl-11 pr-4
-                    text-white text-sm placeholder-slate-600
-                    focus:outline-none transition-all duration-300
-                    ${error
-                      ? "border-red-500/60 focus:border-red-400"
-                      : "border-white/8 focus:border-amber-400/60 focus:bg-white/[0.05]"
-                    }`}
-      />
-    </div>
-    {error && <p className="text-red-400 text-[11px] font-mono pl-1">{error}</p>}
-  </div>
-);
-
-/* ─── golden line ────────────────────────────────────────────────────────── */
-const GoldenLine = () => (
-  <div className="flex items-center gap-3 mb-4">
-    <span className="block w-10 h-px bg-amber-400" />
-    <span className="block w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" />
-  </div>
-);
-
-/* ─── left info panel ────────────────────────────────────────────────────── */
-const InfoPanel = () => (
-  <motion.div
-    initial={{ opacity: 0, x: -60 }}
-    whileInView={{ opacity: 1, x: 0 }}
-    viewport={{ once: true }}
-    transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-    className="flex flex-col justify-between h-full gap-12"
-  >
-    <div>
-      <GoldenLine />
-      <p className="text-xs font-mono tracking-[0.3em] text-amber-400 uppercase mb-4">Get In Touch</p>
-      <h2 className="text-5xl lg:text-6xl font-black text-white tracking-tighter leading-none mb-6">
-        Let's <span className="text-amber-400">Connect</span>
-      </h2>
-      <p className="text-slate-400 text-base leading-relaxed max-w-sm">
-        Have a project in mind or just want to say hello? I'm always open to
-        new opportunities and collaborations.
-      </p>
-    </div>
-
-    <div className="space-y-4">
-      {[
-        { label: "Email",        value: "sabink802@email.com",   icon: <FaEnvelope className="text-amber-400" /> },
-        { label: "Location",     value: "Biratnagar, Nepal",
-          icon: <svg className="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg> },
-        { label: "Availability", value: "Open to opportunities",   icon: <span className="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse block" /> },
-      ].map((item, i) => (
-        <motion.div
-          key={i}
-          initial={{ opacity: 0, x: -20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: i * 0.1 + 0.3 }}
-          className="flex items-center gap-4 p-4 rounded-xl bg-white/[0.03]
-                     border border-white/8 hover:border-amber-400/25 transition-colors"
-        >
-          <div className="w-9 h-9 rounded-lg bg-amber-400/10 flex items-center justify-center flex-shrink-0">
-            {item.icon}
-          </div>
-          <div>
-            <p className="text-[10px] font-mono tracking-widest text-slate-500 uppercase">{item.label}</p>
-            <p className="text-sm text-white font-medium mt-0.5">{item.value}</p>
-          </div>
-        </motion.div>
-      ))}
-    </div>
-
-    <div className="flex gap-4">
-      {[
-        { href: "https://github.com/sabin-khatri",                    icon: <FaGithub />,   label: "GitHub"   },
-        { href: "https://www.linkedin.com/in/sabin-khatri-25460b26a/", icon: <FaLinkedin />, label: "LinkedIn" },
-      ].map((link, i) => (
-        <motion.a
-          key={i} href={link.href} target="_blank" rel="noopener noreferrer"
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium
-                     border border-white/10 text-slate-400 hover:border-amber-400/40
-                     hover:text-amber-400 transition-all duration-300"
-          whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.96 }}
-        >
-          {link.icon}{link.label}
-        </motion.a>
-      ))}
-    </div>
-  </motion.div>
-);
-
-/* ─── MAIN COMPONENT ─────────────────────────────────────────────────────── */
 const Contact = () => {
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
-  const [errors,   setErrors]   = useState({});
-  const [loading,  setLoading]  = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [activeTab, setActiveTab] = useState("contact.js");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((p) => ({ ...p, [name]: value }));
-    const errs = { ...errors };
-    if (name === "name")    value.trim() ? delete errs.name    : (errs.name    = "Name is required");
-    if (name === "email")   /^\S+@\S+\.\S+$/.test(value) ? delete errs.email  : (errs.email   = "Enter a valid email");
-    if (name === "subject") value.trim() ? delete errs.subject : (errs.subject = "Subject is required");
-    if (name === "message") value.trim() ? delete errs.message : (errs.message = "Message is required");
-    setErrors(errs);
-  };
-
-  const validate = () => {
-    const e = {};
-    if (!formData.name.trim())                   e.name    = "Name is required";
-    if (!/^\S+@\S+\.\S+$/.test(formData.email)) e.email   = "Enter a valid email";
-    if (!formData.subject.trim())                e.subject = "Subject is required";
-    if (!formData.message.trim())                e.message = "Message is required";
-    setErrors(e);
-    return Object.keys(e).length === 0;
   };
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    if (!validate()) return;
+    if (!formData.name.trim() || !/^\S+@\S+\.\S+$/.test(formData.email) || !formData.message.trim()) {
+      toast.error("Please fill in required fields correctly.");
+      return;
+    }
+
     setLoading(true);
     try {
-      const fd = new FormData(e.target);
+      const fd = new FormData();
       fd.append("access_key", "f6a8b2f4-095d-41c8-8661-42a386854bdf");
-      fd.set("subject", `New Message from ${formData.name} via Portfolio`);
-      const res    = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify(Object.fromEntries(fd)),
-      });
+      fd.append("name", formData.name);
+      fd.append("email", formData.email);
+      fd.append("subject", formData.subject || "New Message from Portfolio");
+      fd.append("message", formData.message);
+
+      const res = await fetch("https://api.web3forms.com/submit", { method: "POST", body: fd });
       const result = await res.json();
       if (result.success) {
-        Swal.fire({
-          title: "Message Sent!", text: "Thank you! I'll get back to you soon.",
-          icon: "success", showConfirmButton: false, timer: 2500,
-          background: "#0a0a0a", color: "#e2e8f0",
-        });
+        setSent(true);
+        toast.success("Message sent! Return code 0.");
         setFormData({ name: "", email: "", subject: "", message: "" });
-        setErrors({});
+        setTimeout(() => setSent(false), 4000);
       } else {
-        toast.error(result.message || "Failed to send message");
+        toast.error(result.message || "Execution Failed.");
       }
     } catch {
-      toast.error("Something went wrong. Please try again.");
+      toast.error("Network error. Could not connect to API.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <section id="contact" className="relative bg-[#0a0a0a] py-24 lg:py-36 overflow-hidden text-white">
-      <Toaster position="top-center" toastOptions={{ className: "bg-[#141414] text-white border border-white/10" }} />
-      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(#f59e0b_0.8px,transparent_1px)] [background-size:60px_60px] opacity-20" />
+    <section id="contact" className="relative bg-section py-16 sm:py-24 lg:py-36 overflow-hidden text-os-text font-mono">
+      <Toaster position="top-center" toastOptions={{ className: "bg-os-card text-os-text border border-os" }} />
 
-     
-      <BackgroundParticles count={30} />
-
-      <div className="container mx-auto max-w-6xl px-6 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
-
-          {/* LEFT — desktop only */}
-          <div className="hidden lg:block">
-            <InfoPanel />
-          </div>
-
-          {/* RIGHT — form */}
+      <AnimatePresence>
+        {sent && (
           <motion.div
-            initial={{ opacity: 0, x: 60 }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="fixed inset-0 z-[9990] flex items-center justify-center px-4"
+          >
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+            <div className="relative bg-os-card border border-green-500/30 rounded-xl p-8 text-center max-w-sm w-full">
+              <FaCheckCircle className="text-green-400 text-4xl mx-auto mb-3" />
+              <h3 className="text-lg font-bold text-os-text mb-1">Message Sent!</h3>
+              <p className="text-sm text-os-muted font-mono">Executed successfully. Return code 0.</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="absolute inset-0 pointer-events-none dot-grid opacity-[0.03]" />
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(600px,90vw)] h-[600px] blur-[150px] rounded-full pointer-events-none"
+        style={{ background: "rgba(var(--accent-rgb), 0.05)" }}
+      />
+
+      <div className="container mx-auto max-w-6xl px-4 sm:px-6 relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mb-8 sm:mb-12 text-center"
+        >
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <FaTerminal className="text-accent text-2xl sm:text-3xl" />
+            <h2
+              className="text-3xl sm:text-4xl md:text-5xl font-black text-os-text tracking-tighter"
+              style={{ fontFamily: "'Syne', sans-serif" }}
+            >
+              Let's <span className="text-accent">Connect</span>
+            </h2>
+          </div>
+          <p className="text-os-muted font-mono text-xs sm:text-sm">Send a post request to my inbox.</p>
+        </motion.div>
+
+        <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 items-stretch">
+          {/* Info Panel */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+            className="w-full lg:w-1/3 flex flex-col gap-6"
           >
-          
-            <div className="lg:hidden mb-8 text-center">
-              <p className="text-xs font-mono tracking-[0.3em] text-amber-400 uppercase mb-3">Get In Touch</p>
-              <h2 className="text-4xl font-black text-white tracking-tighter leading-none">
-                Let's <span className="text-amber-400">Connect</span>
-              </h2>
-              <p className="text-slate-400 text-sm mt-3 leading-relaxed">
-                Have a project in mind or just want to say hello?
-              </p>
-            </div>
+            <div className="bg-os border border-os rounded-2xl p-5 sm:p-6 shadow-2xl flex flex-col relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-accent/80 to-accent" />
 
-            {/* form card */}
-            <div className="relative p-8 rounded-3xl bg-white/[0.02] border border-white/8 overflow-hidden">
-              <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-amber-400/50 to-transparent" />
+              <h3 className="text-base sm:text-lg text-os-text font-bold mb-5 sm:mb-6 flex items-center gap-2">
+                <FaEnvelope className="text-accent" /> Contact_Info
+              </h3>
 
-              <form onSubmit={onSubmit} className="space-y-5">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <Field id="name"    label="Your Name"      placeholder="Sabin Khatri"                    icon={<FaUser />}            value={formData.name}    onChange={handleChange} error={errors.name}    />
-                  <Field id="email"   label="Email Address"  placeholder="you@example.com" type="email"    icon={<FaEnvelope />}        value={formData.email}   onChange={handleChange} error={errors.email}   />
+              <div className="space-y-5 sm:space-y-6 flex-1">
+                <div>
+                  <p className="text-os-muted text-xs uppercase mb-1">Email</p>
+                  <a href="mailto:sabink802@email.com" className="text-accent text-sm hover:underline break-all">
+                    sabink802@email.com
+                  </a>
                 </div>
-                <Field   id="subject" label="Subject"         placeholder="Project Inquiry / Collaboration" icon={<FaRegCommentDots />}  value={formData.subject} onChange={handleChange} error={errors.subject} />
-
-                <div className="flex flex-col gap-1.5">
-                  <label htmlFor="message" className="text-xs font-mono tracking-widest text-slate-500 uppercase">Your Message</label>
-                  <textarea
-                    id="message" name="message" rows={5}
-                    value={formData.message} onChange={handleChange}
-                    placeholder="Tell me about your project or just say hi..."
-                    className={`w-full bg-white/[0.03] border rounded-xl py-3.5 px-4
-                                text-white text-sm placeholder-slate-600 resize-y min-h-[130px]
-                                focus:outline-none transition-all duration-300
-                                ${errors.message ? "border-red-500/60 focus:border-red-400" : "border-white/8 focus:border-amber-400/60 focus:bg-white/[0.05]"}`}
-                  />
-                  {errors.message && <p className="text-red-400 text-[11px] font-mono pl-1">{errors.message}</p>}
+                <div>
+                  <p className="text-os-muted text-xs uppercase mb-1">Location</p>
+                  <p className="text-os-text/80 text-sm">Biratnagar, Nepal</p>
                 </div>
+                <div>
+                  <p className="text-os-muted text-xs uppercase mb-1">Status</p>
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                    <p className="text-green-400 text-sm">Available for work</p>
+                  </div>
+                </div>
+              </div>
 
-                <motion.button
-                  type="submit" disabled={loading}
-                  className="group relative w-full flex items-center justify-center gap-3
-                             py-4 rounded-xl font-bold text-sm text-black
-                             bg-amber-400 hover:bg-amber-300 transition-colors duration-300
-                             disabled:opacity-60 disabled:cursor-not-allowed overflow-hidden"
-                  whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+              <div className="flex gap-3 sm:gap-4 pt-5 sm:pt-6 mt-5 sm:mt-6 border-t border-white/[0.05]">
+                <a
+                  href="https://github.com/sabin-khatri"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-3 bg-white/[0.03] border border-os rounded-lg hover:text-accent transition-colors"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                  {loading
-                    ? <><FaSpinner className="animate-spin" /> Sending…</>
-                    : <>Send Message <FaPaperPlane className="group-hover:translate-x-1 transition-transform" /></>
-                  }
-                </motion.button>
-              </form>
-
-              <div className="absolute bottom-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-amber-400/30 to-transparent" />
+                  <FaGithub size={20} />
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/sabin-khatri-25460b26a/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-3 bg-white/[0.03] border border-os rounded-lg hover:text-accent transition-colors"
+                >
+                  <FaLinkedin size={20} />
+                </a>
+              </div>
             </div>
+          </motion.div>
 
-            <p className="text-center text-slate-600 text-xs font-mono mt-5">
-              Typically replies within <span className="text-amber-400">24 hours</span>
-            </p>
+          {/* VS Code Editor Form */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="w-full lg:w-2/3 min-w-0"
+          >
+            <div className="bg-[#1e1e1e] border border-white/[0.1] rounded-2xl shadow-2xl overflow-hidden flex flex-col h-full">
+              {/* Title bar */}
+              <div className="flex items-center justify-between bg-[#2d2d2d] px-3 sm:px-4 py-2 border-b border-black/50 gap-2">
+                <div className="flex gap-1.5 shrink-0">
+                  <div className="w-3 h-3 rounded-full bg-[#ff5f56]" />
+                  <div className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
+                  <div className="w-3 h-3 rounded-full bg-[#27c93f]" />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("contact.js")}
+                  className={`px-2 sm:px-3 py-1 text-[10px] sm:text-xs rounded-t-md truncate ${activeTab === "contact.js" ? "bg-[#1e1e1e] text-accent" : "text-slate-400"}`}
+                >
+                  contact.js
+                </button>
+                <button
+                  type="button"
+                  onClick={onSubmit}
+                  disabled={loading}
+                  className="text-green-400 hover:text-green-300 transition-colors flex items-center gap-1 text-[10px] sm:text-xs px-2 py-1 bg-white/5 rounded shrink-0"
+                >
+                  {loading ? "Running..." : <><FaPlay size={10} /> Run</>}
+                </button>
+              </div>
+
+              {/* Editor */}
+              <div className="p-3 sm:p-4 md:p-6 lg:p-8 flex-1 overflow-x-auto text-xs sm:text-sm leading-relaxed">
+                <div className="flex min-w-0">
+                  <div className="text-slate-600 text-right pr-2 sm:pr-4 select-none flex flex-col shrink-0 text-[10px] sm:text-xs">
+                    {[...Array(15)].map((_, i) => <span key={i}>{i + 1}</span>)}
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="text-purple-400 break-words">
+                      const <span className="text-yellow-200">message</span> <span className="text-white">=</span> <span className="text-white">{"{"}</span>
+                    </div>
+
+                    <div className="pl-3 sm:pl-6 py-1">
+                      <div className="mb-2">
+                        <span className="text-blue-300">name: </span>
+                        <span className="text-orange-300">"</span>
+                        <input
+                          type="text"
+                          name="name"
+                          value={formData.name}
+                          onChange={handleChange}
+                          placeholder="Your Name"
+                          className="bg-transparent border-none outline-none text-orange-300 w-full max-w-[180px] sm:max-w-xs placeholder-slate-600 inline"
+                        />
+                        <span className="text-orange-300">",</span>
+                      </div>
+
+                      <div className="mb-2">
+                        <span className="text-blue-300">email: </span>
+                        <span className="text-orange-300">"</span>
+                        <input
+                          type="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          placeholder="your.email@example.com"
+                          className="bg-transparent border-none outline-none text-orange-300 w-full max-w-[200px] sm:max-w-sm placeholder-slate-600 inline"
+                        />
+                        <span className="text-orange-300">",</span>
+                      </div>
+
+                      <div className="mb-2">
+                        <span className="text-blue-300">subject: </span>
+                        <span className="text-orange-300">"</span>
+                        <input
+                          type="text"
+                          name="subject"
+                          value={formData.subject}
+                          onChange={handleChange}
+                          placeholder="Job Opportunity"
+                          className="bg-transparent border-none outline-none text-orange-300 w-full max-w-[200px] sm:max-w-sm placeholder-slate-600 inline"
+                        />
+                        <span className="text-orange-300">",</span>
+                      </div>
+
+                      <div className="mb-2">
+                        <span className="text-blue-300 block sm:inline">message: </span>
+                        <span className="text-orange-300">`</span>
+                        <textarea
+                          name="message"
+                          value={formData.message}
+                          onChange={handleChange}
+                          placeholder="Hello, I'd like to work with you on..."
+                          rows={3}
+                          className="bg-transparent border-none outline-none text-orange-300 w-full resize-none placeholder-slate-600 py-1 block sm:inline align-top"
+                        />
+                        <span className="text-orange-300">`,</span>
+                      </div>
+                    </div>
+
+                    <div className="text-white">{"}"}</div>
+                    <div className="mt-3 sm:mt-4 text-slate-500 text-[10px] sm:text-xs">// Hit Run or press send()</div>
+                    <div className="flex flex-wrap items-center mt-2 text-[10px] sm:text-xs gap-x-1">
+                      <span className="text-yellow-200">await</span>
+                      <span className="text-purple-400">fetch</span>
+                      <span className="text-white">(</span>
+                      <span className="text-orange-300">'/api/send'</span>
+                      <span className="text-white">,</span>
+                      <span className="text-yellow-200">message</span>
+                      <span className="text-white">);</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Status bar */}
+              <div className="bg-[#007acc] text-white text-[10px] sm:text-xs px-3 sm:px-4 py-1 flex justify-between items-center gap-2">
+                <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+                  <span>main*</span>
+                  <span className="hidden sm:inline">UTF-8</span>
+                </div>
+                <div className="flex items-center gap-2 sm:gap-4 truncate">
+                  <span className="hidden sm:inline">JavaScript React</span>
+                  {loading && <span className="animate-pulse truncate">Executing...</span>}
+                </div>
+              </div>
+            </div>
           </motion.div>
         </div>
       </div>
