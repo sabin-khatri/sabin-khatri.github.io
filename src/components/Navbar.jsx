@@ -4,8 +4,10 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { HiMenuAlt3, HiX } from "react-icons/hi";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { HiHome, HiUser, HiCode, HiMail } from "react-icons/hi";
+import { scrollToSection } from "../utils/scroll";
 
 /* ─── DATA ─────────────────────────────────────────── */
+
 const NAV_LINKS = [
   { label: "Home",     href: "#home",     icon: HiHome },
   { label: "About",   href: "#about",    icon: HiUser },
@@ -34,16 +36,16 @@ const Logo = ({ onClick }) => (
     transition={SPRING_FAST}
   >
     <motion.span
-      className="w-[9px] h-[9px] rounded-full bg-amber-400 flex-shrink-0"
+      className="w-[9px] h-[9px] rounded-full bg-accent flex-shrink-0"
       animate={{ scale: [1, 0.65, 1], opacity: [1, 0.35, 1] }}
       transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
-      style={{ boxShadow: "0 0 8px #f59e0b, 0 0 20px #f59e0b55", willChange: "transform, opacity" }}
+      style={{ boxShadow: "0 0 8px var(--os-accent), 0 0 20px rgba(var(--accent-rgb), 0.33)", willChange: "transform, opacity" }}
     />
     <span
       className="text-[22px] sm:text-[24px] font-black text-white leading-none"
       style={{ fontFamily: "'Syne', 'DM Sans', sans-serif", letterSpacing: "-0.04em" }}
     >
-      Sabin<span className="text-amber-400" style={{ textShadow: "0 0 14px #f59e0b" }}>.</span>
+      Sabin<span className="text-accent" style={{ textShadow: "0 0 14px var(--os-accent)" }}>.</span>
     </span>
   </motion.a>
 );
@@ -61,8 +63,8 @@ const DesktopLink = ({ link, isActive, onClick }) => (
           layoutId="desktop-bg"
           className="absolute inset-0 rounded-[18px]"
           style={{
-            background: "rgba(245,158,11,0.10)",
-            border: "1px solid rgba(245,158,11,0.22)",
+            background: "rgba(var(--accent-rgb), 0.10)",
+            border: "1px solid rgba(var(--accent-rgb), 0.22)",
             willChange: "transform",
           }}
           transition={SPRING_PILL}
@@ -72,7 +74,7 @@ const DesktopLink = ({ link, isActive, onClick }) => (
         className="relative z-10 text-[13.5px] font-semibold transition-colors duration-150"
         style={{
           fontFamily: "'Syne', sans-serif",
-          color: isActive ? "#f59e0b" : undefined,
+          color: isActive ? "var(--os-accent)" : undefined,
         }}
       >
         {!isActive && (
@@ -88,8 +90,8 @@ const DesktopLink = ({ link, isActive, onClick }) => (
           layoutId="desktop-line"
           className="absolute bottom-[2px] left-1/2 -translate-x-1/2 h-[2px] w-3/5 rounded-full"
           style={{
-            background: "linear-gradient(90deg,transparent,#f59e0b,transparent)",
-            boxShadow: "0 0 10px #f59e0b, 0 0 24px #f59e0b66",
+            background: "linear-gradient(90deg,transparent,var(--os-accent),transparent)",
+            boxShadow: "0 0 10px var(--os-accent), 0 0 24px rgba(var(--accent-rgb), 0.4)",
             willChange: "transform",
           }}
           transition={SPRING_PILL}
@@ -112,7 +114,7 @@ const DrawerLink = ({ link, index, isActive, onClick }) => {
       transition={{ delay: 0.04 + index * 0.055, duration: 0.32, ease: DRAWER_EASE }}
       className="relative flex items-center gap-4 px-5 py-[14px] rounded-2xl no-underline cursor-pointer select-none"
       style={{
-        background: isActive ? "rgba(245,158,11,0.07)" : "transparent",
+        background: isActive ? "rgba(var(--accent-rgb), 0.07)" : "transparent",
         color: isActive ? "#fff" : "rgb(148 163 184)",
         willChange: "transform, opacity",
       }}
@@ -122,8 +124,8 @@ const DrawerLink = ({ link, index, isActive, onClick }) => {
       {isActive && (
         <motion.div
           layoutId="drawer-bar"
-          className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[38px] rounded-r-full bg-amber-400"
-          style={{ boxShadow: "0 0 12px #f59e0b, 0 0 26px #f59e0b44", willChange: "transform" }}
+          className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[38px] rounded-r-full bg-accent"
+          style={{ boxShadow: "0 0 12px var(--os-accent), 0 0 26px rgba(var(--accent-rgb), 0.27)", willChange: "transform" }}
           transition={SPRING_PILL}
         />
       )}
@@ -131,8 +133,8 @@ const DrawerLink = ({ link, index, isActive, onClick }) => {
       <div
         className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-200"
         style={{
-          background: isActive ? "rgba(245,158,11,0.15)" : "rgba(255,255,255,0.05)",
-          color: isActive ? "#f59e0b" : "rgb(100 116 139)",
+          background: isActive ? "rgba(var(--accent-rgb), 0.15)" : "rgba(255,255,255,0.05)",
+          color: isActive ? "var(--os-accent)" : "rgb(100 116 139)",
         }}
       >
         <Icon style={{ fontSize: 17 }} />
@@ -152,10 +154,10 @@ const DrawerLink = ({ link, index, isActive, onClick }) => {
 
       {isActive && (
         <motion.span
-          className="ml-auto w-[7px] h-[7px] rounded-full bg-amber-400 flex-shrink-0"
+          className="ml-auto w-[7px] h-[7px] rounded-full bg-accent flex-shrink-0"
           animate={{ scale: [1, 0.55, 1], opacity: [1, 0.35, 1] }}
           transition={{ duration: 1.9, repeat: Infinity }}
-          style={{ boxShadow: "0 0 8px #f59e0b", willChange: "transform, opacity" }}
+          style={{ boxShadow: "0 0 8px var(--os-accent)", willChange: "transform, opacity" }}
         />
       )}
     </motion.a>
@@ -227,12 +229,10 @@ const Navbar = () => {
     setMenuOpen(false);
     manualRef.current = true;
 
-    const el = document.querySelector(link.href);
-    if (el) {
-      const top = el.getBoundingClientRect().top + window.scrollY - 85;
-      window.scrollTo({ top, behavior: "smooth" });
-    }
-    setTimeout(() => { manualRef.current = false; }, 1100);
+    const id = link.href.slice(1);
+    scrollToSection(id);
+
+    setTimeout(() => { manualRef.current = false; }, 1200);
   }, []);
 
   /* ── Shared transition settings (respects prefers-reduced-motion) */
@@ -251,10 +251,10 @@ const Navbar = () => {
         style={{
           willChange: "transform",
           transition: "background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease",
-          background: scrolled ? "rgba(7,7,10,0.94)" : "transparent",
+          background: scrolled ? "color-mix(in srgb, var(--os-bg) 94%, transparent)" : "transparent",
           backdropFilter: scrolled ? "blur(20px) saturate(160%)" : "none",
           WebkitBackdropFilter: scrolled ? "blur(20px) saturate(160%)" : "none",
-          borderBottom: scrolled ? "1px solid rgba(245,158,11,0.11)" : "1px solid transparent",
+          borderBottom: scrolled ? "1px solid rgba(var(--accent-rgb), 0.11)" : "1px solid transparent",
           boxShadow: scrolled ? "0 8px 48px rgba(0,0,0,0.55)" : "none",
         }}
       >
@@ -269,7 +269,7 @@ const Navbar = () => {
               transition={{ duration: 0.45 }}
               className="absolute top-0 left-0 right-0 h-[1.5px] origin-left pointer-events-none"
               style={{
-                background: "linear-gradient(90deg,transparent,#f59e0b70,#f59e0b,#f59e0b70,transparent)",
+                background: "linear-gradient(90deg,transparent,rgba(var(--accent-rgb),0.44),var(--os-accent),rgba(var(--accent-rgb),0.44),transparent)",
                 willChange: "transform, opacity",
               }}
             />
@@ -312,7 +312,7 @@ const Navbar = () => {
           <motion.button
             className="md:hidden w-10 h-10 flex items-center justify-center rounded-xl
                        border border-white/[0.09] bg-white/[0.04] text-white
-                       hover:border-amber-400/40 hover:text-amber-400 transition-colors duration-200"
+                       hover:border-accent/40 hover:text-accent transition-colors duration-200"
             onClick={() => setMenuOpen((v) => !v)}
             whileHover={{ scale: 1.07 }}
             whileTap={{ scale: 0.91 }}
@@ -378,17 +378,17 @@ const Navbar = () => {
               className="fixed top-0 right-0 bottom-0 z-[99] md:hidden flex flex-col"
               style={{
                 width: "min(82vw, 320px)",
-                background: "linear-gradient(170deg,#0e0e13 0%,#0a0a0f 55%,#0d0b07 100%)",
-                borderLeft: "1px solid rgba(245,158,11,0.12)",
+                background: "linear-gradient(170deg, var(--section-bg) 0%, var(--os-bg) 55%, color-mix(in srgb, var(--os-accent) 5%, var(--os-bg)) 100%)",
+                borderLeft: "1px solid rgba(var(--accent-rgb), 0.12)",
                 boxShadow: "-20px 0 70px rgba(0,0,0,0.65)",
                 willChange: "transform",
               }}
             >
               {/* Decorative glows */}
               <div className="absolute top-0 right-0 w-56 h-44 pointer-events-none"
-                style={{ background: "radial-gradient(ellipse at top right,rgba(245,158,11,0.13) 0%,transparent 70%)" }} />
+                style={{ background: "radial-gradient(ellipse at top right,rgba(var(--accent-rgb),0.13) 0%,transparent 70%)" }} />
               <div className="absolute bottom-0 left-0 w-44 h-44 pointer-events-none"
-                style={{ background: "radial-gradient(ellipse at bottom left,rgba(245,158,11,0.06) 0%,transparent 70%)" }} />
+                style={{ background: "radial-gradient(ellipse at bottom left,rgba(var(--accent-rgb),0.06) 0%,transparent 70%)" }} />
 
               {/* Header */}
               <div className="relative flex items-center justify-between px-5 pt-[22px] pb-4">
@@ -396,7 +396,7 @@ const Navbar = () => {
                 <motion.button
                   className="w-9 h-9 flex items-center justify-center rounded-xl text-slate-400
                              border border-white/[0.09] bg-white/[0.04]
-                             hover:border-amber-400/40 hover:text-amber-400 transition-colors duration-150"
+                             hover:border-accent/40 hover:text-accent transition-colors duration-150"
                   onClick={() => setMenuOpen(false)}
                   whileTap={{ scale: 0.88 }}
                   transition={SPRING_FAST}
@@ -439,7 +439,7 @@ const Navbar = () => {
                     className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-[13px] font-semibold no-underline
                                border border-white/[0.09] text-slate-400 transition-colors duration-150"
                     style={{ fontFamily: "'Syne', sans-serif" }}
-                    whileHover={{ scale: 1.06, y: -2, color: "#f59e0b", borderColor: "rgba(245,158,11,0.4)" }}
+                    whileHover={{ scale: 1.06, y: -2, color: "var(--os-accent)", borderColor: "rgba(var(--accent-rgb), 0.4)" }}
                     whileTap={{ scale: 0.93 }}
                     transition={SPRING_FAST}
                   >
