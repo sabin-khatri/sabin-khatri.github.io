@@ -73,54 +73,59 @@ const OrbitRing = ({ radius, dashed }) => (
       width: radius * 2,
       height: radius * 2,
       transform: 'translate(-50%, -50%)',
-      borderColor: 'rgba(245,158,11,0.12)',
+      borderColor: 'rgba(var(--accent-rgb), 0.12)',
       borderStyle: dashed ? 'dashed' : 'solid',
       borderWidth: '1px',
     }}
   />
 );
 
-const OrbitItem = memo(({ config, angle, radius }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const x = Math.cos(angle) * radius;
-  const y = Math.sin(angle) * radius;
+const OrbitItem = memo(({ config, isPaused, index, total, direction }) => {
   const Icon = iconComponents[config.iconType];
+  const initialRotation = (360 / total) * index;
 
   return (
     <div
-      className="absolute top-1/2 left-1/2"
+      className={`absolute top-0 left-1/2 -translate-x-1/2 h-full w-[2px] pointer-events-none`}
       style={{
-        width: `${config.size}px`,
-        height: `${config.size}px`,
-        transform: `translate(calc(${x}px - 50%), calc(${y}px - 50%))`,
-        zIndex: isHovered ? 40 : 10,
-        transition: 'z-index 0s',
+        transform: `rotate(${initialRotation}deg)`,
       }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
       <div
-        className="w-full h-full rounded-full flex items-center justify-center cursor-pointer"
+        className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-auto"
         style={{
-          background: 'rgba(15,15,15,0.95)',
-          backdropFilter: 'blur(12px)',
-          border: isHovered
-            ? `1.5px solid ${Icon.color}60`
-            : '1px solid rgba(255,255,255,0.08)',
-          transform: isHovered ? 'scale(1.3)' : 'scale(1)',
-          transition: 'transform 0.3s cubic-bezier(0.34,1.56,0.64,1), border 0.3s ease, box-shadow 0.3s ease',
-          boxShadow: isHovered
-            ? `0 0 24px ${Icon.color}50, 0 0 8px ${Icon.color}30`
-            : '0 4px 20px rgba(0,0,0,0.4)',
-          padding: '20%',
+          width: config.size,
+          height: config.size,
+          animation: `spin-counter-${direction} 10s linear infinite`,
+          animationPlayState: isPaused ? 'paused' : 'running',
         }}
       >
-        {Icon.component()}
+        <div
+          className="w-full h-full rounded-full flex items-center justify-center cursor-pointer group"
+          style={{
+            background: 'rgba(15,15,15,0.95)',
+            backdropFilter: 'blur(12px)',
+            border: '1px solid rgba(255,255,255,0.08)',
+            transition: 'transform 0.3s cubic-bezier(0.34,1.56,0.64,1), border 0.3s ease, box-shadow 0.3s ease',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
+            padding: '20%',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'scale(1.3)';
+            e.currentTarget.style.border = `1.5px solid ${Icon.color}60`;
+            e.currentTarget.style.boxShadow = `0 0 24px ${Icon.color}50, 0 0 8px ${Icon.color}30`;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'scale(1)';
+            e.currentTarget.style.border = '1px solid rgba(255,255,255,0.08)';
+            e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.4)';
+          }}
+        >
+          {Icon.component()}
 
-        {/* Tooltip */}
-        {isHovered && (
+          {/* Tooltip */}
           <div
-            className="absolute pointer-events-none whitespace-nowrap"
+            className="absolute opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition-opacity duration-200"
             style={{
               bottom: `calc(100% + 10px)`,
               left: '50%',
@@ -138,14 +143,13 @@ const OrbitItem = memo(({ config, angle, radius }) => {
           >
             {config.label}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
 });
 
 export default function OrbitingSkills() {
-  const [time, setTime] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [dims, setDims] = useState({ inner: 115, outer: 205, container: 480, core: 80, coreIcon: 52 });
 
@@ -167,31 +171,17 @@ export default function OrbitingSkills() {
     return () => window.removeEventListener('resize', updateSize);
   }, []);
 
-  useEffect(() => {
-    if (isPaused) return;
-    let raf;
-    let last = performance.now();
-    const animate = (now) => {
-      const delta = (now - last) / 1000;
-      last = now;
-      setTime(prev => prev + delta * 0.65);
-      raf = requestAnimationFrame(animate);
-    };
-    raf = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(raf);
-  }, [isPaused]);
-
   const innerSkills = [
-    { id: 'html',       iconType: 'html',       size: dims.inner * 0.42, phase: 0,                    label: 'HTML5' },
-    { id: 'css',        iconType: 'css',        size: dims.inner * 0.44, phase: (2 * Math.PI) / 3,    label: 'CSS3' },
-    { id: 'js',         iconType: 'javascript', size: dims.inner * 0.42, phase: (4 * Math.PI) / 3,    label: 'JavaScript' },
+    { id: 'html',       iconType: 'html',       size: dims.inner * 0.42, label: 'HTML5' },
+    { id: 'css',        iconType: 'css',        size: dims.inner * 0.44, label: 'CSS3' },
+    { id: 'js',         iconType: 'javascript', size: dims.inner * 0.42, label: 'JavaScript' },
   ];
 
   const outerSkills = [
-    { id: 'react',      iconType: 'react',      size: dims.outer * 0.3,  phase: 0,                    label: 'React' },
-    { id: 'node',       iconType: 'node',       size: dims.outer * 0.28, phase: (2 * Math.PI) / 3,    label: 'Node.js' },
-    { id: 'tailwind',   iconType: 'tailwind',   size: dims.outer * 0.27, phase: (4 * Math.PI) / 3,    label: 'Tailwind' },
-    { id: 'typescript', iconType: 'typescript', size: dims.outer * 0.27, phase: Math.PI / 3,          label: 'TypeScript' },
+    { id: 'react',      iconType: 'react',      size: dims.outer * 0.3,  label: 'React' },
+    { id: 'node',       iconType: 'node',       size: dims.outer * 0.28, label: 'Node.js' },
+    { id: 'tailwind',   iconType: 'tailwind',   size: dims.outer * 0.27, label: 'Tailwind' },
+    { id: 'typescript', iconType: 'typescript', size: dims.outer * 0.27, label: 'TypeScript' },
   ];
 
   return (
@@ -200,14 +190,17 @@ export default function OrbitingSkills() {
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
+      <style>{`
+        @keyframes spin-cw { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes spin-ccw { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
+        @keyframes spin-counter-cw { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(-360deg); } }
+        @keyframes spin-counter-ccw { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+      `}</style>
+      
       <div
         className="relative flex items-center justify-center"
         style={{ width: dims.container, height: dims.container }}
       >
-        {/* Orbit rings */}
-        <OrbitRing radius={dims.inner} />
-        <OrbitRing radius={dims.outer} dashed />
-
         {/* Central core */}
         <div
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-30 rounded-full flex items-center justify-center"
@@ -215,7 +208,7 @@ export default function OrbitingSkills() {
             width: dims.core,
             height: dims.core,
             background: 'radial-gradient(circle at 35% 35%, #1a1a1a, #000)',
-            boxShadow: '0 0 0 1px rgba(245,158,11,0.25), 0 0 40px rgba(245,158,11,0.1)',
+            boxShadow: '0 0 0 1px rgba(var(--accent-rgb), 0.25), 0 0 40px rgba(var(--accent-rgb), 0.1)',
           }}
         >
           <div
@@ -223,8 +216,8 @@ export default function OrbitingSkills() {
             style={{
               width: dims.coreIcon,
               height: dims.coreIcon,
-              background: 'linear-gradient(135deg, #f59e0b, #d97706)',
-              boxShadow: '0 0 20px rgba(245,158,11,0.5)',
+              background: 'linear-gradient(135deg, var(--os-accent), color-mix(in srgb, var(--os-accent) 80%, black))',
+              boxShadow: '0 0 20px rgba(var(--accent-rgb), 0.5)',
             }}
           >
             <span
@@ -236,25 +229,36 @@ export default function OrbitingSkills() {
           </div>
         </div>
 
-        {/* Inner orbit items */}
-        {innerSkills.map(skill => (
-          <OrbitItem
-            key={skill.id}
-            config={skill}
-            radius={dims.inner}
-            angle={time * 0.85 + skill.phase}
-          />
-        ))}
+        {/* Inner Ring */}
+        <OrbitRing radius={dims.inner} />
+        <div 
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+          style={{
+            width: dims.inner * 2, height: dims.inner * 2,
+            animation: 'spin-cw 10s linear infinite',
+            animationPlayState: isPaused ? 'paused' : 'running',
+          }}
+        >
+          {innerSkills.map((skill, i) => (
+            <OrbitItem key={skill.id} config={skill} isPaused={isPaused} index={i} total={innerSkills.length} direction="cw" />
+          ))}
+        </div>
 
-        {/* Outer orbit items */}
-        {outerSkills.map(skill => (
-          <OrbitItem
-            key={skill.id}
-            config={skill}
-            radius={dims.outer}
-            angle={time * -0.48 + skill.phase}
-          />
-        ))}
+        {/* Outer Ring */}
+        <OrbitRing radius={dims.outer} dashed />
+        <div 
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+          style={{
+            width: dims.outer * 2, height: dims.outer * 2,
+            animation: 'spin-ccw 14s linear infinite',
+            animationPlayState: isPaused ? 'paused' : 'running',
+          }}
+        >
+          {outerSkills.map((skill, i) => (
+            <OrbitItem key={skill.id} config={skill} isPaused={isPaused} index={i} total={outerSkills.length} direction="ccw" />
+          ))}
+        </div>
+        
       </div>
     </div>
   );
