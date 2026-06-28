@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Toaster, toast } from "react-hot-toast";
@@ -49,8 +50,6 @@ const Contact = () => {
 
   return (
     <section id="contact" className="relative bg-section py-16 sm:py-24 lg:py-36 overflow-hidden text-os-text font-mono">
-      <Toaster position="top-center" toastOptions={{ className: "bg-os-card text-os-text border border-os" }} />
-
       <AnimatePresence>
         {sent && (
           <motion.div
@@ -71,8 +70,8 @@ const Contact = () => {
 
       <div className="absolute inset-0 pointer-events-none dot-grid opacity-[0.03]" />
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(600px,90vw)] h-[600px] blur-[150px] rounded-full pointer-events-none"
-        style={{ background: "rgba(var(--accent-rgb), 0.05)" }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(600px,90vw)] h-[600px] blur-[100px] rounded-full pointer-events-none"
+        style={{ background: "rgba(var(--accent-rgb), 0.05)", transform: "translate3d(-50%, -50%, 0)", willChange: "transform" }}
       />
 
       <div className="container mx-auto max-w-6xl px-4 sm:px-6 relative z-10">
@@ -183,7 +182,7 @@ const Contact = () => {
               </div>
 
               {/* Editor */}
-              <div className="p-3 sm:p-4 md:p-6 lg:p-8 flex-1 overflow-x-auto text-xs sm:text-sm leading-relaxed">
+              <form onSubmit={onSubmit} className="p-3 sm:p-4 md:p-6 lg:p-8 flex-1 overflow-x-auto text-xs sm:text-sm leading-relaxed">
                 <div className="flex min-w-0">
                   <div className="text-slate-600 text-right pr-2 sm:pr-4 select-none flex flex-col shrink-0 text-[10px] sm:text-xs">
                     {[...Array(15)].map((_, i) => <span key={i}>{i + 1}</span>)}
@@ -247,13 +246,18 @@ const Contact = () => {
                           placeholder="Hello, I'd like to work with you on..."
                           rows={3}
                           className="bg-transparent border-none outline-none text-orange-300 w-full resize-none placeholder-slate-600 py-1 block sm:inline align-top"
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                              onSubmit(e);
+                            }
+                          }}
                         />
                         <span className="text-orange-300">`,</span>
                       </div>
                     </div>
 
                     <div className="text-white">{"}"}</div>
-                    <div className="mt-3 sm:mt-4 text-slate-500 text-[10px] sm:text-xs">// Hit Run or press send()</div>
+                    <div className="mt-3 sm:mt-4 text-slate-500 text-[10px] sm:text-xs">// Hit Run, press Enter in fields, or Ctrl+Enter in message</div>
                     <div className="flex flex-wrap items-center mt-2 text-[10px] sm:text-xs gap-x-1">
                       <span className="text-yellow-200">await</span>
                       <span className="text-purple-400">fetch</span>
@@ -263,9 +267,12 @@ const Contact = () => {
                       <span className="text-yellow-200">message</span>
                       <span className="text-white">);</span>
                     </div>
+                    
+                    {/* Hidden submit button to allow Enter to submit */}
+                    <button type="submit" className="hidden">Submit</button>
                   </div>
                 </div>
-              </div>
+              </form>
 
               {/* Status bar */}
               <div className="bg-[#007acc] text-white text-[10px] sm:text-xs px-3 sm:px-4 py-1 flex justify-between items-center gap-2">
