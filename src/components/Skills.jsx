@@ -4,14 +4,9 @@ import React, { useRef, useMemo, Suspense, useState, useEffect } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { 
   Environment, 
-  Text, 
   useTexture, 
-  Float, 
-  PerspectiveCamera,
 } from "@react-three/drei";
-import { EffectComposer, N8AO, Bloom } from "@react-three/postprocessing";
 import { BallCollider, Physics, RigidBody, CuboidCollider } from "@react-three/rapier";
-// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import { useSettings } from '../lib/SettingsContext';
 
@@ -69,7 +64,7 @@ function Sphere({ vec = new THREE.Vector3(), scale, texture, ...props }) {
       {...props}
     >
       <BallCollider args={[scale]} />
-      <mesh scale={scale} geometry={SPHERE_GEOMETRY} castShadow>
+      <mesh scale={scale} geometry={SPHERE_GEOMETRY}>
         <meshStandardMaterial 
           map={texture} 
           metalness={0.2} 
@@ -125,8 +120,8 @@ function Scene({ sphereCount, lowFx, accentColor }) {
 
   return (
     <>
-      <ambientLight intensity={0.5} />
-      <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={2} castShadow />
+      <ambientLight intensity={0.8} />
+      <directionalLight position={[10, 10, 10]} intensity={1.5} />
       <pointLight position={[-10, -10, -10]} intensity={1} color={accentColor} />
 
       <Physics gravity={[0, 0, 0]}>
@@ -137,14 +132,7 @@ function Scene({ sphereCount, lowFx, accentColor }) {
         ))}
       </Physics>
 
-      {!lowFx && <Environment preset="night" />}
-      
-      {!lowFx && (
-        <EffectComposer multisampling={0} disableNormalPass>
-          <N8AO aoRadius={0.5} intensity={0.8} color={accentColor} />
-          <Bloom luminanceThreshold={1.2} intensity={0.35} levels={5} mipmapBlur />
-        </EffectComposer>
-      )}
+      {!lowFx && <Environment preset="city" />}
     </>
   );
 }
@@ -222,11 +210,11 @@ const TechStack = () => {
       <div className="absolute inset-0 cursor-grab active:cursor-grabbing">
         {canvasReady ? (
           <Canvas
-            shadows
             dpr={[1, 1.5]}
             gl={{
               antialias: false,
               powerPreference: 'high-performance',
+              alpha: true,
             }}
             camera={{ position: [0, 0, 20], fov: 35 }}
           >
