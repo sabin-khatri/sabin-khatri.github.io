@@ -1,2 +1,192 @@
 @import "tailwindcss";
 
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&family=Syne:wght@400;600;700;800&display=swap');
+@theme inline {
+  --color-accent: var(--os-accent);
+  --color-os-text: var(--os-text);
+  --color-os-muted: var(--os-muted);
+  --color-os-bg: var(--os-bg);
+  --color-os-card: var(--os-card);
+  --color-section: var(--section-bg);
+}
+
+:root {
+  --accent: 38 92% 50%;
+  --accent-hex: #f59e0b;
+  --accent-rgb: 245, 158, 11;
+  --os-bg: #0a0a0a;
+  --os-card: #111115;
+  --os-border: rgba(255, 255, 255, 0.08);
+  --os-accent: #f59e0b;
+  --os-text: #e2e8f0;
+  --os-muted: #64748b;
+  --os-terminal: #0a0a0c;
+  --os-taskbar: rgba(15, 15, 19, 0.7);
+  --section-bg: #050505;
+  --ui-font-size: 13px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  background: var(--os-bg);
+  color: var(--os-text);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  overflow-x: hidden;
+  transition: background-color 0.35s ease, color 0.35s ease;
+}
+
+/* Taskbar clearance */
+.has-taskbar {
+  padding-bottom: 2.75rem;
+}
+
+@media (min-width: 640px) {
+  .has-taskbar {
+    padding-bottom: 3rem;
+  }
+}
+
+/* Theme-aware section backgrounds */
+.bg-section {
+  background-color: var(--section-bg);
+  transition: background-color 0.35s ease;
+}
+
+.bg-os {
+  background-color: var(--os-bg);
+  transition: background-color 0.35s ease;
+}
+
+.text-os-muted {
+  color: var(--os-muted);
+}
+
+.border-os {
+  border-color: var(--os-border);
+}
+
+/* Accent glow utilities */
+.glow-accent {
+  box-shadow: 0 0 8px rgba(var(--accent-rgb), 0.6);
+}
+
+.glow-accent-lg {
+  box-shadow: 0 0 40px rgba(var(--accent-rgb), 0.3);
+}
+
+.text-glow-accent {
+  text-shadow: 0 0 40px rgba(var(--accent-rgb), 0.35);
+}
+
+.dot-grid {
+  background-image: radial-gradient(var(--os-accent) 0.8px, transparent 1px);
+  background-size: 58px 58px;
+}
+
+.dot-grid-sm {
+  background-image: radial-gradient(var(--os-accent) 0.5px, transparent 0.5px);
+  background-size: 40px 40px;
+}
+
+.spinner-accent {
+  border: 2px solid rgba(var(--accent-rgb), 0.25);
+  border-top-color: var(--os-accent);
+}
+
+/* CRT scanline overlay */
+.crt-overlay {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.08) 2px,
+    rgba(0, 0, 0, 0.08) 4px
+  );
+  opacity: 0.15;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* GPU-friendly animations */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* CSS Particles — theme-aware */
+@keyframes floatUp {
+  0% { transform: translateY(110vh); opacity: 0; }
+  20% { opacity: 0.7; }
+  80% { opacity: 0.4; }
+  100% { transform: translateY(-15vh); opacity: 0; }
+}
+
+.css-particle {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(var(--accent-rgb), 0.55) 0%, rgba(var(--accent-rgb), 0.15) 100%);
+  filter: blur(0.5px);
+  animation: floatUp linear infinite;
+  will-change: transform, opacity;
+}
+
+/* Wallpaper styles — theme-aware */
+body.wallpaper-grid {
+  background-image:
+    linear-gradient(rgba(var(--accent-rgb), 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--accent-rgb), 0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+body.wallpaper-gradient {
+  background: linear-gradient(135deg, var(--os-bg) 0%, color-mix(in srgb, var(--os-accent) 8%, var(--os-bg)) 50%, var(--os-bg) 100%);
+}
+
+body.wallpaper-aurora {
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(var(--accent-rgb), 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(var(--accent-rgb), 0.05) 0%, transparent 50%),
+    var(--os-bg);
+}
