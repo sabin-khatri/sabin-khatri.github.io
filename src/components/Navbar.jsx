@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import { HiMenuAlt3, HiX } from "react-icons/hi";
+import { HiDotsVertical, HiX } from "react-icons/hi";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { HiHome, HiUser, HiCode, HiMail } from "react-icons/hi";
 import { scrollToSection } from "../utils/scroll";
@@ -340,7 +340,7 @@ const Navbar = () => {
                   transition={{ duration: 0.15, ease: "easeOut" }}
                   style={{ display: "flex", willChange: "transform, opacity" }}
                 >
-                  <HiMenuAlt3 style={{ fontSize: 22 }} />
+                  <HiDotsVertical style={{ fontSize: 22 }} />
                 </motion.span>
               )}
             </AnimatePresence>
