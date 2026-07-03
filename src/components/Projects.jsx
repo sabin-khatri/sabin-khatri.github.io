@@ -105,9 +105,9 @@ const ProjectCard = ({ project, index, isMobile }) => {
         border border-white/10 rounded-2xl sm:rounded-[2rem]
         shadow-2xl p-4 sm:p-6 lg:p-10 overflow-visible
         backdrop-blur-xl
-        ${isMobile ? "relative mb-8" : "sticky mb-16 lg:mb-24"}
+        backdrop-blur-xl sticky mb-16 lg:mb-24
       `}
-      style={isMobile ? undefined : { top: `${100 + index * 36}px`, perspective: '1000px' }}
+      style={{ top: isMobile ? `calc(80px + ${index * 24}px)` : `${100 + index * 36}px`, perspective: '1000px' }}
       onMouseEnter={() => !isMobile && setIsFlipped(true)}
       onMouseLeave={() => !isMobile && setIsFlipped(false)}
       onClick={() => isMobile && setIsFlipped(!isFlipped)}
