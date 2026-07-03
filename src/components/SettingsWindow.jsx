@@ -55,7 +55,7 @@ const SettingsWindow = () => {
   };
 
   return (
-    <div className="w-full h-full text-slate-300 p-4 sm:p-6 overflow-y-auto font-mono custom-scrollbar" style={{ fontSize: 'var(--ui-font-size, 13px)', background: 'var(--os-terminal)' }}>
+    <div data-lenis-prevent="true" className="w-full h-full text-slate-300 p-4 sm:p-6 overflow-y-auto font-mono custom-scrollbar" style={{ fontSize: 'var(--ui-font-size, 13px)', background: 'var(--os-terminal)' }}>
 
       {/* Sound Profile */}
       <div className="mb-6">
