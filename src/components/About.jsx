@@ -141,9 +141,9 @@ const About = () => {
               <span className="text-accent font-mono tracking-[0.25em] sm:tracking-[0.4em] text-[10px] sm:text-xs font-bold uppercase block mb-2">
                 Introduction
               </span>
-              <h2 className="text-[1.75rem] leading-tight sm:text-4xl md:text-5xl lg:text-7xl font-black tracking-tight mb-3 sm:mb-4 md:mb-6 break-words">
+              <h2 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-[1.1] mb-4 sm:mb-6 break-words">
                 About{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent via-orange-500 to-accent">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent via-orange-400 to-accent drop-shadow-sm">
                   Me.
                 </span>
               </h2>
