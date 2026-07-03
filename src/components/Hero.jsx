@@ -92,9 +92,9 @@ const Hero = () => {
       <div className="absolute inset-0 dot-grid opacity-[0.18] pointer-events-none" />
 
       <div className="container mx-auto max-w-7xl relative z-10 px-5 sm:px-6 pt-28 pb-16">
-        <div className="flex flex-col lg:grid lg:grid-cols-2 lg:gap-20 items-center gap-12">
+        <div className="flex flex-col lg:grid lg:grid-cols-2 lg:gap-20 items-center gap-6 sm:gap-10 lg:gap-12">
           <motion.div
-            className="flex justify-center lg:justify-end lg:order-2 w-full h-[280px] sm:h-[360px] lg:h-[500px]"
+            className="flex justify-center lg:justify-end lg:order-2 w-full h-[220px] sm:h-[320px] lg:h-[500px]"
             initial={{ scale: 0.82, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: "spring", stiffness: 180, damping: 22, delay: 0.1 }}
@@ -105,18 +105,19 @@ const Hero = () => {
           <div className="lg:order-1 text-center lg:text-left space-y-6 lg:space-y-8 w-full">
             <motion.div
               {...fadeUp(0.1)}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-sm text-accent text-xs font-semibold tracking-widest uppercase mx-auto lg:mx-0"
-              style={{ fontFamily: "'Syne', sans-serif", border: '1px solid rgba(var(--accent-rgb), 0.2)', background: 'rgba(var(--accent-rgb), 0.06)' }}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-sm text-accent text-xs font-semibold tracking-widest uppercase mx-auto lg:mx-0 font-heading"
+              style={{ border: '1px solid rgba(var(--accent-rgb), 0.2)', background: 'rgba(var(--accent-rgb), 0.06)' }}
             >
               <span className="w-1.5 h-1.5 rounded-full bg-accent glow-accent" />
               Available for opportunities
             </motion.div>
 
             <motion.div {...fadeUp(0.2)}>
-              <h1 className="text-4xl sm:text-5xl lg:text-[4.5rem] font-black tracking-tighter leading-[1.0]" style={{ fontFamily: "'Syne', sans-serif" }}>
-                <span className="text-accent text-glow-accent">Sabin</span> Khatri
+              <h1 className="font-heading text-5xl sm:text-6xl lg:text-[5.5rem] font-black tracking-[-0.04em] leading-[1.05] sm:leading-[1.1] mb-3">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-orange-400 drop-shadow-sm">Sabin</span> 
+                <span className="text-white drop-shadow-sm ml-2 sm:ml-4">Khatri</span>
               </h1>
-              <p className="text-lg sm:text-2xl lg:text-3xl text-os-text/80 mt-2 lg:mt-3 font-light tracking-wide min-h-[2.25rem]" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+              <p className="text-lg sm:text-xl lg:text-2xl text-slate-300/90 mt-4 lg:mt-5 font-light tracking-wide min-h-[2.5rem]">
                 {text}
                 <Cursor cursorColor="var(--os-accent)" cursorStyle="|" />
               </p>
@@ -134,7 +135,7 @@ const Hero = () => {
               ))}
             </motion.div>
 
-            <motion.p {...fadeUp(0.32)} className="text-sm sm:text-base lg:text-[1.05rem] text-os-muted max-w-sm mx-auto lg:mx-0 leading-relaxed" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+            <motion.p {...fadeUp(0.32)} className="text-sm sm:text-base lg:text-lg text-slate-400 max-w-md mx-auto lg:mx-0 leading-loose font-sans font-medium">
               Building elegant digital experiences with modern web technologies. Passionate about clean code, smooth animations, and meaningful interfaces.
             </motion.p>
 
