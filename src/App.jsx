@@ -50,6 +50,9 @@ function AppContent() {
   const [isIdle, setIsIdle] = useState(false);
   const idleTimerRef = useRef(null);
   const isIdleRef = useRef(false);
+  const lenisRef = useRef(null);
+
+  const isAnyOverlayOpen = !hasBooted || isCommandPaletteOpen || isShortcutsOpen || windows.length > 0;
 
   const openWindowTypes = windows.map(w => w.type);
 
@@ -104,6 +107,7 @@ function AppContent() {
       touchMultiplier: 2,
       infinite: false,
     });
+    lenisRef.current = lenis;
 
     function raf(time) {
       lenis.raf(time);
@@ -113,6 +117,7 @@ function AppContent() {
 
     return () => {
       lenis.destroy();
+      lenisRef.current = null;
     };
   }, [hasBooted]);
 
