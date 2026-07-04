@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   FaSearch, FaHome, FaUser, FaFolderOpen, FaEnvelope, FaCode,
@@ -8,7 +9,7 @@ import { playOpenSound, playCloseSound, playSuccessSound } from '../utils/audio'
 import { scrollToSection } from '../utils/scroll';
 
 const COMMANDS = [
-  { id: 'home',     label: 'Home',           desc: 'Go to hero section',       icon: FaHome,       action: 'scroll' },
+  { id: 'home',     label: 'Home',  desc: 'Go to hero section',       icon: FaHome,       action: 'scroll' },
   { id: 'about',    label: 'About',          desc: 'About Sabin Khatri',       icon: FaUser,       action: 'scroll' },
   { id: 'services', label: 'Services',       desc: 'What I do & expertise',    icon: FaCode,       action: 'scroll' },
   { id: 'projects', label: 'Projects',       desc: 'View portfolio projects',  icon: FaFolderOpen, action: 'scroll' },
