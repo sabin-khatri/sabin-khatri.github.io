@@ -6,10 +6,10 @@ import { FaGithub, FaHtml5, FaCss3Alt, FaJsSquare, FaReact, FaBootstrap, FaPhp }
 import { FiExternalLink } from "react-icons/fi";
 import { SiTailwindcss, SiMysql } from "react-icons/si";
 
-import chiyaghar from "../assets/projects/chiyaghar.png";
-import trekking  from "../assets/projects/trekking.png";
-import driving   from "../assets/projects/travel.png";
-import carrental from "../assets/projects/carrental.png";
+import chiyaghar from "../assets/projects/chiyaghar.jpg";
+import trekking  from "../assets/projects/trekking-react.jpg";
+import realtime   from "../assets/projects/realtime-complaint.jpg";
+import district from "../assets/projects/district-score.jpg";
 
 const TAG_ICONS = {
   HTML:          <FaHtml5     className="text-orange-400" />,
@@ -24,51 +24,58 @@ const TAG_ICONS = {
 
 const PROJECTS = [
   {
-    id: 1, num: "01",
+    id: 1,
+    num: "01",
+    title: "Real-Time Complaint Hub",
+    subtitle: "Smart Complaint Management System",
+    description:
+      "A real-time complaint management platform that enables users to submit, track, and monitor complaints efficiently. The system provides instant status updates, role-based dashboards, and a responsive user experience for faster issue resolution.",
+    image: realtime,
+    tags: ["React", "Tailwind CSS", "Node.js"],
+    liveUrl: "https://realtime-complaint-tracking.netlify.app/",
+    githubUrl: "https://github.com/sabin-khatri/realtime-complaint-tracking-hub",
+    color: "from-red-900/40 to-section",
+  },
+  {
+    id: 2,
+    num: "02",
     title: "Chiya Ghar",
-    subtitle: "Premium Tea Experience",
-    description: "A visually stunning landing page for a Nepali tea café. Featuring smooth parallax effects and a warm, inviting aesthetic that captures the essence of local tea culture.",
+    subtitle: "Modern Tea Café Website",
+    description:
+      "A modern and responsive website for a Nepali tea café featuring smooth animations, interactive UI, elegant layouts, and an engaging user experience to showcase products, services, and the café's unique atmosphere.",
     image: chiyaghar,
-    tags: ["React", "Tailwind CSS", "JavaScript"],
-    liveUrl:   "https://bespoke-twilight-0dc185.netlify.app/",
+    tags: ["React", "Tailwind CSS", "Framer Motion"],
+    liveUrl: "https://bespoke-twilight-0dc185.netlify.app/",
     githubUrl: "https://github.com/sabin-khatri/ChiyaAdda",
     color: "from-amber-900/40 to-section",
   },
   {
-    id: 2, num: "02",
+    id: 3,
+    num: "03",
     title: "Trekking Nepal",
-    subtitle: "Adventure Expedition",
-    description: "An immersive tourism platform designed to showcase the majestic Himalayas. Built with a focus on high-resolution imagery and fluid storytelling transitions.",
+    subtitle: "Tourism & Adventure Platform",
+    description:
+      "A visually appealing trekking and tourism platform designed to explore Nepal's natural beauty. It includes responsive layouts, engaging animations, destination highlights, and an immersive browsing experience.",
     image: trekking,
-    tags: ["React", "Tailwind CSS", "JavaScript"],
-    liveUrl:   "https://sabintrek.netlify.app/",
-    githubUrl: "https://github.com/sabin-khatri/Trekking-Web",
+    tags: ["React", "Tailwind CSS", "Framer Motion"],
+    liveUrl: "https://sabintrek.netlify.app/",
+    githubUrl: "https://github.com/sabin-khatri/trekking_web",
     color: "from-emerald-900/40 to-section",
   },
   {
-    id: 3, num: "03",
-    title: "Travel App",
-    subtitle: "Modern Travel Agency",
-    description: "A dynamic SPA built for travel enthusiasts. Features advanced filtering, category exploration, and sleek motion components.",
-    image: driving,
-    tags: ["React", "Tailwind CSS", "JavaScript"],
-    liveUrl:   "https://travel-web-zeta-livid.vercel.app/",
-    githubUrl: "https://github.com/sabin-khatri/Travel-web",
+    id: 4,
+    num: "04",
+    title: "District Score",
+    subtitle: "Hackathon Data Dashboard",
+    description:
+      "A hackathon project developed collaboratively to visualize district-level data through an interactive dashboard. Built with Supabase for backend services, it offers secure data management, responsive design, and real-time information presentation.",
+    image: district,
+    tags: ["React", "TypeScript", "Tailwind CSS", "Supabase"],
+    liveUrl: "https://district-scrore.vercel.app/",
+    githubUrl: "https://github.com/sabin-khatri/DistrictScrore",
     color: "from-blue-900/40 to-section",
   },
-  {
-    id: 4, num: "04",
-    title: "Gadi Rental",
-    subtitle: "Automotive Booking",
-    description: "A full-scale car rental solution with a focus on UX. Includes a sophisticated booking flow and a modern, responsive dashboard-style interface.",
-    image: carrental,
-    tags: ["React", "Tailwind CSS", "JavaScript"],
-    liveUrl:   "https://gadi-rental.netlify.app/",
-    githubUrl: "https://github.com/sabin-khatri/Car-Rental",
-    color: "from-purple-900/40 to-section",
-  },
 ];
-
 const cardVariants = {
   hidden: { opacity: 0, y: 40 },
   show: (i) => ({
@@ -108,9 +115,6 @@ const ProjectCard = ({ project, index, isMobile }) => {
         backdrop-blur-xl sticky mb-16 lg:mb-24
       `}
       style={{ top: isMobile ? `calc(80px + ${index * 24}px)` : `${100 + index * 36}px`, perspective: '1000px' }}
-      onMouseEnter={() => !isMobile && setIsFlipped(true)}
-      onMouseLeave={() => !isMobile && setIsFlipped(false)}
-      onClick={() => isMobile && setIsFlipped(!isFlipped)}
     >
       <AnimatePresence mode="wait">
         {!isFlipped ? (
@@ -142,6 +146,12 @@ const ProjectCard = ({ project, index, isMobile }) => {
                 <span className="text-accent font-mono text-[10px] sm:text-sm tracking-widest uppercase truncate">
                   {project.subtitle}
                 </span>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); setIsFlipped(true); }}
+                  className="ml-auto text-[10px] sm:text-xs font-mono px-2 py-1 rounded bg-black/30 border border-white/10 text-slate-400 hover:text-accent hover:border-accent/40 transition-colors"
+                >
+                  {'{ }'} JSON
+                </button>
               </div>
 
               <h3 className="text-2xl sm:text-3xl lg:text-5xl font-bold text-white mb-3 sm:mb-5 tracking-tight">
@@ -196,18 +206,23 @@ const ProjectCard = ({ project, index, isMobile }) => {
             transition={{ duration: 0.3 }}
             className="w-full bg-[#1e1e1e]/95 backdrop-blur-3xl p-6 sm:p-10 rounded-2xl border border-white/10 overflow-hidden flex flex-col justify-center min-h-[300px] sm:min-h-[400px]"
           >
-            <div className="flex items-center gap-2 mb-4 bg-black/40 p-3 rounded-lg border border-white/5">
-              <div className="w-3 h-3 rounded-full bg-red-500" />
-              <div className="w-3 h-3 rounded-full bg-yellow-500" />
-              <div className="w-3 h-3 rounded-full bg-green-500" />
-              <span className="ml-3 text-xs font-mono text-slate-400">project_data.json</span>
+            <div className="flex items-center justify-between mb-4 bg-black/40 p-3 rounded-lg border border-white/5">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-red-500" />
+                <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                <div className="w-3 h-3 rounded-full bg-green-500" />
+                <span className="ml-3 text-xs font-mono text-slate-400">project_data.json</span>
+              </div>
+              <button 
+                onClick={(e) => { e.stopPropagation(); setIsFlipped(false); }}
+                className="text-[10px] font-mono px-2 py-1 rounded bg-slate-800 text-slate-400 hover:text-white"
+              >
+                Close
+              </button>
             </div>
             <pre className="text-xs sm:text-sm md:text-base text-green-400 font-mono whitespace-pre-wrap overflow-y-auto custom-scrollbar flex-1">
               {JSON.stringify(jsonData, null, 4)}
             </pre>
-            {isMobile && (
-              <div className="mt-4 text-center text-xs text-slate-500 font-mono">Tap to flip back</div>
-            )}
           </motion.div>
         )}
       </AnimatePresence>
