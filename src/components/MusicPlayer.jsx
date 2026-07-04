@@ -146,7 +146,7 @@ const MusicPlayer = () => {
   const secs = totalSecs % 60;
 
   return (
-    <div className="p-4 custom-scrollbar overflow-y-auto max-h-[min(520px,70vh)]">
+    <div data-lenis-prevent="true" className="p-4 custom-scrollbar overflow-y-auto max-h-[min(520px,70vh)]">
       {/* Now playing */}
       <div className="flex items-center gap-3 mb-3">
         <div className={`w-11 h-11 rounded-lg border flex items-center justify-center shrink-0 ${playing ? 'border-accent/40' : 'border-slate-700'}`}>
