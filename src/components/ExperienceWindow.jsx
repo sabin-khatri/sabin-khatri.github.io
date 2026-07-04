@@ -22,7 +22,7 @@ const TIMELINE = [
 ];
 
 const ExperienceWindow = () => (
-  <div className="p-4 sm:p-5 overflow-y-auto custom-scrollbar max-h-[min(420px,65vh)]" style={{ fontSize: 'var(--ui-font-size, 13px)' }}>
+  <div data-lenis-prevent="true" className="p-4 sm:p-5 overflow-y-auto custom-scrollbar max-h-[min(420px,65vh)]" style={{ fontSize: 'var(--ui-font-size, 13px)' }}>
     <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-4">~/timeline — career.log</p>
     <div className="relative pl-4 border-l border-slate-800 space-y-6">
       {TIMELINE.map((item, i) => (
