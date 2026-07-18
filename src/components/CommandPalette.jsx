@@ -26,6 +26,10 @@ const CommandPalette = ({ isOpen, onClose, onOpen }) => {
   const [search, setSearch] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef(null);
+  const listRef = useRef(null);
+  const itemRefs = useRef([]);
+  // true only when selection moved via keyboard — avoids fighting mouse hover scroll
+  const keyboardNavRef = useRef(false);
 
   const filteredCommands = COMMANDS.filter(cmd =>
     cmd.label.toLowerCase().includes(search.toLowerCase()) ||
@@ -41,6 +45,15 @@ const CommandPalette = ({ isOpen, onClose, onOpen }) => {
     }
   }, [isOpen]);
 
+  // Keep the keyboard-selected row inside the scrollable list, without
+  // ever touching (or leaking scroll to) whatever is behind the palette.
+  useEffect(() => {
+    if (!keyboardNavRef.current) return;
+    keyboardNavRef.current = false;
+    const el = itemRefs.current[selectedIndex];
+    if (el) el.scrollIntoView({ block: 'nearest' });
+  }, [selectedIndex]);
+
   const handleSelect = (cmd) => {
     playSuccessSound();
     if (cmd.action === 'scroll') {
@@ -54,9 +67,11 @@ const CommandPalette = ({ isOpen, onClose, onOpen }) => {
   const handleKeyDown = (e) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault();
+      keyboardNavRef.current = true;
       setSelectedIndex(prev => Math.min(prev + 1, filteredCommands.length - 1));
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
+      keyboardNavRef.current = true;
       setSelectedIndex(prev => Math.max(prev - 1, 0));
     } else if (e.key === 'Enter' && filteredCommands[selectedIndex]) {
       e.preventDefault();
@@ -101,13 +116,24 @@ const CommandPalette = ({ isOpen, onClose, onOpen }) => {
               <span className="text-[10px] text-slate-500 font-mono border border-slate-700 px-1.5 py-0.5 rounded hidden sm:inline">ESC</span>
             </div>
 
-            <div data-lenis-prevent="true" className="max-h-[50vh] sm:max-h-[300px] overflow-y-auto p-2 custom-scrollbar" style={{ overscrollBehavior: 'contain' }}>
+            {/* Fixed max-height so the window itself never grows.
+                data-lenis-prevent + overscrollBehavior:contain keep scroll
+                fully local: wheel here scrolls only this list; wheel
+                anywhere else (header, footer, backdrop) reaches the page
+                behind, exactly like Settings / Music player. */}
+            <div
+              ref={listRef}
+              data-lenis-prevent="true"
+              className="max-h-[50vh] sm:max-h-[300px] overflow-y-auto p-2 custom-scrollbar"
+              style={{ overscrollBehavior: 'contain' }}
+            >
               {filteredCommands.length > 0 ? (
                 filteredCommands.map((cmd, idx) => {
                   const Icon = cmd.icon;
                   return (
                     <button
                       key={cmd.id}
+                      ref={(el) => { itemRefs.current[idx] = el; }}
                       onClick={() => handleSelect(cmd)}
                       onMouseEnter={() => setSelectedIndex(idx)}
                       className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-mono transition-colors text-left ${
