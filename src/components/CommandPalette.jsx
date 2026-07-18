@@ -101,7 +101,7 @@ const CommandPalette = ({ isOpen, onClose, onOpen }) => {
               <span className="text-[10px] text-slate-500 font-mono border border-slate-700 px-1.5 py-0.5 rounded hidden sm:inline">ESC</span>
             </div>
 
-            <div data-lenis-prevent="true" className="max-h-[50vh] sm:max-h-[300px] overflow-y-auto p-2 custom-scrollbar">
+            <div data-lenis-prevent="true" className="max-h-[50vh] sm:max-h-[300px] overflow-y-auto p-2 custom-scrollbar" style={{ overscrollBehavior: 'contain' }}>
               {filteredCommands.length > 0 ? (
                 filteredCommands.map((cmd, idx) => {
                   const Icon = cmd.icon;

@@ -132,7 +132,21 @@ function AppContent() {
     return () => { document.body.style.overflow = ''; };
   }, [hasBooted]);
 
-  const openWindow = useCallback((type) => {
+  useEffect(() => {
+    if (isCommandPaletteOpen) {
+      document.body.style.overflow = 'hidden';
+      if (lenisRef.current) lenisRef.current.stop();
+    } else {
+      document.body.style.overflow = hasBooted ? '' : 'hidden';
+      if (lenisRef.current) lenisRef.current.start();
+    }
+    return () => {
+      document.body.style.overflow = '';
+      if (lenisRef.current) lenisRef.current.start();
+    };
+  }, [isCommandPaletteOpen, hasBooted]);
+
+  const openWindow = useCallback((type, params = null) => {
     if (type === 'shortcuts') { setIsShortcutsOpen(true); return; }
 
     const existing = windows.find(w => w.type === type);
@@ -140,12 +154,12 @@ function AppContent() {
       const newZ = topZIndex + 1;
       setTopZIndex(newZ);
       setActiveWindow(type);
-      setWindows(prev => prev.map(w => w.type === type ? { ...w, zIndex: newZ } : w));
+      setWindows(prev => prev.map(w => w.type === type ? { ...w, zIndex: newZ, params: params || w.params } : w));
       return;
     }
 
     if (type !== 'shortcuts') {
-      const displayNames = { terminal: 'Terminal', music: 'Music Player', settings: 'Settings', timeline: 'Experience' };
+      const displayNames = { terminal: 'Terminal', music: 'Music Player', settings: 'Settings', timeline: 'Experience', casestudy: 'Case Study' };
       const appName = displayNames[type] || type;
       toast.success(`Opening ${appName}...`, { id: `open-${type}` });
     }
@@ -155,7 +169,7 @@ function AppContent() {
     const newZIndex = topZIndex + 1;
     setTopZIndex(newZIndex);
     setActiveWindow(type);
-    setWindows(prev => [...prev, { id, type, zIndex: newZIndex }]);
+    setWindows(prev => [...prev, { id, type, zIndex: newZIndex, params }]);
   }, [windows, topZIndex]);
 
   const closeWindow = useCallback((id) => {

@@ -1,26 +1,26 @@
-
 import React from "react";
 // eslint-disable-next-line no-unused-vars
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { FaGithub, FaHtml5, FaCss3Alt, FaJsSquare, FaReact, FaBootstrap, FaPhp } from "react-icons/fa";
 import { FiExternalLink } from "react-icons/fi";
 import { SiTailwindcss, SiMysql } from "react-icons/si";
 
 import chiyaghar from "../assets/projects/chiyaghar.jpg";
-import trekking  from "../assets/projects/trekking-react.jpg";
-import realtime   from "../assets/projects/realtime-complaint.jpg";
+import trekking from "../assets/projects/trekking-react.jpg";
+import realtime from "../assets/projects/realtime-complaint.jpg";
 import district from "../assets/projects/district-score.jpg";
 
 const TAG_ICONS = {
-  HTML:          <FaHtml5     className="text-orange-400" />,
-  CSS:           <FaCss3Alt   className="text-blue-400"   />,
-  JavaScript:    <FaJsSquare  className="text-amber-400"  />,
-  React:         <FaReact     className="text-cyan-400"   />,
-  "Tailwind CSS":<SiTailwindcss className="text-sky-400"  />,
-  Bootstrap:     <FaBootstrap className="text-purple-400" />,
-  PHP:           <FaPhp       className="text-indigo-400" />,
-  MySQL:         <SiMysql     className="text-blue-300"   />,
+  HTML: <FaHtml5 className="text-orange-400" />,
+  CSS: <FaCss3Alt className="text-blue-400" />,
+  JavaScript: <FaJsSquare className="text-amber-400" />,
+  React: <FaReact className="text-cyan-400" />,
+  "Tailwind CSS": <SiTailwindcss className="text-sky-400" />,
+  Bootstrap: <FaBootstrap className="text-purple-400" />,
+  PHP: <FaPhp className="text-indigo-400" />,
+  MySQL: <SiMysql className="text-blue-300" />,
 };
+
 
 const PROJECTS = [
   {
@@ -76,6 +76,7 @@ const PROJECTS = [
     color: "from-blue-900/40 to-section",
   },
 ];
+
 const cardVariants = {
   hidden: { opacity: 0, y: 40 },
   show: (i) => ({
@@ -85,19 +86,30 @@ const cardVariants = {
   }),
 };
 
-import { AnimatePresence } from "framer-motion";
+const flipVariants = {
+  front: {
+    initial: { rotateX: 90, opacity: 0 },
+    animate: { rotateX: 0, opacity: 1 },
+    exit: { rotateX: -90, opacity: 0 },
+  },
+  back: {
+    initial: { rotateX: -90, opacity: 0 },
+    animate: { rotateX: 0, opacity: 1 },
+    exit: { rotateX: 90, opacity: 0 },
+  },
+};
 
 const ProjectCard = ({ project, index, isMobile }) => {
   const [isFlipped, setIsFlipped] = React.useState(false);
 
-  // Extract clean data for JSON view
+
   const jsonData = {
     id: project.id,
     title: project.title,
     subtitle: project.subtitle,
     stack: project.tags,
     repository: project.githubUrl,
-    deployment: project.liveUrl
+    deployment: project.liveUrl,
   };
 
   return (
@@ -107,22 +119,17 @@ const ProjectCard = ({ project, index, isMobile }) => {
       initial="hidden"
       whileInView="show"
       viewport={{ once: true, margin: "-40px" }}
-      className={`
-        w-full bg-gradient-to-br ${project.color}
-        border border-white/10 rounded-2xl sm:rounded-[2rem]
-        shadow-2xl p-4 sm:p-6 lg:p-10 overflow-visible
-        backdrop-blur-xl
-        backdrop-blur-xl sticky mb-16 lg:mb-24
-      `}
-      style={{ top: isMobile ? `calc(80px + ${index * 24}px)` : `${100 + index * 36}px`, perspective: '1000px' }}
+      className={`w-full bg-gradient-to-br ${project.color} border border-white/10 rounded-2xl sm:rounded-[2rem] shadow-2xl p-4 sm:p-6 lg:p-10 overflow-visible backdrop-blur-xl sticky mb-16 lg:mb-24`}
+      style={{
+        top: isMobile ? `calc(80px + ${index * 24}px)` : `${100 + index * 36}px`,
+        perspective: "1000px",
+      }}
     >
       <AnimatePresence mode="wait">
         {!isFlipped ? (
           <motion.div
             key="front"
-            initial={{ rotateX: 90, opacity: 0 }}
-            animate={{ rotateX: 0, opacity: 1 }}
-            exit={{ rotateX: -90, opacity: 0 }}
+            {...flipVariants.front}
             transition={{ duration: 0.3 }}
             className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 items-center"
           >
@@ -146,11 +153,15 @@ const ProjectCard = ({ project, index, isMobile }) => {
                 <span className="text-accent font-mono text-[10px] sm:text-sm tracking-widest uppercase truncate">
                   {project.subtitle}
                 </span>
-                <button 
-                  onClick={(e) => { e.stopPropagation(); setIsFlipped(true); }}
-                  className="ml-auto text-[10px] sm:text-xs font-mono px-2 py-1 rounded bg-black/30 border border-white/10 text-slate-400 hover:text-accent hover:border-accent/40 transition-colors"
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsFlipped(true);
+                  }}
+                  className="ml-auto shrink-0 text-[10px] sm:text-xs font-mono px-2 py-1 rounded bg-black/30 border border-white/10 text-slate-400 hover:text-accent hover:border-accent/40 transition-colors"
                 >
-                  {'{ }'} JSON
+                  {"{ }"} JSON
                 </button>
               </div>
 
@@ -167,7 +178,8 @@ const ProjectCard = ({ project, index, isMobile }) => {
                     key={tag}
                     className="px-3 py-1.5 rounded-full bg-black/30 border border-white/5 text-xs sm:text-sm font-medium text-slate-200 flex items-center gap-1.5"
                   >
-                    {TAG_ICONS[tag]} {tag}
+                    <span className="text-sm sm:text-base leading-none">{TAG_ICONS[tag]}</span>
+                    {tag}
                   </span>
                 ))}
               </div>
@@ -182,7 +194,7 @@ const ProjectCard = ({ project, index, isMobile }) => {
                   whileTap={{ scale: 0.97 }}
                   className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3.5 sm:px-8 sm:py-4 bg-white text-black font-bold rounded-full hover:bg-accent transition-colors duration-300 text-sm sm:text-base"
                 >
-                  Visit Site <FiExternalLink />
+                  Visit Site <FiExternalLink className="text-base sm:text-lg" />
                 </motion.a>
                 <motion.a
                   href={project.githubUrl}
@@ -192,7 +204,7 @@ const ProjectCard = ({ project, index, isMobile }) => {
                   whileTap={{ scale: 0.97 }}
                   className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3.5 sm:px-8 sm:py-4 border border-white/15 text-white hover:text-accent hover:border-accent/40 font-medium transition-colors rounded-full text-sm sm:text-base"
                 >
-                  <FaGithub size={20} /> Source Code
+                  <FaGithub className="text-base sm:text-lg" /> Source Code
                 </motion.a>
               </div>
             </div>
@@ -200,9 +212,7 @@ const ProjectCard = ({ project, index, isMobile }) => {
         ) : (
           <motion.div
             key="back"
-            initial={{ rotateX: -90, opacity: 0 }}
-            animate={{ rotateX: 0, opacity: 1 }}
-            exit={{ rotateX: 90, opacity: 0 }}
+            {...flipVariants.back}
             transition={{ duration: 0.3 }}
             className="w-full bg-[#1e1e1e]/95 backdrop-blur-3xl p-6 sm:p-10 rounded-2xl border border-white/10 overflow-hidden flex flex-col justify-center min-h-[300px] sm:min-h-[400px]"
           >
@@ -213,9 +223,13 @@ const ProjectCard = ({ project, index, isMobile }) => {
                 <div className="w-3 h-3 rounded-full bg-green-500" />
                 <span className="ml-3 text-xs font-mono text-slate-400">project_data.json</span>
               </div>
-              <button 
-                onClick={(e) => { e.stopPropagation(); setIsFlipped(false); }}
-                className="text-[10px] font-mono px-2 py-1 rounded bg-slate-800 text-slate-400 hover:text-white"
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsFlipped(false);
+                }}
+                className="text-[10px] font-mono px-2 py-1 rounded bg-slate-800 text-slate-400 hover:text-white transition-colors"
               >
                 Close
               </button>
@@ -232,13 +246,13 @@ const ProjectCard = ({ project, index, isMobile }) => {
 
 const Projects = () => {
   const [isMobile, setIsMobile] = React.useState(
-    typeof window !== 'undefined' ? window.innerWidth < 768 : false
+    typeof window !== "undefined" ? window.innerWidth < 768 : false
   );
 
   React.useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener('resize', onResize, { passive: true });
-    return () => window.removeEventListener('resize', onResize);
+    window.addEventListener("resize", onResize, { passive: true });
+    return () => window.removeEventListener("resize", onResize);
   }, []);
 
   return (
@@ -246,8 +260,9 @@ const Projects = () => {
       <div
         className="absolute inset-0 pointer-events-none opacity-[0.03]"
         style={{
-          backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
-          backgroundSize: '40px 40px',
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)",
+          backgroundSize: "40px 40px",
         }}
       />
 
@@ -271,12 +286,7 @@ const Projects = () => {
 
         <div className="relative pb-8 sm:pb-16">
           {PROJECTS.map((project, index) => (
-            <ProjectCard
-              key={project.id}
-              project={project}
-              index={index}
-              isMobile={isMobile}
-            />
+            <ProjectCard key={project.id} project={project} index={index} isMobile={isMobile} />
           ))}
         </div>
       </div>

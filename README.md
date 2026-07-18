@@ -17,12 +17,51 @@
 
 ## 🌟 Features
 
-- **OS-Themed UI:** Features a boot screen, taskbar, command palette, and draggable windows just like a real operating system.
-- **Buttery Smooth Scrolling:** Integrated with `Lenis` for premium scroll hijacking and fluidity.
-- **Spring Animations:** Powered by `framer-motion` for bouncy, modern, and interactive transitions.
-- **Glassmorphism Design:** Modern aesthetic with blurred backgrounds on the taskbar and navigation.
-- **3D Elements:** Uses `@react-three/fiber` and `@react-three/drei` for engaging 3D interactions.
-- **Fully Responsive:** Looks great and works seamlessly on desktops, tablets, and mobile devices.
+Sabin OS is packed with premium, interactive, and nostalgic desktop features crafted to deliver a modern web experience:
+
+### 🖥️ OS-Themed Environment
+- **Interactive Boot Sequence:** A simulated BIOS boot screen that runs on startup with retro scanlines and diagnostic steps.
+- **Draggable & Focusable Windows:** Desktop windows (`DraggableWindow`, `WindowFrame`) equipped with minimize, focus, and close controls. Clicking any window automatically raises its depth level (z-index).
+- **Glassmorphic Taskbar:** A premium blur-filter dock housing quick launch application shortcuts and indicators for running processes.
+
+### 💻 Command Line Terminal
+- **Interactive Console:** A pseudo-bash interface (`Terminal.jsx`) with realistic audio effects and custom system command actions:
+  - `help` / `whoami` / `clear`
+  - `home` / `about` / `projects` / `skills` / `contact` (Scroll navigation commands)
+  - `music` / `timeline` (Application execution commands)
+  - `neofetch` (Prints retro Sabin OS configurations and hardware properties)
+  - `matrix` (Launches an animated Matrix code screen effect)
+  - `audit` / `lighthouse` (Performs a simulated 100% score Performance and SEO audit)
+  - `sudo` (Access denial safety action)
+
+### ⚛️ 3D Physics Laboratory (Skills Showcase)
+- **Interactive Spheres:** Powered by `@react-three/fiber` and `@react-three/rapier` 3D physics engine.
+- **Pointer Tracking:** Mouse pointer or touch drags control an invisible kinematic cursor, letting you collide with, grab, and toss the skill spheres around.
+- **Dynamic Adaptability:** Scales the number of physical elements and texture filters automatically based on system viewport size for optimized performance.
+
+### 🎵 Dual-Mode Music Player
+- **Diverse Stations:** Play live audio streams (e.g., *Lofi Radio*, *Jazz & Hop* via safe YouTube feeds) or procedurally-synthesized focus beats generated entirely in-browser using Web Audio APIs.
+- **Beat Visualizer:** Features a responsive bouncing equalizer/visualizer bar matching the musical beat.
+- **Media Controls:** Full play, pause, next/prev track cycle, volume adjustments, and instant mute capabilities.
+
+### ⚙️ Customization Preferences Center
+- **Theme Selection:** Quickly switch between 5 preset color schemes (Default, Dracula, Catppuccin, Nord, Tokyo Night).
+- **Accent Highlighting:** Apply neon accents across the UI (Amber, Matrix Green, Cyber Cyan, Neon Fuchsia, Azure Blue).
+- **Sound Profile Engine:** Toggle system click sounds and choose between 4 audio profiles (*Soft*, *Retro*, *Arcade*, *Minimal*).
+- **Desktop Wallpapers:** 4 dynamic patterns (Dot Grid, Grid Lines, Gradient, Aurora).
+- **Nostalgic Overlay:** Toggle a CRT monitor filter with scanline animations.
+
+### 🔍 Search & Quick Operations
+- **Spotlight-Style Command Palette:** Triggered via `Ctrl + Space` for rapid page scrolling or desktop app execution.
+- **Keyboard Shortcuts Reference:** An overlay modal (`Ctrl + ?`) listing quick navigation keybinds.
+- **Atmospheric Screensaver:** Triggers automatically after 45s of idle state, showing a neon glowing digital clock. Instantly wakes on any user input.
+- **Live GitHub Calendar Graph:** Displays live contribution metrics directly from the GitHub API using a custom error-boundary widget.
+
+### ⚡ Aesthetics & Performance
+- **Buttery Smooth Scroll:** Powered by `Lenis` for premium scroll interpolation and fluidity.
+- **Spring Animations:** Enhanced with `framer-motion` and `gsap` for bouncy micro-interactions and transition state persistence.
+- **Smart Loading & Error Isolation:** Implements intersection observers to lazy-load resource-intensive sections, and custom React Error Boundaries to prevent crash propagation.
+
 
 ---
 

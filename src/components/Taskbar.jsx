@@ -5,9 +5,9 @@ import { FaGlobe, FaTerminal, FaCog, FaCloud, FaSearch, FaMusic } from 'react-ic
 import { playClickSound } from '../utils/audio';
 
 const APPS = [
-  { id: 'terminal', icon: FaTerminal, label: 'Terminal' },
-  { id: 'music',    icon: FaMusic,    label: 'Music' },
-  { id: 'settings', icon: FaCog,      label: 'Settings' },
+  { id: 'terminal',  icon: FaTerminal,   label: 'Terminal' },
+  { id: 'music',     icon: FaMusic,      label: 'Music' },
+  { id: 'settings',  icon: FaCog,        label: 'Settings' },
 ];
 
 const Taskbar = ({ openWindows, activeWindow, onOpenApp, onCommandPalette }) => {
