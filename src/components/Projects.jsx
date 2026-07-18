@@ -21,7 +21,6 @@ const TAG_ICONS = {
   MySQL: <SiMysql className="text-blue-300" />,
 };
 
-
 const PROJECTS = [
   {
     id: 1,
@@ -35,6 +34,7 @@ const PROJECTS = [
     liveUrl: "https://realtime-complaint-tracking.netlify.app/",
     githubUrl: "https://github.com/sabin-khatri/realtime-complaint-tracking-hub",
     color: "from-red-900/40 to-section",
+    glow: "225, 60, 60",
   },
   {
     id: 2,
@@ -48,6 +48,7 @@ const PROJECTS = [
     liveUrl: "https://bespoke-twilight-0dc185.netlify.app/",
     githubUrl: "https://github.com/sabin-khatri/ChiyaAdda",
     color: "from-amber-900/40 to-section",
+    glow: "217, 149, 60",
   },
   {
     id: 3,
@@ -61,6 +62,7 @@ const PROJECTS = [
     liveUrl: "https://sabintrek.netlify.app/",
     githubUrl: "https://github.com/sabin-khatri/trekking_web",
     color: "from-emerald-900/40 to-section",
+    glow: "52, 195, 143",
   },
   {
     id: 4,
@@ -74,8 +76,11 @@ const PROJECTS = [
     liveUrl: "https://district-scrore.vercel.app/",
     githubUrl: "https://github.com/sabin-khatri/DistrictScrore",
     color: "from-blue-900/40 to-section",
+    glow: "56, 135, 230",
   },
 ];
+
+const ALL_TAGS = ["All", ...Array.from(new Set(PROJECTS.flatMap((p) => p.tags)))];
 
 const cardVariants = {
   hidden: { opacity: 0, y: 40 },
@@ -84,6 +89,7 @@ const cardVariants = {
     y: 0,
     transition: { duration: 0.55, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] },
   }),
+  exit: { opacity: 0, y: -20, transition: { duration: 0.25 } },
 };
 
 const flipVariants = {
@@ -99,9 +105,39 @@ const flipVariants = {
   },
 };
 
+// Editor-style filter tabs with a sliding active pill (layoutId magic)
+const FilterTabs = ({ active, onChange }) => (
+  <div className="flex flex-wrap items-center justify-center gap-2 mb-14 sm:mb-20 font-mono text-xs sm:text-sm">
+    {ALL_TAGS.map((tag) => {
+      const isActive = tag === active;
+      return (
+        <button
+          key={tag}
+          type="button"
+          onClick={() => onChange(tag)}
+          className={`relative px-4 py-2 rounded-full border transition-colors duration-300 ${
+            isActive
+              ? "text-black border-transparent"
+              : "text-slate-400 border-white/10 hover:text-white hover:border-white/30"
+          }`}
+        >
+          {isActive && (
+            <motion.span
+              layoutId="activeTabPill"
+              className="absolute inset-0 rounded-full bg-accent"
+              transition={{ type: "spring", stiffness: 380, damping: 32 }}
+            />
+          )}
+          <span className="relative z-10">{tag === "All" ? "// all" : tag}</span>
+        </button>
+      );
+    })}
+  </div>
+);
+
 const ProjectCard = ({ project, index, isMobile }) => {
   const [isFlipped, setIsFlipped] = React.useState(false);
-
+  const cardRef = React.useRef(null);
 
   const jsonData = {
     id: project.id,
@@ -112,26 +148,50 @@ const ProjectCard = ({ project, index, isMobile }) => {
     deployment: project.liveUrl,
   };
 
+  // Cursor-follow spotlight — updated directly via CSS vars, no re-render
+  const handleMouseMove = (e) => {
+    const el = cardRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    el.style.setProperty("--mx", `${e.clientX - rect.left}px`);
+    el.style.setProperty("--my", `${e.clientY - rect.top}px`);
+  };
+
   return (
     <motion.article
+      layout
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
       custom={index}
       variants={cardVariants}
       initial="hidden"
       whileInView="show"
+      exit="exit"
       viewport={{ once: true, margin: "-40px" }}
-      className={`w-full bg-gradient-to-br ${project.color} border border-white/10 rounded-2xl sm:rounded-[2rem] shadow-2xl p-4 sm:p-6 lg:p-10 overflow-visible backdrop-blur-xl sticky mb-16 lg:mb-24`}
+      className={`group/card relative w-full bg-gradient-to-br ${project.color} border border-white/10 rounded-2xl sm:rounded-[2rem] shadow-2xl p-4 sm:p-6 lg:p-10 overflow-visible backdrop-blur-xl sticky mb-16 lg:mb-24`}
       style={{
         top: isMobile ? `calc(80px + ${index * 24}px)` : `${100 + index * 36}px`,
         perspective: "1000px",
+        "--mx": "50%",
+        "--my": "50%",
+        "--glow": project.glow,
       }}
     >
+      {/* Spotlight overlay */}
+      <div
+        className="pointer-events-none absolute inset-0 rounded-2xl sm:rounded-[2rem] opacity-0 group-hover/card:opacity-100 transition-opacity duration-500"
+        style={{
+          background: `radial-gradient(480px circle at var(--mx) var(--my), rgba(var(--glow), 0.12), transparent 60%)`,
+        }}
+      />
+
       <AnimatePresence mode="wait">
         {!isFlipped ? (
           <motion.div
             key="front"
             {...flipVariants.front}
             transition={{ duration: 0.3 }}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 items-center"
+            className="relative grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 items-center"
           >
             {/* Image */}
             <div className="order-1 lg:order-2 relative group">
@@ -139,16 +199,17 @@ const ProjectCard = ({ project, index, isMobile }) => {
                 <img
                   src={project.image}
                   alt={project.title}
-                  className="w-full h-auto max-h-[220px] sm:max-h-none object-cover object-top"
+                  className="w-full h-auto max-h-[220px] sm:max-h-none object-cover object-top transition-transform duration-700 group-hover:scale-[1.04]"
                   loading="lazy"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </div>
             </div>
 
             {/* Text */}
             <div className="order-2 lg:order-1 flex flex-col justify-center min-w-0">
               <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-5">
-                <span className="text-2xl sm:text-4xl font-black text-white/20">{project.num}</span>
+                <span className="font-mono text-xs sm:text-sm text-white/30">// {project.num}</span>
                 <div className="h-px flex-1 max-w-[48px] bg-white/20" />
                 <span className="text-accent font-mono text-[10px] sm:text-sm tracking-widest uppercase truncate">
                   {project.subtitle}
@@ -214,7 +275,7 @@ const ProjectCard = ({ project, index, isMobile }) => {
             key="back"
             {...flipVariants.back}
             transition={{ duration: 0.3 }}
-            className="w-full bg-[#1e1e1e]/95 backdrop-blur-3xl p-6 sm:p-10 rounded-2xl border border-white/10 overflow-hidden flex flex-col justify-center min-h-[300px] sm:min-h-[400px]"
+            className="relative w-full bg-[#1e1e1e]/95 backdrop-blur-3xl p-6 sm:p-10 rounded-2xl border border-white/10 overflow-hidden flex flex-col justify-center min-h-[300px] sm:min-h-[400px]"
           >
             <div className="flex items-center justify-between mb-4 bg-black/40 p-3 rounded-lg border border-white/5">
               <div className="flex items-center gap-2">
@@ -236,6 +297,11 @@ const ProjectCard = ({ project, index, isMobile }) => {
             </div>
             <pre className="text-xs sm:text-sm md:text-base text-green-400 font-mono whitespace-pre-wrap overflow-y-auto custom-scrollbar flex-1">
               {JSON.stringify(jsonData, null, 4)}
+              <motion.span
+                className="inline-block w-2 h-4 bg-green-400 ml-1 align-middle"
+                animate={{ opacity: [1, 1, 0, 0] }}
+                transition={{ duration: 1, repeat: Infinity, times: [0, 0.5, 0.5, 1] }}
+              />
             </pre>
           </motion.div>
         )}
@@ -248,12 +314,16 @@ const Projects = () => {
   const [isMobile, setIsMobile] = React.useState(
     typeof window !== "undefined" ? window.innerWidth < 768 : false
   );
+  const [activeFilter, setActiveFilter] = React.useState("All");
 
   React.useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener("resize", onResize, { passive: true });
     return () => window.removeEventListener("resize", onResize);
   }, []);
+
+  const filteredProjects =
+    activeFilter === "All" ? PROJECTS : PROJECTS.filter((p) => p.tags.includes(activeFilter));
 
   return (
     <section id="projects" className="relative bg-section py-16 sm:py-24 lg:py-36 overflow-visible">
@@ -271,7 +341,7 @@ const Projects = () => {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-12 sm:mb-20 lg:mb-28"
+          className="text-center mb-10 sm:mb-14"
         >
           <span className="text-accent font-mono tracking-[0.3em] sm:tracking-[0.4em] text-xs font-bold uppercase mb-3 sm:mb-4 block">
             Selected Works
@@ -284,10 +354,14 @@ const Projects = () => {
           </h2>
         </motion.div>
 
+        <FilterTabs active={activeFilter} onChange={setActiveFilter} />
+
         <div className="relative pb-8 sm:pb-16">
-          {PROJECTS.map((project, index) => (
-            <ProjectCard key={project.id} project={project} index={index} isMobile={isMobile} />
-          ))}
+          <AnimatePresence mode="popLayout">
+            {filteredProjects.map((project, index) => (
+              <ProjectCard key={project.id} project={project} index={index} isMobile={isMobile} />
+            ))}
+          </AnimatePresence>
         </div>
       </div>
     </section>
