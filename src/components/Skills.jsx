@@ -7,6 +7,7 @@ import {
   useTexture, 
 } from "@react-three/drei";
 import { BallCollider, Physics, RigidBody, CuboidCollider } from "@react-three/rapier";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import { useSettings } from '../lib/SettingsContext';
 
