@@ -24,6 +24,7 @@ const WALLPAPERS = {
   grid:     "wallpaper-grid",
   gradient: "wallpaper-gradient",
   aurora:   "wallpaper-aurora",
+  shader:   "wallpaper-shader",
 };
 
 const hexToRgb = (hex) => {
