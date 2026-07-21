@@ -3,6 +3,27 @@ import { toast } from 'react-hot-toast';
 import { playKeySound, playSuccessSound, playErrorSound, playCloseSound, playMinimizeSound } from '../utils/audio';
 import { scrollToSection } from '../utils/scroll';
 
+const handleChatbotQuery = (query) => {
+  const q = query.toLowerCase();
+  
+  if (q.includes("who") || q.includes("name") || q.includes("about") || q.includes("sabin")) {
+    return "SYSTEM LOOKUP:\n  Sabin Khatri is a passionate Frontend Developer based in Biratnagar, Nepal.\n  He specializes in building elegant, high-performance web applications using React, Vite, Tailwind CSS, and Three.js.";
+  }
+  if (q.includes("skill") || q.includes("stack") || q.includes("tech") || q.includes("language")) {
+    return "DATABASE LOOKUP:\n  - Languages: JavaScript (ES6+), TypeScript, HTML5, CSS3\n  - Libraries: React, Framer Motion, GSAP, Three.js (R3F/Rapier)\n  - Backend/DB: Node.js, Express, Supabase, MySQL, MongoDB\n  - Styling: Tailwind CSS v4, Bootstrap";
+  }
+  if (q.includes("project") || q.includes("work") || q.includes("portfolio")) {
+    return "PROJECT INDEX:\n  1. Real-Time Complaint Hub (React, Node, Sockets)\n  2. Chiya Ghar (React, Tailwind, Framer Motion)\n  3. Trekking Nepal (React, Tailwind, Lenis)\n  4. District Score Dashboard (React, TS, Supabase)\n\nType the section name (e.g. 'projects') to scroll there directly!";
+  }
+  if (q.includes("contact") || q.includes("hire") || q.includes("email") || q.includes("reach")) {
+    return "COMMUNICATION NODE:\n  - Email: sabinkhatri.dev@gmail.com (or use the Contact window/form!)\n  - GitHub: github.com/sabin-khatri\n  - LinkedIn: linkedin.com/in/sabin-khatri-25460b26a/";
+  }
+  if (q.includes("os") || q.includes("system") || q.includes("portfolio")) {
+    return "SABIN OS v1.0 STATUS:\n  - Kernel: React 19 + Vite\n  - DE: Custom Framer Motion Window Manager\n  - Active Features: Sound profiles, accent picks, Task Monitor, and Snake Game Arcade!";
+  }
+  return `Simulated AI: I processed your query: "${query}".\nI don't have a direct answer in my local database for that.\nTry asking: 'who are you', 'skills', 'projects', or 'contact'.`;
+};
+
 const Terminal = ({ onMinimize, onClose, isFloating = false, title = "guest@sabin-os:~", defaultCommands = [], dragControls }) => {
   const [input, setInput] = useState("");
   const [history, setHistory] = useState([
@@ -29,9 +50,27 @@ const Terminal = ({ onMinimize, onClose, isFloating = false, title = "guest@sabi
     let output = "";
     let isValid = true;
 
+    // Check for 'ask' command prefix
+    if (trimmed.startsWith("ask ") || trimmed === "ask") {
+      const query = trimmed.substring(3).trim();
+      if (!query) {
+        output = "Usage: ask <question>\n\nExamples:\n  ask who are you?\n  ask skills\n  ask projects\n  ask contact";
+      } else {
+        output = handleChatbotQuery(query);
+      }
+      
+      setHistory((prev) => [
+        ...prev,
+        { type: "input", text: `guest@sabin-os:~$ ${cmd.trim()}` },
+        { type: "output", text: output },
+      ]);
+      playSuccessSound();
+      return;
+    }
+
     switch (trimmed) {
       case "help":
-        output = "Available commands:\n  help     - Show this message\n  about    - Go to About section\n  projects - Go to Projects section\n  skills   - Go to Skills section\n  contact  - Go to Contact section\n  home     - Go to Home section\n  clear    - Clear terminal\n  music    - Open music player\n  timeline - Open career timeline\n  whoami   - Print current user\n  neofetch - System information\n  sudo     - Execute as superuser\n  matrix   - Enter the matrix\n  audit    - Run Lighthouse performance audit";
+        output = "Available commands:\n  help     - Show this message\n  ask      - Conversational chatbot (e.g., 'ask skills')\n  about    - Go to About section\n  projects - Go to Projects section\n  skills   - Go to Skills section\n  contact  - Go to Contact section\n  home     - Go to Home section\n  clear    - Clear terminal\n  music    - Open music player\n  timeline - Open career timeline\n  whoami   - Print current user\n  neofetch - System information\n  sudo     - Execute as superuser\n  matrix   - Enter the matrix\n  audit    - Run Lighthouse performance audit";
         break;
       case "home":
         output = "Navigating to Home section...";
