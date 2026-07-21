@@ -26,7 +26,8 @@ const AnimatedCounter = ({ to, trigger }) => {
 };
 
 const MovingBorderBtn = ({
-  as: Tag = 'button',
+  // eslint-disable-next-line no-unused-vars
+  as: Component = 'button',
   href,
   onClick,
   children,
@@ -40,7 +41,7 @@ const MovingBorderBtn = ({
   const [hovered, setHovered] = useState(false);
 
   return (
-    <Tag
+    <Component
       href={href}
       onClick={disabled ? undefined : onClick}
       onMouseEnter={() => setHovered(true)}
@@ -64,7 +65,7 @@ const MovingBorderBtn = ({
       >
         {children}
       </div>
-    </Tag>
+    </Component>
   );
 };
 
