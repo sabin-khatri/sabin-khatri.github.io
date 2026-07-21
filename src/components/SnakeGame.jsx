@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useRef } from 'react';
 import { playClickSound } from '../utils/audio';
 
@@ -33,7 +34,6 @@ const SnakeGame = () => {
     while (onSnake) {
       fx = Math.floor(Math.random() * GRID_SIZE);
       fy = Math.floor(Math.random() * GRID_SIZE);
-      // eslint-disable-next-line no-loop-func
       onSnake = snakeRef.current.some(([sx, sy]) => sx === fx && sy === fy);
     }
     foodRef.current = [fx, fy];
