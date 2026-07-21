@@ -8,6 +8,8 @@ const WINDOW_SIZES = {
   settings: { w: 400, h: 580 },
   timeline: { w: 400, h: 420 },
   shortcuts:{ w: 400, h: 320 },
+  arcade:   { w: 340, h: 470 },
+  taskmanager: { w: 420, h: 480 },
 };
 
 const DraggableWindow = ({ children, isOpen, zIndex, onFocus, type = 'terminal' }) => {
