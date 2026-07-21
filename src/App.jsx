@@ -18,6 +18,7 @@ import ScrollProgress from './components/ScrollProgress';
 import CustomCursor from './components/CustomCursor';
 import LazySection from './components/LazySection';
 import SectionErrorBoundary from './components/SectionErrorBoundary';
+import ShaderWallpaper from './components/ShaderWallpaper';
 import { SettingsProvider, useSettings } from './lib/SettingsContext';
 import { playOpenSound, ensureContext, setSoundEnabled, setSoundProfile } from './utils/audio';
 import { scrollToTop, preloadAllSections } from './utils/scroll';
@@ -30,6 +31,8 @@ const Footer = lazy(() => import('./components/Footer'));
 const MusicPlayer = lazy(() => import('./components/MusicPlayer'));
 const ExperienceWindow = lazy(() => import('./components/ExperienceWindow'));
 const Services = lazy(() => import('./components/Services'));
+const SnakeGame = lazy(() => import('./components/SnakeGame'));
+const TaskManager = lazy(() => import('./components/TaskManager'));
 
 const IDLE_TIMEOUT_MS = 45000;
 
@@ -40,7 +43,7 @@ const Spinner = () => (
 );
 
 function AppContent() {
-  const { crtScanlines, soundEnabled, soundProfile } = useSettings();
+  const { crtScanlines, soundEnabled, soundProfile, wallpaper } = useSettings();
   const [hasBooted, setHasBooted] = useState(() => sessionStorage.getItem('hasBooted') === 'true');
   const [windows, setWindows] = useState([]);
   const [activeWindow, setActiveWindow] = useState(null);
@@ -51,9 +54,6 @@ function AppContent() {
   const idleTimerRef = useRef(null);
   const isIdleRef = useRef(false);
   const lenisRef = useRef(null);
-
-  const isAnyOverlayOpen = !hasBooted || isCommandPaletteOpen || isShortcutsOpen || windows.length > 0;
-
   const openWindowTypes = windows.map(w => w.type);
 
   useEffect(() => {
@@ -199,10 +199,19 @@ function AppContent() {
     document.addEventListener('click', unlockAudio);
     document.addEventListener('keydown', unlockAudio);
 
+    const onTerminal = () => openWindow('terminal');
     const onMusic = () => openWindow('music');
+    const onSettings = () => openWindow('settings');
     const onTimeline = () => openWindow('timeline');
+    const onArcade = () => openWindow('arcade');
+    const onTaskManager = () => openWindow('taskmanager');
+
+    window.addEventListener('open-terminal', onTerminal);
     window.addEventListener('open-music', onMusic);
+    window.addEventListener('open-settings', onSettings);
     window.addEventListener('open-timeline', onTimeline);
+    window.addEventListener('open-arcade', onArcade);
+    window.addEventListener('open-taskmanager', onTaskManager);
 
     const handleKeyDown = (e) => {
       if (isIdleRef.current) { wakeFromScreensaver(); return; }
@@ -220,8 +229,12 @@ function AppContent() {
     return () => {
       document.removeEventListener('click', unlockAudio);
       document.removeEventListener('keydown', unlockAudio);
+      window.removeEventListener('open-terminal', onTerminal);
       window.removeEventListener('open-music', onMusic);
+      window.removeEventListener('open-settings', onSettings);
       window.removeEventListener('open-timeline', onTimeline);
+      window.removeEventListener('open-arcade', onArcade);
+      window.removeEventListener('open-taskmanager', onTaskManager);
       window.removeEventListener('keydown', handleKeyDown, { capture: true });
       events.forEach(evt => window.removeEventListener(evt, onActivity));
       if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
@@ -251,6 +264,16 @@ function AppContent() {
           <Suspense fallback={<Spinner />}><ExperienceWindow /></Suspense>
         </WindowFrame>
       ),
+      arcade: (
+        <WindowFrame title="Snake Game — Sabin OS" onClose={close} onMinimize={close} className="w-[min(340px,92vw)]">
+          <Suspense fallback={<Spinner />}><SnakeGame /></Suspense>
+        </WindowFrame>
+      ),
+      taskmanager: (
+        <WindowFrame title="Task Monitor — Sabin OS" onClose={close} onMinimize={close} className="w-[min(420px,92vw)]">
+          <Suspense fallback={<Spinner />}><TaskManager windows={windows} onCloseWindow={closeWindow} /></Suspense>
+        </WindowFrame>
+      ),
     };
 
     if (!frames[win.type]) return null;
@@ -272,6 +295,7 @@ function AppContent() {
 
       {crtScanlines && hasBooted && <div className="crt-overlay" aria-hidden="true" />}
       {hasBooted && <ScrollProgress />}
+      {hasBooted && wallpaper === 'shader' && <ShaderWallpaper />}
 
       <div
         className={`min-h-screen transition-opacity duration-700 ${hasBooted ? 'opacity-100 has-taskbar' : 'opacity-0 pointer-events-none'}`}
