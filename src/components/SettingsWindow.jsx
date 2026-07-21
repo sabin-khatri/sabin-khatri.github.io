@@ -33,6 +33,7 @@ const WALLPAPERS = [
   { id: 'grid',     name: 'Grid Lines' },
   { id: 'gradient', name: 'Gradient' },
   { id: 'aurora',   name: 'Aurora' },
+  { id: 'shader',   name: 'Shader' },
 ];
 
 const selectedCls = 'border-accent/50 bg-accent/5 text-accent';
