@@ -25,6 +25,8 @@ const WALLPAPERS = {
   gradient: "wallpaper-gradient",
   aurora:   "wallpaper-aurora",
   shader:   "wallpaper-shader",
+  "custom-image": "",
+  "custom-color": "",
 };
 
 const hexToRgb = (hex) => {
@@ -72,6 +74,8 @@ export const SettingsProvider = ({ children }) => {
   const [soundProfile, setSoundProfileState] = useState(saved.soundProfile ?? "soft");
   const [musicStation, setMusicStationState] = useState(saved.musicStation ?? "midnight-code");
   const [wallpaper, setWallpaperState] = useState(saved.wallpaper ?? "dots");
+  const [customWallpaperUrl, setCustomWallpaperUrlState] = useState(saved.customWallpaperUrl ?? "");
+  const [customBgColor, setCustomBgColorState] = useState(saved.customBgColor ?? "");
 
   const applyAccent = (accentId, themeId) => {
     const root = document.documentElement;
@@ -102,16 +106,39 @@ export const SettingsProvider = ({ children }) => {
     setAccentRgb(root, hexToRgb(t.accent));
   };
 
-  const applyWallpaper = (wp) => {
+  const applyWallpaper = (wp, url = customWallpaperUrl, color = customBgColor) => {
+    // Reset background styles first
+    document.body.style.backgroundImage = "";
+    document.body.style.backgroundSize = "";
+    document.body.style.backgroundColor = "";
+
     Object.values(WALLPAPERS).forEach(cls => cls && document.body.classList.remove(cls));
-    const cls = WALLPAPERS[wp];
-    if (cls) document.body.classList.add(cls);
+
+    if (wp === 'custom-image') {
+      if (url) {
+        document.body.style.backgroundImage = `url(${url})`;
+        document.body.style.backgroundSize = "cover";
+        document.body.style.backgroundPosition = "center";
+        document.body.style.backgroundAttachment = "fixed";
+      }
+    } else if (wp === 'custom-color') {
+      if (color) {
+        document.body.style.backgroundColor = color;
+        document.documentElement.style.setProperty("--os-bg", color);
+      }
+    } else {
+      const cls = WALLPAPERS[wp];
+      if (cls) document.body.classList.add(cls);
+      const t = THEMES[theme] || THEMES.default;
+      document.body.style.backgroundColor = t.bg;
+      document.documentElement.style.setProperty("--os-bg", t.bg);
+    }
   };
 
   const persist = (patch) => {
     const next = {
       accent, fontSize, crtScanlines, theme, soundEnabled,
-      soundProfile, musicStation, wallpaper, ...patch,
+      soundProfile, musicStation, wallpaper, customWallpaperUrl, customBgColor, ...patch,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
   };
@@ -129,6 +156,8 @@ export const SettingsProvider = ({ children }) => {
   const setSoundProfile = (p) => { setSoundProfileState(p); applySoundProfile(p); persist({ soundProfile: p }); };
   const setMusicStation = (id) => { setMusicStationState(id); persist({ musicStation: id }); };
   const setWallpaper = (wp) => { setWallpaperState(wp); applyWallpaper(wp); persist({ wallpaper: wp }); };
+  const setCustomWallpaperUrl = (url) => { setCustomWallpaperUrlState(url); applyWallpaper(wallpaper, url, customBgColor); persist({ customWallpaperUrl: url }); };
+  const setCustomBgColor = (color) => { setCustomBgColorState(color); applyWallpaper(wallpaper, customWallpaperUrl, color); persist({ customBgColor: color }); };
 
   useEffect(() => {
     applyTheme(theme);
@@ -141,8 +170,9 @@ export const SettingsProvider = ({ children }) => {
   return (
     <SettingsContext.Provider value={{
       accent, fontSize, crtScanlines, theme, soundEnabled, soundProfile, musicStation, wallpaper,
+      customWallpaperUrl, customBgColor,
       setAccent, setFontSize, setCrtScanlines, setTheme, setSoundEnabled,
-      setSoundProfile, setMusicStation, setWallpaper,
+      setSoundProfile, setMusicStation, setWallpaper, setCustomWallpaperUrl, setCustomBgColor,
     }}>
       {children}
     </SettingsContext.Provider>
