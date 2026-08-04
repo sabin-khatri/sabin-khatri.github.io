@@ -5,8 +5,8 @@ import { FaGithub, FaHtml5, FaCss3Alt, FaJsSquare, FaReact, FaBootstrap, FaPhp }
 import { FiExternalLink } from "react-icons/fi";
 import { SiTailwindcss, SiMysql } from "react-icons/si";
 
-import chiyaghar from "../assets/projects/chiyaghar.jpg";
-import trekking from "../assets/projects/trekking-react.jpg";
+import chiyaghar from "../assets/projects/chiya.png";
+import trekking from "../assets/projects/trekking.png";
 import realtime from "../assets/projects/realtime-complaint.jpg";
 import district from "../assets/projects/district-score.jpg";
 
@@ -45,7 +45,7 @@ const PROJECTS = [
       "A modern and responsive website for a Nepali tea café featuring smooth animations, interactive UI, elegant layouts, and an engaging user experience to showcase products, services, and the café's unique atmosphere.",
     image: chiyaghar,
     tags: ["React", "Tailwind CSS", "Framer Motion"],
-    liveUrl: "https://bespoke-twilight-0dc185.netlify.app/",
+    liveUrl: "https://chiya-adda.vercel.app/",
     githubUrl: "https://github.com/sabin-khatri/ChiyaAdda",
     color: "from-amber-900/40 to-section",
     glow: "217, 149, 60",
