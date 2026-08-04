@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
-import { FaGlobe, FaTerminal, FaCog, FaCloud, FaSearch, FaMusic, FaGamepad, FaChartLine } from 'react-icons/fa';
+import { FaGlobe, FaTerminal, FaCog, FaCloud, FaSearch, FaMusic, FaSlidersH, FaRobot } from 'react-icons/fa';
 import { playClickSound } from '../utils/audio';
 
 const APPS = [
   { id: 'terminal',    icon: FaTerminal,   label: 'Terminal' },
   { id: 'music',       icon: FaMusic,      label: 'Music' },
-  { id: 'arcade',      icon: FaGamepad,    label: 'Snake Game' },
-  { id: 'taskmanager', icon: FaChartLine,  label: 'Task Monitor' },
+  { id: 'synth',       icon: FaSlidersH,   label: 'Cyber Synth' },
+  { id: 'assistant',   icon: FaRobot,      label: 'AI Assistant' },
   { id: 'settings',    icon: FaCog,        label: 'Settings' },
 ];
 
