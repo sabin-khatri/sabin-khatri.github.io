@@ -101,7 +101,6 @@ export const SettingsProvider = ({ children }) => {
     root.style.setProperty("--os-terminal", t.terminal);
     root.style.setProperty("--os-taskbar", t.taskbar);
     root.style.setProperty("--section-bg", t.section);
-    document.body.style.backgroundColor = t.bg;
     document.body.style.color = t.text;
     setAccentRgb(root, hexToRgb(t.accent));
   };
@@ -130,7 +129,6 @@ export const SettingsProvider = ({ children }) => {
       const cls = WALLPAPERS[wp];
       if (cls) document.body.classList.add(cls);
       const t = THEMES[theme] || THEMES.default;
-      document.body.style.backgroundColor = t.bg;
       document.documentElement.style.setProperty("--os-bg", t.bg);
     }
   };
