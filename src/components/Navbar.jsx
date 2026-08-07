@@ -43,7 +43,7 @@ const Logo = ({ onClick }) => (
     />
     <span
       className="text-[22px] sm:text-[24px] font-black text-white leading-none"
-      style={{ fontFamily: "'Syne', 'DM Sans', sans-serif", letterSpacing: "-0.04em" }}
+      style={{ fontFamily: "var(--font-heading)", letterSpacing: "-0.04em" }}
     >
       Sabin<span className="text-accent" style={{ textShadow: "0 0 14px var(--os-accent)" }}>.</span>
     </span>
@@ -73,7 +73,7 @@ const DesktopLink = ({ link, isActive, onClick }) => (
       <span
         className="relative z-10 text-[13.5px] font-semibold transition-colors duration-150"
         style={{
-          fontFamily: "'Syne', sans-serif",
+          fontFamily: "var(--font-heading)",
           color: isActive ? "var(--os-accent)" : undefined,
         }}
       >
@@ -146,7 +146,7 @@ const DrawerLink = ({ link, index, isActive, onClick }) => {
         </span>
         <span
           className="text-[18px] font-bold leading-none"
-          style={{ fontFamily: "'Syne', sans-serif", letterSpacing: "-0.02em" }}
+          style={{ fontFamily: "var(--font-heading)", letterSpacing: "-0.02em" }}
         >
           {link.label}
         </span>
@@ -438,7 +438,7 @@ const Navbar = () => {
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-[13px] font-semibold no-underline
                                border border-white/[0.09] text-slate-400 transition-colors duration-150"
-                    style={{ fontFamily: "'Syne', sans-serif" }}
+                    style={{ fontFamily: "var(--font-heading)" }}
                     whileHover={{ scale: 1.06, y: -2, color: "var(--os-accent)", borderColor: "rgba(var(--accent-rgb), 0.4)" }}
                     whileTap={{ scale: 0.93 }}
                     transition={SPRING_FAST}
