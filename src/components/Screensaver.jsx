@@ -51,7 +51,7 @@ const Screensaver = ({ onWake }) => {
           }}
           transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
           className="text-5xl sm:text-7xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-b from-accent to-orange-500 tracking-tighter"
-          style={{ fontFamily: "'Syne', sans-serif" }}
+          style={{ fontFamily: "var(--font-heading)" }}
         >
           Sabin OS
         </motion.h1>
