@@ -76,8 +76,14 @@ const MovingBorderBtn = ({ href, children, innerClass = "", bg = 'rgba(var(--acc
 
 const Hero = () => {
   const [text] = useTypewriter({
-    words: ["Frontend Developer", "React Developer", "UI/UX Enthusiast"],
-    loop: true, typeSpeed: 80, deleteSpeed: 50, delaySpeed: 2200,
+    words: [
+      "breaks production on Fridays",
+      "turns tea into clean JavaScript",
+      "crafts smooth 60fps animations",
+      "builds premium React apps",
+      "hates sloppy copy-paste code"
+    ],
+    loop: true, typeSpeed: 60, deleteSpeed: 40, delaySpeed: 2000,
   });
 
   const fadeUp = (delay = 0) => ({
@@ -104,39 +110,39 @@ const Hero = () => {
 
           <div className="lg:order-1 text-center lg:text-left space-y-6 lg:space-y-8 w-full">
             <motion.div
-              {...fadeUp(0.1)}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-sm text-accent text-xs font-semibold tracking-widest uppercase mx-auto lg:mx-0 font-heading"
-              style={{ border: '1px solid rgba(var(--accent-rgb), 0.2)', background: 'rgba(var(--accent-rgb), 0.06)' }}
+              {...fadeUp(0.08)}
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-accent/20 bg-accent/5 backdrop-blur-sm text-accent text-[10px] font-mono tracking-wider uppercase mx-auto lg:mx-0"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-accent glow-accent" />
-              Available for opportunities
+              <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+              const status = "available_to_hire";
             </motion.div>
 
-            <motion.div {...fadeUp(0.2)}>
-              <h1 className="font-heading text-5xl sm:text-6xl lg:text-[5.5rem] font-black tracking-[-0.04em] leading-[1.05] sm:leading-[1.1] mb-3">
+            <motion.div {...fadeUp(0.15)}>
+              <span className="block text-[11px] font-mono text-os-muted uppercase tracking-[0.25em] mb-2">// TODO: Build something exceptional</span>
+              <h1 className="font-heading text-5xl sm:text-6xl lg:text-[5.2rem] font-black tracking-[-0.04em] leading-[1.05] mb-4">
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-orange-400 drop-shadow-sm">Sabin</span> 
-                <span className="text-white drop-shadow-sm ml-2 sm:ml-4">Khatri</span>
+                <span className="text-white drop-shadow-sm ml-2">Khatri</span>
               </h1>
-              <p className="text-lg sm:text-xl lg:text-2xl text-slate-300/90 mt-4 lg:mt-5 font-light tracking-wide min-h-[2.5rem]">
-                {text}
-                <Cursor cursorColor="var(--os-accent)" cursorStyle="|" />
+              <p className="text-lg sm:text-xl lg:text-2xl text-slate-300 font-mono tracking-tight min-h-[2.5rem]">
+                <span className="text-accent/80">sabin.</span><span className="text-white">{text}</span>
+                <Cursor cursorColor="var(--os-accent)" cursorStyle="▊" />
               </p>
             </motion.div>
 
-            <motion.div {...fadeUp(0.38)} className="flex flex-wrap gap-2 justify-center lg:justify-start">
+            <motion.div {...fadeUp(0.25)} className="flex flex-wrap gap-2.5 justify-center lg:justify-start">
               {[
-                { label: '📍 Biratnagar, Nepal' },
-                { label: '⚡ React · Vite · Three.js' },
-                { label: '🟢 Open to work' },
+                { key: 'const location', value: '"Biratnagar, NP"' },
+                { key: 'let stack', value: '["React", "Three.js"]' },
+                { key: 'let status', value: '"building_60fps"' },
               ].map((chip) => (
-                <span key={chip.label} className="px-3 py-1 rounded-full text-[11px] font-mono text-os-muted border border-os" style={{ background: 'rgba(255,255,255,0.03)' }}>
-                  {chip.label}
+                <span key={chip.key} className="px-3.5 py-1 rounded-lg text-[10px] font-mono text-slate-400 border border-os bg-white/[0.02] shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
+                  <span className="text-accent/70">{chip.key}</span> = <span className="text-green-400">{chip.value}</span>;
                 </span>
               ))}
             </motion.div>
 
-            <motion.p {...fadeUp(0.32)} className="text-sm sm:text-base lg:text-lg text-slate-400 max-w-md mx-auto lg:mx-0 leading-loose font-sans font-medium">
-              Building elegant digital experiences with modern web technologies. Passionate about clean code, smooth animations, and meaningful interfaces.
+            <motion.p {...fadeUp(0.32)} className="text-sm sm:text-base lg:text-lg text-slate-400 max-w-lg mx-auto lg:mx-0 leading-relaxed font-sans font-light">
+              Hey, I'm Sabin. I write clean, fast JavaScript and build web applications. I prefer dark themes, pixel-perfection, and custom UI components over templated layouts. Currently tweaking web vitals.
             </motion.p>
 
             <motion.div {...fadeUp(0.44)} className="flex flex-wrap items-center gap-4 justify-center lg:justify-start pt-1">

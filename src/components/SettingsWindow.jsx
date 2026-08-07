@@ -29,11 +29,15 @@ const SOUND_PROFILES = [
 ];
 
 const WALLPAPERS = [
-  { id: 'dots',     name: 'Dot Grid' },
-  { id: 'grid',     name: 'Grid Lines' },
-  { id: 'gradient', name: 'Gradient' },
-  { id: 'aurora',   name: 'Aurora' },
-  { id: 'shader',   name: 'Shader' },
+  { id: 'dots',         name: 'Dot Grid' },
+  { id: 'grid',         name: 'Grid Lines' },
+  { id: 'gradient',     name: 'Gradient' },
+  { id: 'aurora',       name: 'Aurora' },
+  { id: 'shader',       name: 'Shader Mesh' },
+  { id: 'matrix',       name: 'Matrix Rain' },
+  { id: 'codestream',   name: 'Code Stream' },
+  { id: 'custom-image', name: 'Custom Image' },
+  { id: 'custom-color', name: 'Custom Color' },
 ];
 
 const selectedCls = 'border-accent/50 bg-accent/5 text-accent';
@@ -42,8 +46,9 @@ const idleCls = 'border-slate-800/50 hover:border-slate-700';
 const SettingsWindow = () => {
   const {
     accent, fontSize, crtScanlines, theme, soundEnabled, soundProfile, musicStation, wallpaper,
+    customWallpaperUrl, customBgColor,
     setAccent, setFontSize, setCrtScanlines, setTheme, setSoundEnabled,
-    setSoundProfile, setMusicStation, setWallpaper,
+    setSoundProfile, setMusicStation, setWallpaper, setCustomWallpaperUrl, setCustomBgColor,
   } = useSettings();
 
   const click = () => playClickSound();
@@ -99,7 +104,7 @@ const SettingsWindow = () => {
             <button
               key={w.id}
               onClick={() => { click(); setWallpaper(w.id); }}
-              className={`p-2.5 rounded-lg border text-xs transition-all ${
+              className={`p-2 rounded-lg border text-xs transition-all ${
                 wallpaper === w.id ? `${selectedCls}` : `${idleCls} text-slate-400`
               }`}
             >
@@ -107,6 +112,35 @@ const SettingsWindow = () => {
             </button>
           ))}
         </div>
+
+        {wallpaper === 'custom-image' && (
+          <div className="mt-3 flex flex-col gap-1.5 p-2.5 rounded-lg border border-slate-800 bg-slate-900/40">
+            <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Custom Image URL</span>
+            <input
+              type="text"
+              value={customWallpaperUrl}
+              onChange={(e) => setCustomWallpaperUrl(e.target.value)}
+              placeholder="https://images.unsplash.com/photo-..."
+              className="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-1 text-xs text-white outline-none focus:border-accent/50 font-sans"
+            />
+            <span className="text-[9px] text-slate-500">Paste any public image link (Unsplash, Imgur, etc.)</span>
+          </div>
+        )}
+
+        {wallpaper === 'custom-color' && (
+          <div className="mt-3 flex items-center justify-between p-2.5 rounded-lg border border-slate-800 bg-slate-900/40">
+            <div>
+              <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider block">Custom Background Color</span>
+              <span className="text-xs text-slate-350 font-mono">{customBgColor || '#0a0a0a'}</span>
+            </div>
+            <input
+              type="color"
+              value={customBgColor || '#0a0a0a'}
+              onChange={(e) => setCustomBgColor(e.target.value)}
+              className="w-8 h-8 rounded border border-slate-700 bg-transparent cursor-pointer"
+            />
+          </div>
+        )}
       </div>
 
       {/* OS Theme */}

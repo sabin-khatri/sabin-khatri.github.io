@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from 'react';
-// eslint-disable-next-line no-unused-vars
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useSpring } from 'framer-motion';
 
 const CustomCursor = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
   const [isDesktop, setIsDesktop] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
 
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  // Smooth out the outer ring movement
+  const springConfig = { damping: 25, stiffness: 250, mass: 0.5 };
+  const cursorX = useSpring(mouseX, springConfig);
+  const cursorY = useSpring(mouseY, springConfig);
+
   useEffect(() => {
-    // Check if device supports hover (desktop)
     const checkHover = () => {
       setIsDesktop(window.matchMedia('(hover: hover) and (pointer: fine)').matches);
     };
@@ -22,36 +27,44 @@ const CustomCursor = () => {
     if (!isDesktop) return;
 
     const mouseMove = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
       if (!isVisible) setIsVisible(true);
     };
 
     const mouseEnter = () => setIsVisible(true);
-    const mouseLeave = () => setIsVisible(false);
+    
+    const mouseLeave = (e) => {
+      // Only hide if the mouse genuinely left the viewport boundaries
+      if (
+        e.clientX <= 0 ||
+        e.clientY <= 0 ||
+        e.clientX >= window.innerWidth - 2 ||
+        e.clientY >= window.innerHeight - 2
+      ) {
+        setIsVisible(false);
+      }
+    };
 
-    window.addEventListener('mousemove', mouseMove);
+    const handleScroll = () => {
+      // Keep cursor visible on scroll and ensure it updates status
+      if (!isVisible) setIsVisible(true);
+    };
+
+    window.addEventListener('mousemove', mouseMove, { passive: true });
     document.addEventListener('mouseenter', mouseEnter);
     document.addEventListener('mouseleave', mouseLeave);
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
-    const handleHoverStart = (e) => {
-      const target = e.target.closest('a, button, input, textarea, select, [role="button"], .cursor-hover');
-      if (target) setIsHovering(true);
+    const handleMouseOver = (e) => {
+      if (!e.target) return;
+      const target = e.target.closest?.('a, button, input, textarea, select, [role="button"], .cursor-hover, iframe');
+      setIsHovering(!!target);
     };
-    const handleHoverEnd = () => setIsHovering(false);
 
-    document.addEventListener('mouseover', handleHoverStart);
-    document.addEventListener('mouseout', handleHoverEnd);
+    document.addEventListener('mouseover', handleMouseOver);
 
     // Hide default cursor
-    document.body.style.cursor = 'none';
-    const allElements = document.querySelectorAll('*');
-    allElements.forEach(el => {
-        if(getComputedStyle(el).cursor !== 'none' && getComputedStyle(el).cursor !== 'auto' && getComputedStyle(el).cursor !== 'text') {
-             // Let css handle specific cursors, but generally hide the arrow
-        }
-    });
-
-    // We can add a global style to hide it thoroughly, but ensuring links don't show the hand
     const style = document.createElement('style');
     style.innerHTML = `
       * { cursor: none !important; }
@@ -62,37 +75,49 @@ const CustomCursor = () => {
       window.removeEventListener('mousemove', mouseMove);
       document.removeEventListener('mouseenter', mouseEnter);
       document.removeEventListener('mouseleave', mouseLeave);
-      document.removeEventListener('mouseover', handleHoverStart);
-      document.removeEventListener('mouseout', handleHoverEnd);
+      window.removeEventListener('scroll', handleScroll);
+      document.removeEventListener('mouseover', handleMouseOver);
       document.body.style.cursor = 'auto';
-      document.head.removeChild(style);
+      if (document.head.contains(style)) {
+        document.head.removeChild(style);
+      }
     };
-  }, [isDesktop, isVisible]);
+  }, [isDesktop, isVisible, mouseX, mouseY]);
 
   if (!isDesktop || !isVisible) return null;
 
   return (
     <>
+      {/* Inner Dot - follows cursor immediately */}
       <motion.div
-        className="fixed top-0 left-0 w-2 h-2 bg-accent rounded-full pointer-events-none z-[99999]"
+        className="fixed top-0 left-0 w-2.5 h-2.5 bg-accent rounded-full pointer-events-none z-[999999]"
+        style={{
+          x: mouseX,
+          y: mouseY,
+          translateX: '-50%',
+          translateY: '-50%',
+        }}
         animate={{
-          x: mousePosition.x - 4,
-          y: mousePosition.y - 4,
           scale: isHovering ? 0 : 1,
           opacity: isHovering ? 0 : 1
         }}
-        transition={{ type: 'tween', ease: 'backOut', duration: 0.1 }}
+        transition={{ duration: 0.1 }}
       />
+      {/* Outer Ring - trails cursor smoothly */}
       <motion.div
-        className="fixed top-0 left-0 w-8 h-8 rounded-full border border-accent pointer-events-none z-[99998] flex items-center justify-center mix-blend-screen"
-        animate={{
-          x: mousePosition.x - 16,
-          y: mousePosition.y - 16,
-          scale: isHovering ? 1.5 : 1,
-          backgroundColor: isHovering ? 'rgba(var(--accent-rgb), 0.2)' : 'transparent',
-          borderColor: isHovering ? 'transparent' : 'rgba(var(--accent-rgb), 0.5)'
+        className="fixed top-0 left-0 w-8 h-8 rounded-full border border-accent pointer-events-none z-[999998] flex items-center justify-center mix-blend-screen"
+        style={{
+          x: cursorX,
+          y: cursorY,
+          translateX: '-50%',
+          translateY: '-50%',
         }}
-        transition={{ type: 'tween', ease: 'backOut', duration: 0.15 }}
+        animate={{
+          scale: isHovering ? 1.6 : 1,
+          backgroundColor: isHovering ? 'rgba(var(--accent-rgb), 0.25)' : 'transparent',
+          borderColor: isHovering ? 'transparent' : 'rgba(var(--accent-rgb), 0.6)'
+        }}
+        transition={{ duration: 0.15 }}
       />
     </>
   );

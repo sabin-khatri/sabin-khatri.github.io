@@ -31,8 +31,8 @@ const Footer = lazy(() => import('./components/Footer'));
 const MusicPlayer = lazy(() => import('./components/MusicPlayer'));
 const ExperienceWindow = lazy(() => import('./components/ExperienceWindow'));
 const Services = lazy(() => import('./components/Services'));
-const SnakeGame = lazy(() => import('./components/SnakeGame'));
-const TaskManager = lazy(() => import('./components/TaskManager'));
+const CyberSynth = lazy(() => import('./components/CyberSynth'));
+const AIAssistant = lazy(() => import('./components/AIAssistant'));
 
 const IDLE_TIMEOUT_MS = 45000;
 
@@ -159,7 +159,7 @@ function AppContent() {
     }
 
     if (type !== 'shortcuts') {
-      const displayNames = { terminal: 'Terminal', music: 'Music Player', settings: 'Settings', timeline: 'Experience', casestudy: 'Case Study' };
+      const displayNames = { terminal: 'Terminal', music: 'Music Player', settings: 'Settings', timeline: 'Experience', casestudy: 'Case Study', synth: 'Cyber Synth', assistant: 'AI Assistant' };
       const appName = displayNames[type] || type;
       toast.success(`Opening ${appName}...`, { id: `open-${type}` });
     }
@@ -203,15 +203,15 @@ function AppContent() {
     const onMusic = () => openWindow('music');
     const onSettings = () => openWindow('settings');
     const onTimeline = () => openWindow('timeline');
-    const onArcade = () => openWindow('arcade');
-    const onTaskManager = () => openWindow('taskmanager');
+    const onSynth = () => openWindow('synth');
+    const onAssistant = () => openWindow('assistant');
 
     window.addEventListener('open-terminal', onTerminal);
     window.addEventListener('open-music', onMusic);
     window.addEventListener('open-settings', onSettings);
     window.addEventListener('open-timeline', onTimeline);
-    window.addEventListener('open-arcade', onArcade);
-    window.addEventListener('open-taskmanager', onTaskManager);
+    window.addEventListener('open-synth', onSynth);
+    window.addEventListener('open-assistant', onAssistant);
 
     const handleKeyDown = (e) => {
       if (isIdleRef.current) { wakeFromScreensaver(); return; }
@@ -233,8 +233,8 @@ function AppContent() {
       window.removeEventListener('open-music', onMusic);
       window.removeEventListener('open-settings', onSettings);
       window.removeEventListener('open-timeline', onTimeline);
-      window.removeEventListener('open-arcade', onArcade);
-      window.removeEventListener('open-taskmanager', onTaskManager);
+      window.removeEventListener('open-synth', onSynth);
+      window.removeEventListener('open-assistant', onAssistant);
       window.removeEventListener('keydown', handleKeyDown, { capture: true });
       events.forEach(evt => window.removeEventListener(evt, onActivity));
       if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
@@ -264,14 +264,14 @@ function AppContent() {
           <Suspense fallback={<Spinner />}><ExperienceWindow /></Suspense>
         </WindowFrame>
       ),
-      arcade: (
-        <WindowFrame title="Snake Game — Sabin OS" onClose={close} onMinimize={close} className="w-[min(340px,92vw)]">
-          <Suspense fallback={<Spinner />}><SnakeGame /></Suspense>
+      synth: (
+        <WindowFrame title="Cyber Synth — Sabin OS" onClose={close} onMinimize={close} className="w-[min(480px,94vw)]">
+          <Suspense fallback={<Spinner />}><CyberSynth /></Suspense>
         </WindowFrame>
       ),
-      taskmanager: (
-        <WindowFrame title="Task Monitor — Sabin OS" onClose={close} onMinimize={close} className="w-[min(420px,92vw)]">
-          <Suspense fallback={<Spinner />}><TaskManager windows={windows} onCloseWindow={closeWindow} /></Suspense>
+      assistant: (
+        <WindowFrame title="AI Assistant — Sabin OS" onClose={close} onMinimize={close} className="w-[min(400px,92vw)]">
+          <Suspense fallback={<Spinner />}><AIAssistant /></Suspense>
         </WindowFrame>
       ),
     };
@@ -295,11 +295,11 @@ function AppContent() {
 
       {crtScanlines && hasBooted && <div className="crt-overlay" aria-hidden="true" />}
       {hasBooted && <ScrollProgress />}
-      {hasBooted && wallpaper === 'shader' && <ShaderWallpaper />}
+      {hasBooted && ['shader', 'matrix', 'codestream'].includes(wallpaper) && <ShaderWallpaper type={wallpaper} />}
 
       <div
         className={`min-h-screen transition-opacity duration-700 ${hasBooted ? 'opacity-100 has-taskbar' : 'opacity-0 pointer-events-none'}`}
-        style={{ background: 'var(--os-bg)', color: 'var(--os-text)' }}
+        style={{ color: 'var(--os-text)' }}
         aria-hidden={!hasBooted}
       >
         {hasBooted && <Navbar />}
