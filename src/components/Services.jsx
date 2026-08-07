@@ -73,7 +73,7 @@ const Services = () => (
         </span>
         <h2
           className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-os-text"
-          style={{ fontFamily: "'Syne', sans-serif" }}
+          style={{ fontFamily: "var(--font-heading)" }}
         >
           Services &{' '}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-orange-400">
@@ -116,7 +116,7 @@ const Services = () => (
               </div>
               <h3
                 className="text-lg font-bold text-os-text mb-2"
-                style={{ fontFamily: "'Syne', sans-serif" }}
+                style={{ fontFamily: "var(--font-heading)" }}
               >
                 {svc.title}
               </h3>
