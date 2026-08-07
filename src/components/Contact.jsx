@@ -127,7 +127,7 @@ const Contact = () => {
             <FaTerminal className="text-accent text-2xl sm:text-3xl" />
             <h2
               className="text-3xl sm:text-4xl md:text-5xl font-black text-os-text tracking-tighter"
-              style={{ fontFamily: "'Syne', sans-serif" }}
+              style={{ fontFamily: "var(--font-heading)" }}
             >
               Let's <span className="text-accent">Connect</span>
             </h2>
