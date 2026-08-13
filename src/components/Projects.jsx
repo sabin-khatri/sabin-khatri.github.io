@@ -59,7 +59,7 @@ const PROJECTS = [
       "A visually appealing trekking and tourism platform designed to explore Nepal's natural beauty. It includes responsive layouts, engaging animations, destination highlights, and an immersive browsing experience.",
     image: trekking,
     tags: ["React", "Tailwind CSS", "Framer Motion"],
-    liveUrl: "https://sabintrek.netlify.app/",
+    liveUrl: "https://trekking-web-mu69.vercel.app/",
     githubUrl: "https://github.com/sabin-khatri/trekking_web",
     color: "from-emerald-900/40 to-section",
     glow: "52, 195, 143",
