@@ -4,7 +4,7 @@ import { motion, useInView } from 'framer-motion';
 import { FaDownload, FaCheckCircle, FaRocket } from 'react-icons/fa';
 import OrbitingSkills from './ui/orbiting-skills';
 import GithubGraph from './ui/GithubGraph';
-import resume from '../assets/resume/sabin.pdf';
+import resume from '../assets/resume/sabin-khatri.pdf';
 
 const SKILL_CHIPS = ['React', 'Vite', 'Tailwind', 'Three.js', 'Node.js', 'TypeScript'];
 
