@@ -1,9 +1,9 @@
 import React from "react";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
-import { FaGithub, FaHtml5, FaCss3Alt, FaJsSquare, FaReact, FaBootstrap, FaPhp } from "react-icons/fa";
+import { FaGithub, FaHtml5, FaCss3Alt, FaJsSquare, FaReact, FaBootstrap, FaPhp, FaNodeJs } from "react-icons/fa";
 import { FiExternalLink } from "react-icons/fi";
-import { SiTailwindcss, SiMysql } from "react-icons/si";
+import { SiTailwindcss, SiMysql, SiFramer, SiTypescript, SiSupabase } from "react-icons/si";
 
 import chiyaghar from "../assets/projects/chiya.png";
 import trekking from "../assets/projects/trekking.png";
@@ -19,6 +19,10 @@ const TAG_ICONS = {
   Bootstrap: <FaBootstrap className="text-purple-400" />,
   PHP: <FaPhp className="text-indigo-400" />,
   MySQL: <SiMysql className="text-blue-300" />,
+  "Node.js": <FaNodeJs className="text-green-400" />,
+  "Framer Motion": <SiFramer className="text-pink-400" />,
+  TypeScript: <SiTypescript className="text-blue-400" />,
+  Supabase: <SiSupabase className="text-emerald-400" />,
 };
 
 const PROJECTS = [
@@ -168,9 +172,9 @@ const ProjectCard = ({ project, index, isMobile }) => {
       whileInView="show"
       exit="exit"
       viewport={{ once: true, margin: "-40px" }}
-      className={`group/card relative w-full bg-gradient-to-br ${project.color} border border-white/10 rounded-2xl sm:rounded-[2rem] shadow-2xl p-4 sm:p-6 lg:p-10 overflow-visible backdrop-blur-xl sticky mb-16 lg:mb-24`}
+      className={`group/card relative w-full bg-gradient-to-br ${project.color} border border-white/10 rounded-2xl sm:rounded-[2rem] shadow-2xl p-4 sm:p-6 lg:p-10 overflow-hidden lg:overflow-visible backdrop-blur-md lg:backdrop-blur-xl mb-8 sm:mb-10 lg:mb-24 ${isMobile ? "" : "lg:sticky"}`}
       style={{
-        top: isMobile ? `calc(80px + ${index * 24}px)` : `${100 + index * 36}px`,
+        ...(isMobile ? {} : { top: `${100 + index * 36}px`, zIndex: index + 1 }),
         perspective: "1000px",
         "--mx": "50%",
         "--my": "50%",
@@ -229,11 +233,11 @@ const ProjectCard = ({ project, index, isMobile }) => {
               <h3 className="text-2xl sm:text-3xl lg:text-5xl font-bold text-white mb-3 sm:mb-5 tracking-tight">
                 {project.title}
               </h3>
-              <p className="text-slate-400 text-sm sm:text-base lg:text-lg leading-relaxed mb-5 sm:mb-6">
+              <p className="text-slate-400 text-sm sm:text-base lg:text-lg leading-relaxed mb-5 sm:mb-6 line-clamp-4 sm:line-clamp-none">
                 {project.description}
               </p>
 
-              <div className="flex flex-wrap gap-2 sm:gap-3 mb-6 sm:mb-8">
+              <div className="flex flex-wrap gap-2 sm:gap-3">
                 {project.tags.map((tag) => (
                   <span
                     key={tag}
@@ -244,30 +248,6 @@ const ProjectCard = ({ project, index, isMobile }) => {
                   </span>
                 ))}
               </div>
-
-              {/* Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full">
-                <motion.a
-                  href={project.liveUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.03, y: -2 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3.5 sm:px-8 sm:py-4 bg-white text-black font-bold rounded-full hover:bg-accent transition-colors duration-300 text-sm sm:text-base"
-                >
-                  Visit Site <FiExternalLink className="text-base sm:text-lg" />
-                </motion.a>
-                <motion.a
-                  href={project.githubUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.03, y: -2 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3.5 sm:px-8 sm:py-4 border border-white/15 text-white hover:text-accent hover:border-accent/40 font-medium transition-colors rounded-full text-sm sm:text-base"
-                >
-                  <FaGithub className="text-base sm:text-lg" /> Source Code
-                </motion.a>
-              </div>
             </div>
           </motion.div>
         ) : (
@@ -275,7 +255,7 @@ const ProjectCard = ({ project, index, isMobile }) => {
             key="back"
             {...flipVariants.back}
             transition={{ duration: 0.3 }}
-            className="relative w-full bg-[#1e1e1e]/95 backdrop-blur-3xl p-6 sm:p-10 rounded-2xl border border-white/10 overflow-hidden flex flex-col justify-center min-h-[300px] sm:min-h-[400px]"
+            className="relative w-full bg-[#1e1e1e]/95 backdrop-blur-3xl p-4 sm:p-10 rounded-2xl border border-white/10 overflow-hidden flex flex-col justify-center min-h-[220px] sm:min-h-[400px]"
           >
             <div className="flex items-center justify-between mb-4 bg-black/40 p-3 rounded-lg border border-white/5">
               <div className="flex items-center gap-2">
@@ -306,18 +286,37 @@ const ProjectCard = ({ project, index, isMobile }) => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <div className="relative z-20 mt-5 sm:mt-6 flex flex-col sm:flex-row gap-3 w-full">
+        <a
+          href={project.liveUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center justify-center gap-2 w-full sm:w-auto min-h-12 px-6 py-3 sm:px-8 sm:py-3.5 bg-white text-black font-bold rounded-full hover:bg-accent active:scale-[0.97] transition-colors duration-300 text-sm sm:text-base"
+        >
+          Live Preview <FiExternalLink className="text-base sm:text-lg" />
+        </a>
+        <a
+          href={project.githubUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center justify-center gap-2 w-full sm:w-auto min-h-12 px-6 py-3 sm:px-8 sm:py-3.5 border border-white/20 text-white hover:text-accent hover:border-accent/40 font-medium transition-colors rounded-full text-sm sm:text-base active:scale-[0.97]"
+        >
+          <FaGithub className="text-base sm:text-lg" /> Source Code
+        </a>
+      </div>
     </motion.article>
   );
 };
 
 const Projects = () => {
   const [isMobile, setIsMobile] = React.useState(
-    typeof window !== "undefined" ? window.innerWidth < 768 : false
+    typeof window !== "undefined" ? window.innerWidth < 1024 : false
   );
   const [activeFilter, setActiveFilter] = React.useState("All");
 
   React.useEffect(() => {
-    const onResize = () => setIsMobile(window.innerWidth < 768);
+    const onResize = () => setIsMobile(window.innerWidth < 1024);
     window.addEventListener("resize", onResize, { passive: true });
     return () => window.removeEventListener("resize", onResize);
   }, []);
@@ -326,7 +325,7 @@ const Projects = () => {
     activeFilter === "All" ? PROJECTS : PROJECTS.filter((p) => p.tags.includes(activeFilter));
 
   return (
-    <section id="projects" className="relative bg-section py-16 sm:py-24 lg:py-36 overflow-visible">
+    <section id="projects" className="relative bg-section py-16 sm:py-24 lg:py-36 pb-24 sm:pb-28 overflow-visible">
       <div
         className="absolute inset-0 pointer-events-none opacity-[0.03]"
         style={{
