@@ -93,7 +93,7 @@ const Hero = () => {
   });
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-os text-os-text">
+    <section id="home" className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden bg-os text-os-text">
       <BackgroundParticles />
       <div className="absolute inset-0 dot-grid opacity-[0.18] pointer-events-none" />
 
@@ -119,7 +119,7 @@ const Hero = () => {
 
             <motion.div {...fadeUp(0.15)}>
               <span className="block text-[11px] font-mono text-os-muted uppercase tracking-[0.25em] mb-2">// TODO: Build something exceptional</span>
-              <h1 className="font-heading text-5xl sm:text-6xl lg:text-[5.2rem] font-black tracking-[-0.04em] leading-[1.05] mb-4">
+              <h1 className="font-heading text-[2.6rem] sm:text-6xl lg:text-[5.2rem] font-black tracking-[-0.04em] leading-[1.05] mb-4">
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-orange-400 drop-shadow-sm">Sabin</span> 
                 <span className="text-white drop-shadow-sm ml-2">Khatri</span>
               </h1>
