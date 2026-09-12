@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 const MOCK_LOGS = [
   "✔ [vite] hot module replacement active",
@@ -31,10 +31,19 @@ const MOCK_LOGS = [
 const ShaderWallpaper = ({ type = 'shader' }) => {
   const canvasRef = useRef(null);
   const mouseRef = useRef({ x: null, y: null, radius: 150 });
+  const [enabled, setEnabled] = useState(
+    () => typeof window !== 'undefined' && window.innerWidth >= 768
+  );
+
+  useEffect(() => {
+    const update = () => setEnabled(window.innerWidth >= 768);
+    window.addEventListener('resize', update, { passive: true });
+    return () => window.removeEventListener('resize', update);
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas || !enabled) return;
     const ctx = canvas.getContext('2d');
     let animationFrameId;
     let particles = [];
@@ -231,7 +240,9 @@ const ShaderWallpaper = ({ type = 'shader' }) => {
       window.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseleave', handleMouseLeave);
     };
-  }, [type]);
+  }, [type, enabled]);
+
+  if (!enabled) return null;
 
   return (
     <canvas
