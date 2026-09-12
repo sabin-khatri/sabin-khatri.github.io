@@ -10,6 +10,7 @@ import { BallCollider, Physics, RigidBody, CuboidCollider } from "@react-three/r
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import { useSettings } from '../lib/SettingsContext';
+import OrbitingSkills from "./ui/orbiting-skills";
 
 // Assets
 import imgNext from "../assets/image/next2.webp";
@@ -27,32 +28,34 @@ const IMAGE_URLS = [
   imgTypescript, imgJavascript, imgReact, imgTailwind,
 ];
 
-/* ── Configuration ── */
+const TECH_CHIPS = ["React", "Next.js", "Node.js", "MongoDB", "Tailwind", "TypeScript"];
+
 const SPHERE_COUNT_DESKTOP = 16;
-const SPHERE_COUNT_MOBILE = 8;
 const SPHERE_GEOMETRY = new THREE.IcosahedronGeometry(1, 2);
 
-/* ── Invisible Walls to keep balls inside screen ── */
 function Borders() {
   const { viewport } = useThree();
+  const w = viewport.width / 2;
+  const h = viewport.height / 2;
   return (
     <RigidBody type="fixed" colliders={false}>
-      <CuboidCollider args={[viewport.width / 2, 1, 10]} position={[0, -viewport.height / 2 - 1, 0]} /> {/* Floor */}
-      <CuboidCollider args={[viewport.width / 2, 1, 10]} position={[0, viewport.height / 2 + 1, 0]} />  {/* Ceiling */}
-      <CuboidCollider args={[1, viewport.height / 2, 10]} position={[-viewport.width / 2 - 1, 0, 0]} /> {/* Left */}
-      <CuboidCollider args={[1, viewport.height / 2, 10]} position={[viewport.width / 2 + 1, 0, 0]} />  {/* Right */}
+      <CuboidCollider args={[w, 1, 4]} position={[0, -h - 0.6, 0]} />
+      <CuboidCollider args={[w, 1, 4]} position={[0, h + 0.6, 0]} />
+      <CuboidCollider args={[1, h, 4]} position={[-w - 0.6, 0, 0]} />
+      <CuboidCollider args={[1, h, 4]} position={[w + 0.6, 0, 0]} />
+      <CuboidCollider args={[w, h, 1]} position={[0, 0, -2.5]} />
+      <CuboidCollider args={[w, h, 1]} position={[0, 0, 2.5]} />
     </RigidBody>
   );
 }
 
-/* ── Individual Tech Sphere ── */
 function Sphere({ vec = new THREE.Vector3(), scale, texture, ...props }) {
   const api = useRef();
   
-  useFrame((state, delta) => {
+  useFrame((_state, delta) => {
     if (!api.current) return;
-    // Gentle gravity toward center to keep them clustered
-    const impulse = vec.copy(api.current.translation()).negate().multiplyScalar(10 * delta);
+    const impulse = vec.copy(api.current.translation()).negate().multiplyScalar(8 * Math.min(delta, 0.033));
+    impulse.z *= 2.4;
     api.current.applyImpulse(impulse, true);
   });
 
@@ -60,8 +63,8 @@ function Sphere({ vec = new THREE.Vector3(), scale, texture, ...props }) {
     <RigidBody 
       ref={api} 
       colliders={false} 
-      linearDamping={0.5} 
-      angularDamping={0.5} 
+      linearDamping={0.65} 
+      angularDamping={0.65} 
       {...props}
     >
       <BallCollider args={[scale]} />
@@ -79,7 +82,6 @@ function Sphere({ vec = new THREE.Vector3(), scale, texture, ...props }) {
   );
 }
 
-/* ── Interactive Pointer ── */
 function Pointer() {
   const ref = useRef();
   const vec = new THREE.Vector3();
@@ -87,37 +89,31 @@ function Pointer() {
 
   useFrame(() => {
     if (!ref.current) return;
-    // Map mouse/touch to 3D space
     vec.set((pointer.x * viewport.width) / 2, (pointer.y * viewport.height) / 2, 0);
     ref.current.setNextKinematicTranslation(vec);
   });
 
   return (
     <RigidBody type="kinematicPosition" colliders={false} ref={ref}>
-      <BallCollider args={[1.5]} />
+      <BallCollider args={[0.85]} />
     </RigidBody>
   );
 }
 
-/* ── Scene Components ── */
 function Scene({ sphereCount, lowFx, accentColor }) {
   const textures = useTexture(IMAGE_URLS);
-  const { viewport } = useThree();
   
-  const isMobile = viewport.width < 10;
-  const sphereScale = isMobile ? 0.8 : 1.2;
-
   const spheres = useMemo(() => {
     return [...Array(sphereCount)].map((_, i) => ({
       texture: textures[i % textures.length],
-      scale: (0.6 + Math.random() * 0.5) * sphereScale,
+      scale: 0.85 + Math.random() * 0.45,
       position: [
-        THREE.MathUtils.randFloatSpread(10),
-        THREE.MathUtils.randFloatSpread(10),
-        THREE.MathUtils.randFloatSpread(5)
+        THREE.MathUtils.randFloatSpread(5),
+        THREE.MathUtils.randFloatSpread(3.2),
+        THREE.MathUtils.randFloatSpread(0.6),
       ]
     }));
-  }, [textures, sphereScale, sphereCount]);
+  }, [textures, sphereCount]);
 
   return (
     <>
@@ -138,14 +134,49 @@ function Scene({ sphereCount, lowFx, accentColor }) {
   );
 }
 
-/* ── Main Component ── */
+const SectionChrome = ({ compact }) => (
+  <div className={`absolute inset-0 z-10 pointer-events-none flex flex-col items-center justify-between ${compact ? "py-8 px-4" : "py-12 px-6"}`}>
+    <motion.div 
+      initial={{ opacity: 0, y: -20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="text-center"
+    >
+      <p className="text-accent font-mono tracking-[0.5em] text-[10px] sm:text-xs font-bold uppercase mb-2">
+        Skill Laboratory
+      </p>
+      <h2 className={`${compact ? "text-4xl" : "text-5xl sm:text-7xl lg:text-8xl"} font-black text-os-text tracking-tighter`}>
+        TECH <span className="text-accent">STACK</span>
+      </h2>
+    </motion.div>
+
+    <motion.div 
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true }}
+      transition={{ delay: 0.25 }}
+      className="flex flex-wrap justify-center gap-2 sm:gap-3 max-w-2xl"
+    >
+      {TECH_CHIPS.map((tech) => (
+        <span key={tech} className="px-3 sm:px-4 py-1 rounded-full border border-white/10 bg-white/5 text-white/50 font-mono text-[10px] uppercase tracking-widest">
+          {tech}
+        </span>
+      ))}
+    </motion.div>
+  </div>
+);
+
 const TechStack = () => {
   const { theme, accent } = useSettings();
   const sectionRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth < 768 : true
+  );
   const [canvasReady, setCanvasReady] = useState(false);
-  const [sphereCount, setSphereCount] = useState(SPHERE_COUNT_DESKTOP);
-  const [lowFx, setLowFx] = useState(false);
+  const [sceneActive, setSceneActive] = useState(false);
+  const [lowFx, setLowFx] = useState(true);
   const [accentColor, setAccentColor] = useState('#f59e0b');
+  const [glFailed, setGlFailed] = useState(false);
 
   useEffect(() => {
     const color = getComputedStyle(document.documentElement).getPropertyValue('--os-accent').trim();
@@ -153,88 +184,87 @@ const TechStack = () => {
   }, [theme, accent]);
 
   useEffect(() => {
-    const updateCount = () => {
+    const update = () => {
       const mobile = window.innerWidth < 768;
-      setSphereCount(mobile ? SPHERE_COUNT_MOBILE : SPHERE_COUNT_DESKTOP);
+      setIsMobile(mobile);
       setLowFx(mobile || window.innerWidth < 1024);
     };
-    updateCount();
-    window.addEventListener('resize', updateCount, { passive: true });
-    return () => window.removeEventListener('resize', updateCount);
+    update();
+    window.addEventListener('resize', update, { passive: true });
+    return () => window.removeEventListener('resize', update);
   }, []);
 
   useEffect(() => {
     const el = sectionRef.current;
-    if (!el) return;
+    if (!el || isMobile) return;
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setCanvasReady(true); },
-      { rootMargin: '150px' }
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setCanvasReady(true);
+          setSceneActive(true);
+        } else {
+          setSceneActive(false);
+        }
+      },
+      { rootMargin: '120px', threshold: 0.05 }
     );
     obs.observe(el);
     return () => obs.disconnect();
-  }, []);
+  }, [isMobile]);
+
+  const useFallback = isMobile || glFailed;
 
   return (
-    <section ref={sectionRef} id="skills" className="relative w-full h-screen bg-section overflow-hidden">
-      
-      {/* HUD / UI Layer */}
-      <div className="absolute inset-0 z-10 pointer-events-none flex flex-col items-center justify-between py-12 px-6">
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          className="text-center"
-        >
-          <p className="text-accent font-mono tracking-[0.5em] text-[10px] sm:text-xs font-bold uppercase mb-2">
-            Skill Laboratory
-          </p>
-          <h2 className="text-5xl sm:text-7xl lg:text-8xl font-black text-os-text tracking-tighter">
-            TECH <span className="text-accent transition-all duration-500 hover:italic">STACK</span>
-          </h2>
-        </motion.div>
+    <section
+      ref={sectionRef}
+      id="skills"
+      className="relative w-full min-h-[100dvh] bg-section overflow-hidden"
+    >
+      <SectionChrome compact={useFallback} />
 
-        {/* Bottom Description */}
-        <motion.div 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="flex flex-wrap justify-center gap-3 max-w-2xl"
-        >
-          {["React", "Next.js", "Node.js", "MongoDB", "Tailwind"].map((tech) => (
-            <span key={tech} className="px-4 py-1 rounded-full border border-white/10 bg-white/5 text-white/40 font-mono text-[10px] uppercase tracking-widest">
-              {tech}
-            </span>
-          ))}
-        </motion.div>
-      </div>
-
-      {/* 3D Context — only mounts when section is near viewport */}
-      <div className="absolute inset-0 cursor-grab active:cursor-grabbing">
-        {canvasReady ? (
-          <Canvas
-            dpr={[1, 1.5]}
-            gl={{
-              antialias: false,
-              powerPreference: 'high-performance',
-              alpha: true,
-            }}
-            camera={{ position: [0, 0, 20], fov: 35 }}
-          >
-            <Suspense fallback={null}>
-              <Scene sphereCount={sphereCount} lowFx={lowFx} accentColor={accentColor} />
-            </Suspense>
-          </Canvas>
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <div className="w-8 h-8 rounded-full animate-spin spinner-accent" />
+      {useFallback ? (
+        <div className="absolute inset-0 flex items-center justify-center pt-16 pb-20">
+          <div className="w-full max-w-[420px] h-[min(420px,58vh)]">
+            <OrbitingSkills />
           </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="absolute inset-0 cursor-grab active:cursor-grabbing">
+          {canvasReady ? (
+            <Canvas
+              dpr={[1, 1.25]}
+              frameloop={sceneActive ? "always" : "demand"}
+              gl={{
+                antialias: false,
+                powerPreference: 'high-performance',
+                alpha: true,
+                failIfMajorPerformanceCaveat: false,
+              }}
+              camera={{ position: [0, 0, 16], fov: 38 }}
+              onCreated={({ gl }) => {
+                const canvas = gl.domElement;
+                const onLost = (e) => {
+                  e.preventDefault();
+                  setGlFailed(true);
+                };
+                canvas.addEventListener("webglcontextlost", onLost, false);
+              }}
+            >
+              <Suspense fallback={null}>
+                <Scene sphereCount={SPHERE_COUNT_DESKTOP} lowFx={lowFx} accentColor={accentColor} />
+              </Suspense>
+            </Canvas>
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full animate-spin spinner-accent" />
+            </div>
+          )}
+        </div>
+      )}
 
-      {/* Decorative Background Grid */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
       
-      {/* Background Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] blur-[120px] rounded-full pointer-events-none" style={{ background: 'rgba(var(--accent-rgb), 0.1)' }} />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(500px,80vw)] h-[min(500px,80vw)] blur-[120px] rounded-full pointer-events-none" style={{ background: 'rgba(var(--accent-rgb), 0.1)' }} />
     </section>
   );
 };
