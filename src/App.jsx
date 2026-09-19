@@ -97,14 +97,14 @@ function AppContent() {
   useEffect(() => {
     if (!hasBooted) return;
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: 1.05,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 1,
+      wheelMultiplier: 0.95,
       smoothTouch: false,
-      touchMultiplier: 2,
+      touchMultiplier: 1.4,
       infinite: false,
     });
     lenisRef.current = lenis;
