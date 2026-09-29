@@ -13,7 +13,7 @@ const Footer = () => {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="relative bg-section pt-12 pb-10 overflow-hidden">
+    <footer className="relative bg-section pt-12 pb-16 sm:pb-12 overflow-hidden">
       {/* Top accent line */}
       <div
         className="absolute top-0 left-0 right-0 h-px"

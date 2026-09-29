@@ -271,7 +271,7 @@ const Contact = () => {
               </div>
 
               {/* Editor */}
-              <form onSubmit={onSubmit} className="relative p-3 sm:p-4 md:p-6 lg:p-8 flex-1 overflow-x-auto text-xs sm:text-sm leading-relaxed">
+              <form onSubmit={onSubmit} className="relative p-3 sm:p-4 md:p-6 lg:p-8 flex-1 overflow-x-hidden text-xs sm:text-sm leading-relaxed">
                 <div className="flex min-w-0">
                   <div className="text-slate-600 text-right pr-2 sm:pr-4 select-none flex flex-col shrink-0 text-[10px] sm:text-xs">
                     {[...Array(15)].map((_, i) => <span key={i}>{i + 1}</span>)}

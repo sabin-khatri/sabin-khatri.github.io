@@ -1,6 +1,6 @@
 import React from "react";
 // eslint-disable-next-line no-unused-vars
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { FaGithub, FaHtml5, FaCss3Alt, FaJsSquare, FaReact, FaBootstrap, FaPhp, FaNodeJs } from "react-icons/fa";
 import { FiExternalLink } from "react-icons/fi";
 import { SiTailwindcss, SiMysql, SiFramer, SiTypescript, SiSupabase } from "react-icons/si";
@@ -86,16 +86,6 @@ const PROJECTS = [
 
 const ALL_TAGS = ["All", ...Array.from(new Set(PROJECTS.flatMap((p) => p.tags)))];
 
-const cardVariants = {
-  hidden: { opacity: 0, y: 40 },
-  show: (i) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.55, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] },
-  }),
-  exit: { opacity: 0, y: -20, transition: { duration: 0.25 } },
-};
-
 const flipVariants = {
   front: {
     initial: { rotateX: 90, opacity: 0 },
@@ -109,9 +99,8 @@ const flipVariants = {
   },
 };
 
-// Editor-style filter tabs with a sliding active pill (layoutId magic)
 const FilterTabs = ({ active, onChange }) => (
-  <div className="flex flex-wrap items-center justify-center gap-2 mb-14 sm:mb-20 font-mono text-xs sm:text-sm">
+  <div className="flex flex-wrap items-center justify-center gap-2 mb-10 sm:mb-14 lg:mb-20 font-mono text-xs sm:text-sm">
     {ALL_TAGS.map((tag) => {
       const isActive = tag === active;
       return (
@@ -139,10 +128,7 @@ const FilterTabs = ({ active, onChange }) => (
   </div>
 );
 
-const ProjectCard = ({ project, index, isMobile }) => {
-  const [isFlipped, setIsFlipped] = React.useState(false);
-  const cardRef = React.useRef(null);
-
+const CardBody = ({ project, isFlipped, setIsFlipped }) => {
   const jsonData = {
     id: project.id,
     title: project.title,
@@ -152,43 +138,8 @@ const ProjectCard = ({ project, index, isMobile }) => {
     deployment: project.liveUrl,
   };
 
-  // Cursor-follow spotlight — updated directly via CSS vars, no re-render
-  const handleMouseMove = (e) => {
-    const el = cardRef.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    el.style.setProperty("--mx", `${e.clientX - rect.left}px`);
-    el.style.setProperty("--my", `${e.clientY - rect.top}px`);
-  };
-
   return (
-    <motion.article
-      layout
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      custom={index}
-      variants={cardVariants}
-      initial="hidden"
-      whileInView="show"
-      exit="exit"
-      viewport={{ once: true, margin: "-40px" }}
-      className={`group/card relative w-full bg-gradient-to-br ${project.color} border border-white/10 rounded-2xl sm:rounded-[2rem] shadow-2xl p-4 sm:p-6 lg:p-10 overflow-hidden lg:overflow-visible backdrop-blur-md lg:backdrop-blur-xl mb-8 sm:mb-10 lg:mb-24 ${isMobile ? "" : "lg:sticky"}`}
-      style={{
-        ...(isMobile ? {} : { top: `${100 + index * 36}px`, zIndex: index + 1 }),
-        perspective: "1000px",
-        "--mx": "50%",
-        "--my": "50%",
-        "--glow": project.glow,
-      }}
-    >
-      {/* Spotlight overlay */}
-      <div
-        className="pointer-events-none absolute inset-0 rounded-2xl sm:rounded-[2rem] opacity-0 group-hover/card:opacity-100 transition-opacity duration-500"
-        style={{
-          background: `radial-gradient(480px circle at var(--mx) var(--my), rgba(var(--glow), 0.12), transparent 60%)`,
-        }}
-      />
-
+    <>
       <AnimatePresence mode="wait">
         {!isFlipped ? (
           <motion.div
@@ -197,20 +148,18 @@ const ProjectCard = ({ project, index, isMobile }) => {
             transition={{ duration: 0.3 }}
             className="relative grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 items-center"
           >
-            {/* Image */}
             <div className="order-1 lg:order-2 relative group">
               <div className="relative rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
                 <img
                   src={project.image}
                   alt={project.title}
-                  className="w-full h-auto max-h-[220px] sm:max-h-none object-cover object-top transition-transform duration-700 group-hover:scale-[1.04]"
+                  className="w-full h-auto max-h-[180px] sm:max-h-[240px] lg:max-h-none object-cover object-top transition-transform duration-700 group-hover:scale-[1.04]"
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </div>
             </div>
 
-            {/* Text */}
             <div className="order-2 lg:order-1 flex flex-col justify-center min-w-0">
               <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-5">
                 <span className="font-mono text-xs sm:text-sm text-white/30">// {project.num}</span>
@@ -224,7 +173,7 @@ const ProjectCard = ({ project, index, isMobile }) => {
                     e.stopPropagation();
                     setIsFlipped(true);
                   }}
-                  className="ml-auto shrink-0 text-[10px] sm:text-xs font-mono px-2 py-1 rounded bg-black/30 border border-white/10 text-slate-400 hover:text-accent hover:border-accent/40 transition-colors"
+                  className="ml-auto shrink-0 text-[10px] sm:text-xs font-mono px-2 py-1 rounded bg-black/30 border border-white/10 text-slate-400 hover:text-accent hover:border-accent/40 transition-colors cursor-pointer relative z-50"
                 >
                   {"{ }"} JSON
                 </button>
@@ -233,7 +182,7 @@ const ProjectCard = ({ project, index, isMobile }) => {
               <h3 className="text-2xl sm:text-3xl lg:text-5xl font-bold text-white mb-3 sm:mb-5 tracking-tight">
                 {project.title}
               </h3>
-              <p className="text-slate-400 text-sm sm:text-base lg:text-lg leading-relaxed mb-5 sm:mb-6 line-clamp-4 sm:line-clamp-none">
+              <p className="text-slate-400 text-sm sm:text-base lg:text-lg leading-relaxed mb-5 sm:mb-6 line-clamp-3 sm:line-clamp-none">
                 {project.description}
               </p>
 
@@ -255,9 +204,9 @@ const ProjectCard = ({ project, index, isMobile }) => {
             key="back"
             {...flipVariants.back}
             transition={{ duration: 0.3 }}
-            className="relative w-full bg-[#1e1e1e]/95 backdrop-blur-3xl p-4 sm:p-10 rounded-2xl border border-white/10 overflow-hidden flex flex-col justify-center min-h-[220px] sm:min-h-[400px]"
+            className="relative w-full bg-[#1e1e1e]/95 backdrop-blur-3xl p-4 sm:p-10 rounded-2xl border border-white/10 overflow-hidden flex flex-col justify-center min-h-[220px] sm:min-h-[360px]"
           >
-            <div className="flex items-center justify-between mb-4 bg-black/40 p-3 rounded-lg border border-white/5">
+            <div className="flex items-center justify-between mb-4 bg-black/40 p-3 rounded-lg border border-white/5 relative z-50">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-red-500" />
                 <div className="w-3 h-3 rounded-full bg-yellow-500" />
@@ -270,18 +219,13 @@ const ProjectCard = ({ project, index, isMobile }) => {
                   e.stopPropagation();
                   setIsFlipped(false);
                 }}
-                className="text-[10px] font-mono px-2 py-1 rounded bg-slate-800 text-slate-400 hover:text-white transition-colors"
+                className="text-[10px] font-mono px-2 py-1 rounded bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer"
               >
                 Close
               </button>
             </div>
             <pre className="text-xs sm:text-sm md:text-base text-green-400 font-mono whitespace-pre-wrap overflow-y-auto custom-scrollbar flex-1">
               {JSON.stringify(jsonData, null, 4)}
-              <motion.span
-                className="inline-block w-2 h-4 bg-green-400 ml-1 align-middle"
-                animate={{ opacity: [1, 1, 0, 0] }}
-                transition={{ duration: 1, repeat: Infinity, times: [0, 0.5, 0.5, 1] }}
-              />
             </pre>
           </motion.div>
         )}
@@ -305,27 +249,119 @@ const ProjectCard = ({ project, index, isMobile }) => {
           <FaGithub className="text-base sm:text-lg" /> Source Code
         </a>
       </div>
+    </>
+  );
+};
+
+const ProjectCardShell = ({ project, children, className = "", style }) => {
+  const cardRef = React.useRef(null);
+
+  const handleMouseMove = (e) => {
+    const el = cardRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    el.style.setProperty("--mx", `${e.clientX - rect.left}px`);
+    el.style.setProperty("--my", `${e.clientY - rect.top}px`);
+  };
+
+  return (
+    <motion.article
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      className={`group/card bg-gradient-to-br ${project.color} border border-white/10 rounded-2xl sm:rounded-[2rem] shadow-2xl p-4 sm:p-6 lg:p-10 overflow-hidden backdrop-blur-xl ${className}`}
+      style={{
+        perspective: "1000px",
+        "--mx": "50%",
+        "--my": "50%",
+        "--glow": project.glow,
+        ...style,
+      }}
+    >
+      <div
+        className="pointer-events-none absolute inset-0 rounded-2xl sm:rounded-[2rem] opacity-0 group-hover/card:opacity-100 transition-opacity duration-500"
+        style={{
+          background: `radial-gradient(480px circle at var(--mx) var(--my), rgba(var(--glow), 0.12), transparent 60%)`,
+        }}
+      />
+      {children}
     </motion.article>
   );
 };
 
-const Projects = () => {
-  const [isMobile, setIsMobile] = React.useState(
-    typeof window !== "undefined" ? window.innerWidth < 1024 : false
+const StaticProjectCard = ({ project }) => {
+  const [isFlipped, setIsFlipped] = React.useState(false);
+  return (
+    <ProjectCardShell project={project} className="relative w-full">
+      <CardBody project={project} isFlipped={isFlipped} setIsFlipped={setIsFlipped} />
+    </ProjectCardShell>
   );
+};
+
+const StackedProjectCard = ({ project, index, total, scrollYProgress }) => {
+  const [isFlipped, setIsFlipped] = React.useState(false);
+  const transitions = total > 1 ? total - 1 : 1;
+  const start = Math.max(0, (index - 1) / transitions);
+  const end = index / transitions;
+
+  const x = useTransform(
+    scrollYProgress,
+    [start, end],
+    [index === 0 ? "0vw" : "80vw", `${index * 16}px`]
+  );
+
+  const scale = useTransform(
+    scrollYProgress,
+    [end, end + 1 / transitions],
+    [1, 0.94]
+  );
+
+  const opacity = useTransform(
+    scrollYProgress,
+    [start, start + 0.1],
+    [index === 0 ? 1 : 0, 1]
+  );
+
+  return (
+    <ProjectCardShell
+      project={project}
+      className="absolute top-0 left-0 right-0 mx-auto w-[min(92vw,56rem)]"
+      style={{
+        x,
+        scale,
+        opacity,
+        zIndex: index,
+        y: index * 12,
+      }}
+    >
+      <CardBody project={project} isFlipped={isFlipped} setIsFlipped={setIsFlipped} />
+    </ProjectCardShell>
+  );
+};
+
+const Projects = () => {
   const [activeFilter, setActiveFilter] = React.useState("All");
+  const [isDesktop, setIsDesktop] = React.useState(
+    typeof window !== "undefined" ? window.innerWidth >= 768 : false
+  );
+  const targetRef = React.useRef(null);
 
   React.useEffect(() => {
-    const onResize = () => setIsMobile(window.innerWidth < 1024);
-    window.addEventListener("resize", onResize, { passive: true });
-    return () => window.removeEventListener("resize", onResize);
+    const update = () => setIsDesktop(window.innerWidth >= 768);
+    update();
+    window.addEventListener("resize", update, { passive: true });
+    return () => window.removeEventListener("resize", update);
   }, []);
 
   const filteredProjects =
     activeFilter === "All" ? PROJECTS : PROJECTS.filter((p) => p.tags.includes(activeFilter));
 
+  const { scrollYProgress } = useScroll({
+    target: targetRef,
+    offset: ["start start", "end end"],
+  });
+
   return (
-    <section id="projects" className="relative bg-section py-16 sm:py-24 lg:py-36 pb-24 sm:pb-28 overflow-visible">
+    <section id="projects" className="relative bg-section overflow-x-clip">
       <div
         className="absolute inset-0 pointer-events-none opacity-[0.03]"
         style={{
@@ -335,7 +371,7 @@ const Projects = () => {
         }}
       />
 
-      <div className="container mx-auto max-w-6xl px-4 sm:px-6 relative z-10">
+      <div className="container mx-auto max-w-6xl px-4 sm:px-6 relative z-10 pt-16 sm:pt-24 lg:pt-36">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -354,15 +390,33 @@ const Projects = () => {
         </motion.div>
 
         <FilterTabs active={activeFilter} onChange={setActiveFilter} />
-
-        <div className="relative pb-8 sm:pb-16">
-          <AnimatePresence mode="popLayout">
-            {filteredProjects.map((project, index) => (
-              <ProjectCard key={project.id} project={project} index={index} isMobile={isMobile} />
-            ))}
-          </AnimatePresence>
-        </div>
       </div>
+
+      {isDesktop ? (
+        <div ref={targetRef} style={{ height: `${Math.max(filteredProjects.length, 1) * 100}vh` }} className="relative w-full">
+          <div className="sticky top-0 w-full h-screen flex items-center justify-center overflow-hidden">
+            <div className="relative w-full max-w-6xl h-[min(72vh,560px)] flex justify-center">
+              {filteredProjects.map((project, index) => (
+                <StackedProjectCard
+                  key={project.id}
+                  project={project}
+                  index={index}
+                  total={filteredProjects.length}
+                  scrollYProgress={scrollYProgress}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="container mx-auto max-w-6xl px-4 sm:px-6 relative z-10 pb-8">
+          <div className="flex flex-col gap-6">
+            {filteredProjects.map((project) => (
+              <StaticProjectCard key={project.id} project={project} />
+            ))}
+          </div>
+        </div>
+      )}
     </section>
   );
 };

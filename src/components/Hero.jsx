@@ -94,21 +94,25 @@ const Hero = () => {
 
   return (
     <section id="home" className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden bg-os text-os-text">
-      <BackgroundParticles />
-      <div className="absolute inset-0 dot-grid opacity-[0.18] pointer-events-none" />
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <BackgroundParticles />
+        <div className="absolute inset-0 dot-grid opacity-[0.18]" />
+      </div>
 
-      <div className="container mx-auto max-w-7xl relative z-10 px-5 sm:px-6 pt-28 pb-16">
+      <div className="container mx-auto max-w-7xl relative z-10 px-5 sm:px-6 pt-24 sm:pt-28 pb-20 sm:pb-16">
         <div className="flex flex-col lg:grid lg:grid-cols-2 lg:gap-20 items-center gap-6 sm:gap-10 lg:gap-12">
           <motion.div
-            className="flex justify-center lg:justify-end lg:order-2 w-full h-[220px] sm:h-[320px] lg:h-[500px]"
+            className="flex justify-center lg:justify-end lg:order-2 w-full h-[180px] sm:h-[280px] lg:h-[500px] min-h-0"
             initial={{ scale: 0.82, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: "spring", stiffness: 180, damping: 22, delay: 0.1 }}
           >
-            <Terminal />
+            <div className="w-full h-full min-h-0">
+              <Terminal />
+            </div>
           </motion.div>
 
-          <div className="lg:order-1 text-center lg:text-left space-y-6 lg:space-y-8 w-full">
+          <div className="lg:order-1 text-center lg:text-left space-y-5 sm:space-y-6 lg:space-y-8 w-full min-w-0">
             <motion.div
               {...fadeUp(0.08)}
               className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-accent/20 bg-accent/5 backdrop-blur-sm text-accent text-[10px] font-mono tracking-wider uppercase mx-auto lg:mx-0"
@@ -117,9 +121,9 @@ const Hero = () => {
               const status = "available_to_hire";
             </motion.div>
 
-            <motion.div {...fadeUp(0.15)}>
+            <motion.div {...fadeUp(0.15)} className="inline-block max-w-full">
               <span className="block text-[11px] font-mono text-os-muted uppercase tracking-[0.25em] mb-2">// TODO: Build something exceptional</span>
-              <h1 className="font-heading text-[2.6rem] sm:text-6xl lg:text-[5.2rem] font-black tracking-[-0.04em] leading-[1.05] mb-4">
+              <h1 className="font-heading text-[2.25rem] sm:text-6xl lg:text-[5.2rem] font-black tracking-[-0.04em] leading-[1.05] mb-4">
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-orange-400 drop-shadow-sm">Sabin</span> 
                 <span className="text-white drop-shadow-sm ml-2">Khatri</span>
               </h1>

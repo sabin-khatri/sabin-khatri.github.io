@@ -14,7 +14,7 @@ const WINDOW_SIZES = {
 
 const DraggableWindow = ({ children, isOpen, zIndex, onFocus, type = 'terminal' }) => {
   const dragControls = useDragControls();
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [layout, setLayout] = useState({ x: 16, y: 72, constraints: { left: 8, right: 8, top: 40, bottom: 80 } });
 
   useEffect(() => {
     const updatePosition = () => {
@@ -22,9 +22,19 @@ const DraggableWindow = ({ children, isOpen, zIndex, onFocus, type = 'terminal' 
       const vh = window.innerHeight;
       const size = WINDOW_SIZES[type] || WINDOW_SIZES.terminal;
       const w = Math.min(size.w, vw * 0.92);
-      const x = Math.max(8, (vw - w) / 2 - vw * 0.1);
-      const y = Math.max(60, vh * 0.12);
-      setPosition({ x, y });
+      const h = Math.min(size.h, vh * 0.7);
+      const x = Math.max(8, Math.round((vw - w) / 2));
+      const y = Math.max(56, Math.round(vh * 0.1));
+      setLayout({
+        x,
+        y,
+        constraints: {
+          left: -x + 8,
+          right: Math.max(8, vw - w - 8),
+          top: 48,
+          bottom: Math.max(80, vh - h - 48),
+        },
+      });
     };
     updatePosition();
     window.addEventListener('resize', updatePosition, { passive: true });
@@ -39,12 +49,12 @@ const DraggableWindow = ({ children, isOpen, zIndex, onFocus, type = 'terminal' 
       dragControls={dragControls}
       dragListener={false}
       dragMomentum={false}
-      dragConstraints={{ left: -position.x + 8, right: window.innerWidth - 100, top: 40, bottom: window.innerHeight - 80 }}
-      initial={{ opacity: 0, scale: 0.85, y: position.y + 30 }}
-      animate={{ opacity: 1, scale: 1, x: position.x, y: position.y }}
+      dragConstraints={layout.constraints}
+      initial={{ opacity: 0, scale: 0.85, y: layout.y + 30 }}
+      animate={{ opacity: 1, scale: 1, x: layout.x, y: layout.y }}
       exit={{ opacity: 0, scale: 0.85 }}
       transition={{ type: 'spring', stiffness: 320, damping: 28 }}
-      style={{ zIndex, position: 'fixed', top: 0, left: 0 }}
+      style={{ zIndex, position: 'fixed', top: 0, left: 0, maxWidth: '92vw' }}
       onPointerDown={onFocus}
       className="shadow-2xl will-change-transform"
     >

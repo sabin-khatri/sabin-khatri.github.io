@@ -190,7 +190,7 @@ const Terminal = ({ onMinimize, onClose, isFloating = false, title = "guest@sabi
 
   return (
     <div
-      className={`flex flex-col border border-slate-700/50 rounded-xl overflow-hidden shadow-2xl ${isFloating ? 'w-[min(600px,92vw)] h-[min(400px,60vh)]' : 'w-full h-full min-h-[280px] sm:min-h-[300px]'}`}
+      className={`flex flex-col border border-slate-700/50 rounded-xl overflow-hidden shadow-2xl ${isFloating ? 'w-[min(600px,92vw)] h-[min(400px,60vh)]' : 'w-full h-full min-h-0'}`}
       style={{ background: 'var(--os-terminal)' }}
       onClick={() => inputRef.current?.focus()}
     >

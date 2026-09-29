@@ -31,8 +31,6 @@ const Footer = lazy(() => import('./components/Footer'));
 const MusicPlayer = lazy(() => import('./components/MusicPlayer'));
 const ExperienceWindow = lazy(() => import('./components/ExperienceWindow'));
 const Services = lazy(() => import('./components/Services'));
-const CyberSynth = lazy(() => import('./components/CyberSynth'));
-const AIAssistant = lazy(() => import('./components/AIAssistant'));
 
 const IDLE_TIMEOUT_MS = 45000;
 
@@ -90,7 +88,7 @@ function AppContent() {
   useEffect(() => {
     if (!hasBooted) return;
     const preload = () => preloadAllSections();
-    const t = setTimeout(preload, 800);
+    const t = setTimeout(preload, 350);
     return () => clearTimeout(t);
   }, [hasBooted]);
 
@@ -159,7 +157,7 @@ function AppContent() {
     }
 
     if (type !== 'shortcuts') {
-      const displayNames = { terminal: 'Terminal', music: 'Music Player', settings: 'Settings', timeline: 'Experience', casestudy: 'Case Study', synth: 'Cyber Synth', assistant: 'AI Assistant' };
+      const displayNames = { terminal: 'Terminal', music: 'Music Player', settings: 'Settings', timeline: 'Experience', casestudy: 'Case Study' };
       const appName = displayNames[type] || type;
       toast.success(`Opening ${appName}...`, { id: `open-${type}` });
     }
@@ -203,15 +201,11 @@ function AppContent() {
     const onMusic = () => openWindow('music');
     const onSettings = () => openWindow('settings');
     const onTimeline = () => openWindow('timeline');
-    const onSynth = () => openWindow('synth');
-    const onAssistant = () => openWindow('assistant');
 
     window.addEventListener('open-terminal', onTerminal);
     window.addEventListener('open-music', onMusic);
     window.addEventListener('open-settings', onSettings);
     window.addEventListener('open-timeline', onTimeline);
-    window.addEventListener('open-synth', onSynth);
-    window.addEventListener('open-assistant', onAssistant);
 
     const handleKeyDown = (e) => {
       if (isIdleRef.current) { wakeFromScreensaver(); return; }
@@ -233,8 +227,6 @@ function AppContent() {
       window.removeEventListener('open-music', onMusic);
       window.removeEventListener('open-settings', onSettings);
       window.removeEventListener('open-timeline', onTimeline);
-      window.removeEventListener('open-synth', onSynth);
-      window.removeEventListener('open-assistant', onAssistant);
       window.removeEventListener('keydown', handleKeyDown, { capture: true });
       events.forEach(evt => window.removeEventListener(evt, onActivity));
       if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
@@ -262,16 +254,6 @@ function AppContent() {
       timeline: (
         <WindowFrame title="Timeline — Sabin OS" onClose={close} onMinimize={close} className="w-[min(400px,92vw)]">
           <Suspense fallback={<Spinner />}><ExperienceWindow /></Suspense>
-        </WindowFrame>
-      ),
-      synth: (
-        <WindowFrame title="Cyber Synth — Sabin OS" onClose={close} onMinimize={close} className="w-[min(480px,94vw)]">
-          <Suspense fallback={<Spinner />}><CyberSynth /></Suspense>
-        </WindowFrame>
-      ),
-      assistant: (
-        <WindowFrame title="AI Assistant — Sabin OS" onClose={close} onMinimize={close} className="w-[min(400px,92vw)]">
-          <Suspense fallback={<Spinner />}><AIAssistant /></Suspense>
         </WindowFrame>
       ),
     };
@@ -316,7 +298,7 @@ function AppContent() {
               <LazySection sectionId="projects" minHeight="60vh">
                 <SectionErrorBoundary><Projects /></SectionErrorBoundary>
               </LazySection>
-              <LazySection sectionId="skills" minHeight="100vh">
+              <LazySection sectionId="skills" minHeight="80vh" rootMargin="1200px">
                 <SectionErrorBoundary><Skills /></SectionErrorBoundary>
               </LazySection>
               <LazySection sectionId="contact" minHeight="60vh">
