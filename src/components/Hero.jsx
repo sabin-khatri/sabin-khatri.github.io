@@ -77,11 +77,10 @@ const MovingBorderBtn = ({ href, children, innerClass = "", bg = 'rgba(var(--acc
 const Hero = () => {
   const [text] = useTypewriter({
     words: [
-      "breaks production on Fridays",
-      "turns tea into clean JavaScript",
-      "crafts smooth 60fps animations",
-      "builds premium React apps",
-      "hates sloppy copy-paste code"
+      "build polished web experiences",
+      "craft smooth interface animations",
+      "create useful React applications",
+      "care about the little details"
     ],
     loop: true, typeSpeed: 60, deleteSpeed: 40, delaySpeed: 2000,
   });
@@ -102,7 +101,7 @@ const Hero = () => {
       <div className="container mx-auto max-w-7xl relative z-10 px-5 sm:px-6 pt-24 sm:pt-28 pb-20 sm:pb-16">
         <div className="flex flex-col lg:grid lg:grid-cols-2 lg:gap-20 items-center gap-6 sm:gap-10 lg:gap-12">
           <motion.div
-            className="flex justify-center lg:justify-end lg:order-2 w-full h-[180px] sm:h-[280px] lg:h-[500px] min-h-0"
+            className="flex justify-center lg:justify-end lg:order-2 w-full h-[180px] sm:h-[280px] lg:h-[400px] min-h-0"
             initial={{ scale: 0.82, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: "spring", stiffness: 180, damping: 22, delay: 0.1 }}
@@ -118,35 +117,35 @@ const Hero = () => {
               className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-accent/20 bg-accent/5 backdrop-blur-sm text-accent text-[10px] font-mono tracking-wider uppercase mx-auto lg:mx-0"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-              const status = "available_to_hire";
+              Available for new opportunities
             </motion.div>
 
             <motion.div {...fadeUp(0.15)} className="inline-block max-w-full">
-              <span className="block text-[11px] font-mono text-os-muted uppercase tracking-[0.25em] mb-2">// TODO: Build something exceptional</span>
+              <span className="block text-[11px] font-mono text-os-muted uppercase tracking-[0.25em] mb-2">Frontend developer · Nepal</span>
               <h1 className="font-heading text-[2.25rem] sm:text-6xl lg:text-[5.2rem] font-black tracking-[-0.04em] leading-[1.05] mb-4">
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-orange-400 drop-shadow-sm">Sabin</span> 
                 <span className="text-white drop-shadow-sm ml-2">Khatri</span>
               </h1>
               <p className="text-lg sm:text-xl lg:text-2xl text-slate-300 font-mono tracking-tight min-h-[2.5rem]">
-                <span className="text-accent/80">sabin.</span><span className="text-white">{text}</span>
+                <span className="text-accent/80">I </span><span className="text-white">{text}</span>
                 <Cursor cursorColor="var(--os-accent)" cursorStyle="▊" />
               </p>
             </motion.div>
 
             <motion.div {...fadeUp(0.25)} className="flex flex-wrap gap-2.5 justify-center lg:justify-start">
               {[
-                { key: 'const location', value: '"Biratnagar, NP"' },
-                { key: 'let stack', value: '["React", "Three.js"]' },
-                { key: 'let status', value: '"building_60fps"' },
+                { key: 'Based in', value: 'Biratnagar, Nepal' },
+                { key: 'Working with', value: 'React · JavaScript' },
+                { key: 'Focus', value: 'UI engineering' },
               ].map((chip) => (
                 <span key={chip.key} className="px-3.5 py-1 rounded-lg text-[10px] font-mono text-slate-400 border border-os bg-white/[0.02] shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
-                  <span className="text-accent/70">{chip.key}</span> = <span className="text-green-400">{chip.value}</span>;
+                  <span className="text-accent/70">{chip.key}</span> · <span className="text-green-400">{chip.value}</span>
                 </span>
               ))}
             </motion.div>
 
             <motion.p {...fadeUp(0.32)} className="text-sm sm:text-base lg:text-lg text-slate-400 max-w-lg mx-auto lg:mx-0 leading-relaxed font-sans font-light">
-              Hey, I'm Sabin. I write clean, fast JavaScript and build web applications. I prefer dark themes, pixel-perfection, and custom UI components over templated layouts. Currently tweaking web vitals.
+                I’m Sabin, a frontend developer building thoughtful, fast web experiences with React and modern JavaScript. I care about clear interfaces, useful details, and smooth interactions.
             </motion.p>
 
             <motion.div {...fadeUp(0.44)} className="flex flex-wrap items-center gap-4 justify-center lg:justify-start pt-1">
