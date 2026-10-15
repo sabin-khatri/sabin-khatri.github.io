@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+// eslint-disable-next-line no-unused-vars
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 
 const CustomCursor = () => {
