@@ -18,9 +18,11 @@ const IMAGE_URLS = [
   imgNext, imgNode, imgExpress, imgMongo, imgMysql,
   imgTypescript, imgJavascript, imgReact, imgTailwind,
 ];
+const MOBILE_IMAGE_URLS = [imgNext, imgNode, imgExpress, imgMongo, imgMysql, imgTypescript, imgJavascript];
 // Warm the local texture cache as soon as the scene chunk loads, before the balls mount.
-useTexture.preload(IMAGE_URLS);
+useTexture.preload(MOBILE_IMAGE_URLS);
 const SPHERE_COUNT_DESKTOP = 16;
+const SPHERE_COUNT_MOBILE = 7;
 const SPHERE_GEOMETRY = new THREE.IcosahedronGeometry(1, 2);
 
 function Borders() {
@@ -76,14 +78,20 @@ function Pointer() {
 }
 
 function Scene({ lowFx, accentColor }) {
-  const textures = useTexture(IMAGE_URLS);
+  const textures = useTexture(lowFx ? MOBILE_IMAGE_URLS : IMAGE_URLS);
+  const { viewport } = useThree();
+  const sphereCount = lowFx ? SPHERE_COUNT_MOBILE : SPHERE_COUNT_DESKTOP;
   const spheres = useMemo(
-    () => Array.from({ length: SPHERE_COUNT_DESKTOP }, (_, i) => ({
+    () => Array.from({ length: sphereCount }, (_, i) => ({
       texture: textures[i % textures.length],
       scale: 0.85 + Math.random() * 0.45,
-      position: [THREE.MathUtils.randFloatSpread(5), THREE.MathUtils.randFloatSpread(3.2), THREE.MathUtils.randFloatSpread(0.6)],
+      position: [
+        THREE.MathUtils.randFloatSpread(Math.max(1, viewport.width - 2.2)),
+        THREE.MathUtils.randFloatSpread(Math.max(1, viewport.height - 2.2)),
+        THREE.MathUtils.randFloatSpread(0.6),
+      ],
     })),
-    [textures]
+    [textures, sphereCount, viewport.width, viewport.height]
   );
 
   return (
@@ -104,7 +112,7 @@ function Scene({ lowFx, accentColor }) {
 export default function SkillsScene({ active, lowFx, accentColor, onContextLost }) {
   return (
     <Canvas
-      dpr={[1, 1.25]}
+      dpr={lowFx ? 1 : [1, 1.25]}
       frameloop={active ? "always" : "demand"}
       gl={{ antialias: false, powerPreference: "high-performance", alpha: true, failIfMajorPerformanceCaveat: false }}
       camera={{ position: [0, 0, 16], fov: 38 }}
