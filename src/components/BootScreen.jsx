@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 import { scrollToTop } from '../utils/scroll';
@@ -50,12 +50,25 @@ const BootScreen = ({ onComplete }) => {
   const [glitch, setGlitch] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
   const scrollRef = useRef(null);
+  const timersRef = useRef([]);
+  const completionTimerRef = useRef(null);
+  const finishedRef = useRef(false);
+  const glitchTimersRef = useRef([]);
+
+  const finishBoot = useCallback(() => {
+    if (finishedRef.current) return;
+    finishedRef.current = true;
+    timersRef.current.forEach(clearTimeout);
+    glitchTimersRef.current.forEach(clearTimeout);
+    setIsExiting(true);
+    completionTimerRef.current = setTimeout(onComplete, 500);
+  }, [onComplete]);
 
   useEffect(() => {
     scrollToTop();
     document.body.style.overflow = 'hidden';
 
-    const timers = BOOT_LINES.map((line, i) =>
+    timersRef.current = BOOT_LINES.map((line, i) =>
       setTimeout(() => {
         setVisibleLines(i + 1);
         setProgress(((i + 1) / BOOT_LINES.length) * 100);
@@ -67,18 +80,17 @@ const BootScreen = ({ onComplete }) => {
 
     const glitchTimer = setTimeout(() => setGlitch(true), 3200);
     const unglitchTimer = setTimeout(() => setGlitch(false), 3350);
-    const exitTimer = setTimeout(() => {
-      setIsExiting(true);
-      setTimeout(onComplete, 500);
-    }, 3600);
+    glitchTimersRef.current = [glitchTimer, unglitchTimer];
+    const exitTimer = setTimeout(finishBoot, 3600);
 
     return () => {
-      timers.forEach(clearTimeout);
+      timersRef.current.forEach(clearTimeout);
       clearTimeout(glitchTimer);
       clearTimeout(unglitchTimer);
       clearTimeout(exitTimer);
+      clearTimeout(completionTimerRef.current);
     };
-  }, [onComplete]);
+  }, [finishBoot]);
 
   return (
     <motion.div
@@ -104,7 +116,16 @@ const BootScreen = ({ onComplete }) => {
         </div>
       </div>
 
-      <div className="px-4 sm:px-6 pb-6 max-w-3xl mx-auto w-full">
+      <div className="px-4 sm:px-6 pb-5 max-w-3xl mx-auto w-full">
+        <div className="flex justify-end mb-4">
+          <button
+            type="button"
+            onClick={finishBoot}
+            className="rounded-lg border border-white/15 px-3 py-2 text-xs text-slate-300 transition-colors hover:border-accent/50 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
+          >
+            Skip intro <span aria-hidden="true">→</span>
+          </button>
+        </div>
         <div className="flex items-center justify-between mb-2">
           <span className="text-[10px] font-mono text-slate-600">Sabin OS v1.0</span>
           <span className="text-[10px] font-mono text-green-400">
