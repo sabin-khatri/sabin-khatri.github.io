@@ -42,12 +42,11 @@ const SectionChrome = ({ compact }) => (
 const TechStack = () => {
   const { theme, accent } = useSettings();
   const sectionRef = useRef(null);
-  const [isMobile, setIsMobile] = useState(
-    typeof window !== "undefined" ? window.innerWidth < 768 : true
-  );
   const [canvasReady, setCanvasReady] = useState(false);
   const [sceneActive, setSceneActive] = useState(false);
   const [lowFx, setLowFx] = useState(true);
+  const [pageVisible, setPageVisible] = useState(true);
+  const [reducedMotion, setReducedMotion] = useState(false);
   const [accentColor, setAccentColor] = useState("#f59e0b");
   const [glFailed, setGlFailed] = useState(false);
 
@@ -57,19 +56,28 @@ const TechStack = () => {
   }, [theme, accent]);
 
   useEffect(() => {
+    const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
     const update = () => {
-      const mobile = window.innerWidth < 768;
-      setIsMobile(mobile);
-      setLowFx(mobile || window.innerWidth < 1024);
+      const lowPowerDevice = (navigator.hardwareConcurrency || 8) <= 4 || navigator.connection?.saveData;
+      setReducedMotion(motionPreference.matches);
+      setLowFx(window.innerWidth < 1024 || motionPreference.matches || lowPowerDevice);
     };
+    const updateVisibility = () => setPageVisible(!document.hidden);
     update();
+    updateVisibility();
     window.addEventListener("resize", update, { passive: true });
-    return () => window.removeEventListener("resize", update);
+    document.addEventListener("visibilitychange", updateVisibility);
+    motionPreference.addEventListener?.("change", update);
+    return () => {
+      window.removeEventListener("resize", update);
+      document.removeEventListener("visibilitychange", updateVisibility);
+      motionPreference.removeEventListener?.("change", update);
+    };
   }, []);
 
   useEffect(() => {
     const section = sectionRef.current;
-    if (!section || isMobile || glFailed) {
+    if (!section || glFailed) {
       setCanvasReady(false);
       setSceneActive(false);
       return;
@@ -89,15 +97,16 @@ const TechStack = () => {
     );
     observer.observe(section);
     return () => observer.disconnect();
-  }, [isMobile, glFailed]);
+  }, [glFailed]);
 
-  const useFallback = glFailed || isMobile;
+  const useFallback = glFailed;
 
   return (
     <section
       ref={sectionRef}
       id="skills"
-      className="relative w-full min-h-[100dvh] bg-section overflow-hidden"
+      className="relative w-full bg-section overflow-hidden"
+      style={{ minHeight: 'max(100svh, 560px)' }}
     >
       <SectionChrome compact={useFallback} />
 
@@ -108,11 +117,11 @@ const TechStack = () => {
           </div>
         </div>
       ) : (
-        <div className="absolute inset-0 cursor-grab active:cursor-grabbing">
+        <div className="absolute inset-0 cursor-grab active:cursor-grabbing touch-pan-y">
           {canvasReady ? (
             <Suspense fallback={<div className="w-full h-full flex items-center justify-center"><div className="w-8 h-8 rounded-full animate-spin spinner-accent" /></div>}>
               <SkillsScene
-                active={sceneActive}
+                active={sceneActive && pageVisible && !reducedMotion}
                 lowFx={lowFx}
                 accentColor={accentColor}
                 onContextLost={() => setGlFailed(true)}
