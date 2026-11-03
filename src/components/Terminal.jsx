@@ -190,7 +190,7 @@ const Terminal = ({ onMinimize, onClose, isFloating = false, title = "guest@sabi
 
   return (
     <div
-      className={`flex flex-col border border-slate-700/50 rounded-xl overflow-hidden shadow-2xl ${isFloating ? 'w-[min(600px,92vw)] h-[min(400px,60vh)]' : 'w-full h-full min-h-0'}`}
+      className={`flex flex-col border border-slate-700/50 rounded-xl overflow-hidden shadow-2xl ${isFloating ? 'w-full h-[min(400px,calc(100dvh-150px))] min-h-[220px]' : 'w-full h-full min-h-0'}`}
       style={{ background: 'var(--os-terminal)' }}
       onClick={() => inputRef.current?.focus()}
     >
@@ -199,7 +199,7 @@ const Terminal = ({ onMinimize, onClose, isFloating = false, title = "guest@sabi
         style={{ background: 'var(--os-card)' }}
         onPointerDown={(e) => { if (dragControls) dragControls.start(e); }}
       >
-        <div className="mx-auto text-xs font-mono text-slate-400 select-none tracking-wider">{title}</div>
+        <div className="mx-auto min-w-0 truncate px-20 text-xs font-mono text-slate-400 select-none tracking-wider">{title}</div>
         {isFloating && (
           <div className="flex gap-4 absolute right-4">
             <button onClick={handleMinimize} className="text-slate-500 hover:text-white transition-colors">-</button>
@@ -209,10 +209,10 @@ const Terminal = ({ onMinimize, onClose, isFloating = false, title = "guest@sabi
         )}
       </div>
 
-      <div ref={containerRef} className="flex-1 p-4 font-mono text-sm overflow-y-auto text-green-400 custom-scrollbar min-h-0">
+      <div ref={containerRef} data-lenis-prevent="true" className="flex-1 p-3 sm:p-4 font-mono text-xs sm:text-sm overflow-y-auto overflow-x-hidden overscroll-contain text-green-400 custom-scrollbar min-h-0">
         <div className="flex flex-col gap-2">
           {history.map((item, i) => (
-            <div key={i} className="whitespace-pre-wrap">
+            <div key={i} className="whitespace-pre-wrap break-words">
               {item.type === "input"
                 ? <span className="text-white">{item.text}</span>
                 : <span>{item.text}</span>}
