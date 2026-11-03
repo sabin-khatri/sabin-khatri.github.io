@@ -3,7 +3,7 @@ import { playCloseSound, playMinimizeSound } from '../utils/audio';
 
 const WindowFrame = ({ title, onClose, onMinimize, dragControls, children, className = '' }) => (
   <div
-    className={`flex flex-col border border-slate-700/50 rounded-xl overflow-hidden shadow-2xl ${className}`}
+    className={`flex max-h-[calc(100dvh-104px)] flex-col border border-slate-700/50 rounded-xl overflow-hidden shadow-2xl ${className}`}
     style={{ background: 'var(--os-terminal)' }}
   >
     <div
@@ -11,7 +11,7 @@ const WindowFrame = ({ title, onClose, onMinimize, dragControls, children, class
       style={{ background: 'var(--os-card)' }}
       onPointerDown={(e) => dragControls?.start(e)}
     >
-      <div className="mx-auto text-xs font-mono text-slate-400 select-none tracking-wider">{title}</div>
+      <div className="mx-auto min-w-0 truncate px-20 text-xs font-mono text-slate-400 select-none tracking-wider">{title}</div>
       <div className="flex gap-3 absolute right-4">
         <button
           onClick={() => { playMinimizeSound(); onMinimize?.(); }}
