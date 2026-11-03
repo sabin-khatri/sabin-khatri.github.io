@@ -1,10 +1,10 @@
 import React, { useState, useRef, useCallback, useEffect, memo } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion, useInView } from 'framer-motion';
-import { FaDownload, FaCheckCircle, FaRocket } from 'react-icons/fa';
+import { FaDownload, FaRocket } from 'react-icons/fa';
 import OrbitingSkills from './ui/orbiting-skills';
 import GithubGraph from './ui/GithubGraph';
-import resume from '../assets/resume/sabin-khatri.pdf';
+import resume from '../assets/resume/Sabin-khatri.pdf';
 
 const SKILL_CHIPS = ['React', 'Vite', 'Tailwind', 'Three.js', 'Node.js', 'TypeScript'];
 
@@ -13,14 +13,16 @@ const AnimatedCounter = ({ to, trigger }) => {
   useEffect(() => {
     if (!trigger) return;
     let startTime;
+    let frameId;
     const duration = 2000;
     const step = (timestamp) => {
       if (!startTime) startTime = timestamp;
       const progress = Math.min((timestamp - startTime) / duration, 1);
       setCount(Math.floor(progress * to));
-      if (progress < 1) requestAnimationFrame(step);
+      if (progress < 1) frameId = requestAnimationFrame(step);
     };
-    requestAnimationFrame(step);
+    frameId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frameId);
   }, [to, trigger]);
   return <span>{count}{to >= 10 ? '+' : ''}</span>;
 };
@@ -70,8 +72,6 @@ const MovingBorderBtn = ({
 };
 
 const About = () => {
-  const [status, setStatus] = useState('idle');
-  const [progress, setProgress] = useState(0);
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.15 });
 
@@ -81,26 +81,6 @@ const About = () => {
     sectionRef.current.style.setProperty('--mx', `${e.clientX - left}px`);
     sectionRef.current.style.setProperty('--my', `${e.clientY - top}px`);
   }, []);
-
-  const handleDownload = () => {
-    if (status !== 'idle') return;
-    setStatus('downloading');
-    let p = 0;
-    const interval = setInterval(() => {
-      p += Math.random() * 25;
-      if (p >= 100) {
-        p = 100;
-        clearInterval(interval);
-        setStatus('completed');
-        const a = document.createElement('a');
-        a.href = resume;
-        a.download = 'Sabin-Khatri-Resume.pdf';
-        a.click();
-        setTimeout(() => { setStatus('idle'); setProgress(0); }, 2000);
-      }
-      setProgress(p);
-    }, 150);
-  };
 
   return (
     <section
@@ -182,8 +162,8 @@ const About = () => {
 
             <div className="flex justify-center lg:justify-start gap-6 sm:gap-10 md:gap-16">
               {[
-                { to: 2, label: 'Years Exp.' },
-                { to: 12, label: 'Projects' },
+                { to: 4, label: 'Featured Projects' },
+                { to: 6, label: 'Core Technologies' },
               ].map((s, i) => (
                 <motion.div
                   key={s.label}
@@ -209,15 +189,13 @@ const About = () => {
               transition={{ delay: 0.6 }}
             >
               <MovingBorderBtn
-                onClick={handleDownload}
-                disabled={status !== 'idle'}
+                as="a"
+                href={resume}
+                download="Sabin-Khatri-Resume.pdf"
                 innerClass="border border-accent/20 text-white justify-center"
                 style={{ background: 'rgba(var(--accent-rgb), 0.1)' }}
               >
-                <div className="absolute left-0 bottom-0 h-[2px] bg-accent transition-all" style={{ width: `${progress}%` }} />
-                {status === 'idle' && <><FaDownload /> Download CV</>}
-                {status === 'downloading' && `Processing ${Math.floor(progress)}%`}
-                {status === 'completed' && <><FaCheckCircle /> Done</>}
+                <FaDownload /> Download Resume
               </MovingBorderBtn>
 
               <MovingBorderBtn
