@@ -1,12 +1,12 @@
 import React from "react";
 // eslint-disable-next-line no-unused-vars
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { motion, useMotionValueEvent, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
 import { FaGithub, FaHtml5, FaCss3Alt, FaJsSquare, FaReact, FaBootstrap, FaPhp, FaNodeJs } from "react-icons/fa";
 import { FiExternalLink } from "react-icons/fi";
 import { SiTailwindcss, SiMysql, SiFramer, SiTypescript, SiSupabase } from "react-icons/si";
 
-import chiyaghar from "../assets/projects/chiya.png";
-import trekking from "../assets/projects/trekking.png";
+import chiyaghar from "../assets/projects/chiya.jpg";
+import trekking from "../assets/projects/trekking.jpg";
 import realtime from "../assets/projects/realtime-complaint.jpg";
 import district from "../assets/projects/district-score.jpg";
 
@@ -30,6 +30,7 @@ const PROJECTS = [
     id: 1,
     num: "01",
     title: "Real-Time Complaint Hub",
+    quip: "Bug reports go here",
     subtitle: "Smart Complaint Management System",
     description:
       "A real-time complaint management platform that enables users to submit, track, and monitor complaints efficiently. The system provides instant status updates, role-based dashboards, and a responsive user experience for faster issue resolution.",
@@ -44,6 +45,7 @@ const PROJECTS = [
     id: 2,
     num: "02",
     title: "Chiya Ghar",
+    quip: "Freshly brewed UI",
     subtitle: "Modern Tea Café Website",
     description:
       "A modern and responsive website for a Nepali tea café featuring smooth animations, interactive UI, elegant layouts, and an engaging user experience to showcase products, services, and the café's unique atmosphere.",
@@ -58,6 +60,7 @@ const PROJECTS = [
     id: 3,
     num: "03",
     title: "Trekking Nepal",
+    quip: "Scroll responsibly",
     subtitle: "Tourism & Adventure Platform",
     description:
       "A visually appealing trekking and tourism platform designed to explore Nepal's natural beauty. It includes responsive layouts, engaging animations, destination highlights, and an immersive browsing experience.",
@@ -72,6 +75,7 @@ const PROJECTS = [
     id: 4,
     num: "04",
     title: "District Score",
+    quip: "Data, but make it scenic",
     subtitle: "Hackathon Data Dashboard",
     description:
       "A hackathon project developed collaboratively to visualize district-level data through an interactive dashboard. Built with Supabase for backend services, it offers secure data management, responsive design, and real-time information presentation.",
@@ -86,18 +90,12 @@ const PROJECTS = [
 
 const ALL_TAGS = ["All", ...Array.from(new Set(PROJECTS.flatMap((p) => p.tags)))];
 
-const flipVariants = {
-  front: {
-    initial: { rotateX: 90, opacity: 0 },
-    animate: { rotateX: 0, opacity: 1 },
-    exit: { rotateX: -90, opacity: 0 },
-  },
-  back: {
-    initial: { rotateX: -90, opacity: 0 },
-    animate: { rotateX: 0, opacity: 1 },
-    exit: { rotateX: 90, opacity: 0 },
-  },
-};
+const canUseProjectStack = () => (
+  window.innerWidth >= 1200 &&
+  window.innerHeight >= 800 &&
+  typeof window.matchMedia === "function" &&
+  window.matchMedia("(hover: hover) and (pointer: fine)").matches
+);
 
 const FilterTabs = ({ active, onChange }) => (
   <div className="flex flex-wrap items-center justify-center gap-2 mb-10 sm:mb-14 lg:mb-20 font-mono text-xs sm:text-sm">
@@ -108,6 +106,7 @@ const FilterTabs = ({ active, onChange }) => (
           key={tag}
           type="button"
           onClick={() => onChange(tag)}
+          aria-pressed={isActive}
           className={`relative px-4 py-2 rounded-full border transition-colors duration-300 ${
             isActive
               ? "text-black border-transparent"
@@ -128,69 +127,50 @@ const FilterTabs = ({ active, onChange }) => (
   </div>
 );
 
-const CardBody = ({ project, isFlipped, setIsFlipped }) => {
-  const jsonData = {
-    id: project.id,
-    title: project.title,
-    subtitle: project.subtitle,
-    stack: project.tags,
-    repository: project.githubUrl,
-    deployment: project.liveUrl,
-  };
-
-  return (
-    <>
-      <AnimatePresence mode="wait">
-        {!isFlipped ? (
-          <motion.div
-            key="front"
-            {...flipVariants.front}
-            transition={{ duration: 0.3 }}
-            className="relative grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 items-center"
-          >
-            <div className="order-1 lg:order-2 relative group">
-              <div className="relative rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
+const CardBody = ({ project }) => (
+  <>
+          <div className="relative grid grid-cols-1 lg:grid-cols-[1.08fr_.92fr] gap-5 sm:gap-8 lg:gap-10 items-stretch">
+            <div className="relative group min-w-0">
+              <div className="relative h-full min-h-56 sm:min-h-72 lg:min-h-[390px] rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10 bg-black/40">
                 <img
                   src={project.image}
                   alt={project.title}
-                  className="w-full h-auto max-h-[180px] sm:max-h-[240px] lg:max-h-none object-cover object-top transition-transform duration-700 group-hover:scale-[1.04]"
+                  className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-[1.045]"
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/5 to-black/25" />
+                <span className="absolute left-3 top-3 rounded-full border border-white/20 bg-black/55 px-3 py-1.5 font-mono text-[9px] uppercase tracking-wider text-white/90 backdrop-blur sm:left-4 sm:top-4 sm:text-[10px]">
+                  {project.quip}
+                </span>
+                <span className="absolute bottom-3 right-4 font-mono text-5xl sm:text-7xl font-black tracking-tighter text-white/75 drop-shadow-lg select-none" aria-hidden="true">
+                  {project.num}
+                </span>
+                <span className="absolute bottom-4 left-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/50 px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.16em] text-white/80 backdrop-blur">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,.8)]" /> Featured work
+                </span>
               </div>
             </div>
 
-            <div className="order-2 lg:order-1 flex flex-col justify-center min-w-0">
+            <div className="flex flex-col justify-center min-w-0 py-1 sm:py-3 lg:py-5">
               <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-5">
-                <span className="font-mono text-xs sm:text-sm text-white/30">// {project.num}</span>
-                <div className="h-px flex-1 max-w-[48px] bg-white/20" />
-                <span className="text-accent font-mono text-[10px] sm:text-sm tracking-widest uppercase truncate">
+                <span className="h-px w-8 bg-accent/70" />
+                <span className="text-accent font-mono text-[10px] sm:text-xs tracking-[0.18em] uppercase truncate">
                   {project.subtitle}
                 </span>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsFlipped(true);
-                  }}
-                  className="ml-auto shrink-0 text-[10px] sm:text-xs font-mono px-2 py-1 rounded bg-black/30 border border-white/10 text-slate-400 hover:text-accent hover:border-accent/40 transition-colors cursor-pointer relative z-50"
-                >
-                  {"{ }"} JSON
-                </button>
               </div>
 
-              <h3 className="text-2xl sm:text-3xl lg:text-5xl font-bold text-white mb-3 sm:mb-5 tracking-tight">
+              <h3 className="break-words text-[clamp(1.65rem,7vw,2.2rem)] sm:text-4xl lg:text-[clamp(2.5rem,4vw,3.5rem)] font-bold text-white mb-3 sm:mb-5 tracking-[-0.045em] leading-[1.04]">
                 {project.title}
               </h3>
-              <p className="text-slate-400 text-sm sm:text-base lg:text-lg leading-relaxed mb-5 sm:mb-6 line-clamp-3 sm:line-clamp-none">
+              <p className="text-slate-300/75 text-sm sm:text-base leading-relaxed mb-5 sm:mb-6 line-clamp-3 sm:line-clamp-none">
                 {project.description}
               </p>
 
-              <div className="flex flex-wrap gap-2 sm:gap-3">
+              <div className="flex flex-wrap gap-2 sm:gap-2.5">
                 {project.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="px-3 py-1.5 rounded-full bg-black/30 border border-white/5 text-xs sm:text-sm font-medium text-slate-200 flex items-center gap-1.5"
+                    className="px-2.5 py-1.5 rounded-lg bg-white/[0.045] border border-white/[0.09] text-[11px] sm:text-xs font-medium text-slate-200 flex items-center gap-1.5"
                   >
                     <span className="text-sm sm:text-base leading-none">{TAG_ICONS[tag]}</span>
                     {tag}
@@ -198,40 +178,9 @@ const CardBody = ({ project, isFlipped, setIsFlipped }) => {
                 ))}
               </div>
             </div>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="back"
-            {...flipVariants.back}
-            transition={{ duration: 0.3 }}
-            className="relative w-full bg-[#1e1e1e]/95 backdrop-blur-3xl p-4 sm:p-10 rounded-2xl border border-white/10 overflow-hidden flex flex-col justify-center min-h-[220px] sm:min-h-[360px]"
-          >
-            <div className="flex items-center justify-between mb-4 bg-black/40 p-3 rounded-lg border border-white/5 relative z-50">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-red-500" />
-                <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                <div className="w-3 h-3 rounded-full bg-green-500" />
-                <span className="ml-3 text-xs font-mono text-slate-400">project_data.json</span>
-              </div>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsFlipped(false);
-                }}
-                className="text-[10px] font-mono px-2 py-1 rounded bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer"
-              >
-                Close
-              </button>
-            </div>
-            <pre className="text-xs sm:text-sm md:text-base text-green-400 font-mono whitespace-pre-wrap overflow-y-auto custom-scrollbar flex-1">
-              {JSON.stringify(jsonData, null, 4)}
-            </pre>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
 
-      <div className="relative z-20 mt-5 sm:mt-6 flex flex-col sm:flex-row gap-3 w-full">
+      <div className="relative z-20 mt-5 sm:mt-6 pt-4 border-t border-white/10 flex flex-col sm:flex-row gap-3 w-full">
         <a
           href={project.liveUrl}
           target="_blank"
@@ -249,11 +198,10 @@ const CardBody = ({ project, isFlipped, setIsFlipped }) => {
           <FaGithub className="text-base sm:text-lg" /> Source Code
         </a>
       </div>
-    </>
-  );
-};
+  </>
+);
 
-const ProjectCardShell = ({ project, children, className = "", style }) => {
+const ProjectCardShell = ({ project, children, className = "", style, stacked = false }) => {
   const cardRef = React.useRef(null);
 
   const handleMouseMove = (e) => {
@@ -268,7 +216,11 @@ const ProjectCardShell = ({ project, children, className = "", style }) => {
     <motion.article
       ref={cardRef}
       onMouseMove={handleMouseMove}
-      className={`group/card bg-gradient-to-br ${project.color} border border-white/10 rounded-2xl sm:rounded-[2rem] shadow-2xl p-4 sm:p-6 lg:p-10 overflow-hidden backdrop-blur-xl ${className}`}
+      initial={stacked ? false : { opacity: 1, y: 20, scale: 0.985 }}
+      whileInView={stacked ? undefined : { opacity: 1, y: 0, scale: 1 }}
+      viewport={stacked ? undefined : { once: true, amount: 0.12 }}
+      transition={stacked ? undefined : { duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+      className={`group/card relative bg-[#101116] border border-white/[0.12] rounded-2xl sm:rounded-[2rem] shadow-[0_32px_100px_rgba(0,0,0,.5)] p-3 sm:p-5 lg:p-6 ${stacked ? "overflow-visible" : "overflow-hidden"} backdrop-blur-xl ${className}`}
       style={{
         perspective: "1000px",
         "--mx": "50%",
@@ -288,65 +240,126 @@ const ProjectCardShell = ({ project, children, className = "", style }) => {
   );
 };
 
-const StaticProjectCard = ({ project }) => {
-  const [isFlipped, setIsFlipped] = React.useState(false);
-  return (
-    <ProjectCardShell project={project} className="relative w-full">
-      <CardBody project={project} isFlipped={isFlipped} setIsFlipped={setIsFlipped} />
-    </ProjectCardShell>
+const PaperCarrier = ({ opacity }) => (
+  <motion.div aria-hidden="true" style={{ opacity }} className="pointer-events-none absolute -top-[3.4rem] right-6 z-40 flex flex-col items-center text-accent drop-shadow-[0_0_12px_rgba(255,160,70,.45)]">
+    <svg viewBox="0 0 72 48" className="h-10 w-14 overflow-visible">
+      <path d="M36 8 8 2l16 12-9 4 18-3 18 3-9-4L64 2 36 8Z" fill="currentColor" stroke="white" strokeOpacity=".65" strokeWidth="1.5" strokeLinejoin="round" />
+      <path d="m36 8-3 10 3 5 3-5-3-10Z" fill="#fff" fillOpacity=".8" />
+      <path d="M36 23v21" stroke="white" strokeOpacity=".75" strokeWidth="1.5" strokeDasharray="2 2" />
+      <path d="m32 43 4 4 4-4" fill="none" stroke="white" strokeOpacity=".75" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+    <span className="mt-0.5 rounded-full border border-white/10 bg-black/70 px-2 py-0.5 font-mono text-[8px] uppercase tracking-[.18em] text-white/65 backdrop-blur">next up</span>
+  </motion.div>
+);
+
+const PaperProjectCard = ({ project, index, total, progress, activeIndex }) => {
+  const segment = 1 / Math.max(total, 1);
+  const start = index * segment;
+  const enter = Math.max(0, start - segment * 0.16);
+  const exit = Math.min(1, start + segment + segment * 0.16);
+  const entryRange = [enter, enter + segment * 0.18, exit - segment * 0.18, exit];
+  const y = useTransform(
+    progress,
+    entryRange,
+    [index === 0 ? 0 : 18, 0, 0, index === total - 1 ? 0 : -12]
   );
-};
-
-const StackedProjectCard = ({ project, index, total, scrollYProgress }) => {
-  const [isFlipped, setIsFlipped] = React.useState(false);
-  const transitions = total > 1 ? total - 1 : 1;
-  const start = Math.max(0, (index - 1) / transitions);
-  const end = index / transitions;
-
   const x = useTransform(
-    scrollYProgress,
-    [start, end],
-    [index === 0 ? "0vw" : "80vw", `${index * 16}px`]
+    progress,
+    entryRange,
+    [index === 0 ? "0vw" : "105vw", "0vw", "0vw", index === total - 1 ? "0vw" : "-105vw"]
   );
-
-  const scale = useTransform(
-    scrollYProgress,
-    [end, end + 1 / transitions],
-    [1, 0.94]
+  const carrierOpacity = useTransform(
+    progress,
+    entryRange,
+    [index === 0 ? 0 : 0, index === 0 ? 0 : 1, 0, 0]
   );
-
   const opacity = useTransform(
-    scrollYProgress,
-    [start, start + 0.1],
-    [index === 0 ? 1 : 0, 1]
+    progress,
+    entryRange,
+    [index === 0 ? 1 : 0, 1, 1, index === total - 1 ? 1 : 0]
   );
+  const scale = useTransform(
+    progress,
+    entryRange,
+    [index === 0 ? 1 : 0.985, 1, 1, index === total - 1 ? 1 : 0.99]
+  );
+  const isInteractive = index === activeIndex;
 
   return (
     <ProjectCardShell
       project={project}
-      className="absolute top-0 left-0 right-0 mx-auto w-[min(92vw,56rem)]"
-      style={{
-        x,
-        scale,
-        opacity,
-        zIndex: index,
-        y: index * 12,
-      }}
+      stacked
+      className="absolute inset-0 mx-auto h-full w-full max-w-5xl origin-bottom overflow-visible"
+      style={{ x, y, opacity, scale, zIndex: index, pointerEvents: isInteractive ? "auto" : "none" }}
     >
-      <CardBody project={project} isFlipped={isFlipped} setIsFlipped={setIsFlipped} />
+      {index > 0 && <PaperCarrier opacity={carrierOpacity} />}
+      <CardBody project={project} />
     </ProjectCardShell>
+  );
+};
+
+const StaticProjectCard = ({ project }) => {
+  return (
+    <ProjectCardShell project={project} className="relative w-full">
+      <CardBody project={project} />
+    </ProjectCardShell>
+  );
+};
+
+const StackedProjectList = ({ projects }) => {
+  const targetRef = React.useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: targetRef,
+    offset: ["start start", "end end"],
+  });
+  const progress = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 28,
+    mass: 0.25,
+    restDelta: 0.001,
+  });
+  const [activeIndex, setActiveIndex] = React.useState(0);
+
+  useMotionValueEvent(progress, "change", (latest) => {
+    const nextIndex = Math.min(projects.length - 1, Math.floor(latest * projects.length));
+    setActiveIndex((current) => current === nextIndex ? current : nextIndex);
+  });
+
+  return (
+    <div ref={targetRef} className="relative" style={{ height: `${(projects.length + 1) * 100}vh` }}>
+      <div className="sticky top-0 relative flex h-[100dvh] items-center justify-center overflow-hidden px-4 py-16">
+        <div aria-live="polite" aria-atomic="true" className="absolute left-1/2 top-20 z-20 flex -translate-x-1/2 items-center gap-3 whitespace-nowrap rounded-full border border-white/10 bg-black/60 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.16em] text-slate-400 backdrop-blur">
+          Project <motion.span key={activeIndex} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="font-bold text-accent">{String(activeIndex + 1).padStart(2, "0")}</motion.span>
+          <span aria-hidden="true">/</span>
+          {String(projects.length).padStart(2, "0")}
+          <span className="hidden text-slate-500 sm:inline">· scroll to explore</span>
+        </div>
+        <div className="relative h-[min(72dvh,650px)] w-full max-w-5xl" style={{ perspective: 1200 }}>
+          {projects.map((project, index) => (
+            <PaperProjectCard
+              key={project.id}
+              project={project}
+              index={index}
+              total={projects.length}
+              progress={progress}
+              activeIndex={activeIndex}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
   );
 };
 
 const Projects = () => {
   const [activeFilter, setActiveFilter] = React.useState("All");
   const [isDesktop, setIsDesktop] = React.useState(
-    typeof window !== "undefined" ? window.innerWidth >= 768 : false
+    typeof window !== "undefined" ? canUseProjectStack() : false
   );
-  const targetRef = React.useRef(null);
+  const prefersReducedMotion = useReducedMotion();
 
   React.useEffect(() => {
-    const update = () => setIsDesktop(window.innerWidth >= 768);
+    const update = () => setIsDesktop(canUseProjectStack());
     update();
     window.addEventListener("resize", update, { passive: true });
     return () => window.removeEventListener("resize", update);
@@ -354,11 +367,6 @@ const Projects = () => {
 
   const filteredProjects =
     activeFilter === "All" ? PROJECTS : PROJECTS.filter((p) => p.tags.includes(activeFilter));
-
-  const { scrollYProgress } = useScroll({
-    target: targetRef,
-    offset: ["start start", "end end"],
-  });
 
   return (
     <section id="projects" className="relative bg-section overflow-x-clip">
@@ -373,7 +381,7 @@ const Projects = () => {
 
       <div className="container mx-auto max-w-6xl px-4 sm:px-6 relative z-10 pt-16 sm:pt-24 lg:pt-36">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={false}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-center mb-10 sm:mb-14"
@@ -392,31 +400,18 @@ const Projects = () => {
         <FilterTabs active={activeFilter} onChange={setActiveFilter} />
       </div>
 
-      {isDesktop ? (
-        <div ref={targetRef} style={{ height: `${Math.max(filteredProjects.length, 1) * 100}vh` }} className="relative w-full">
-          <div className="sticky top-0 w-full h-screen flex items-center justify-center overflow-hidden">
-            <div className="relative w-full max-w-6xl h-[min(72vh,560px)] flex justify-center">
-              {filteredProjects.map((project, index) => (
-                <StackedProjectCard
-                  key={project.id}
-                  project={project}
-                  index={index}
-                  total={filteredProjects.length}
-                  scrollYProgress={scrollYProgress}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
+      {isDesktop && !prefersReducedMotion ? (
+        <StackedProjectList projects={filteredProjects} />
       ) : (
-        <div className="container mx-auto max-w-6xl px-4 sm:px-6 relative z-10 pb-8">
-          <div className="flex flex-col gap-6">
+        <div className="container mx-auto max-w-6xl px-4 sm:px-6 relative z-10 pb-16 sm:pb-24 lg:pb-32">
+          <div className="flex flex-col gap-5 sm:gap-7">
             {filteredProjects.map((project) => (
               <StaticProjectCard key={project.id} project={project} />
             ))}
           </div>
         </div>
       )}
+
     </section>
   );
 };
