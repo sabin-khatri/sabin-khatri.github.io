@@ -5,6 +5,7 @@ import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
+import Projects from './components/Projects';
 import BootScreen from './components/BootScreen';
 import Taskbar from './components/Taskbar';
 import DraggableWindow from './components/DraggableWindow';
@@ -24,7 +25,6 @@ import { playOpenSound, ensureContext, setSoundEnabled, setSoundProfile } from '
 import { scrollToTop, preloadAllSections } from './utils/scroll';
 
 const About = lazy(() => import('./components/About'));
-const Projects = lazy(() => import('./components/Projects'));
 const Skills = lazy(() => import('./components/Skills'));
 const Contact = lazy(() => import('./components/Contact'));
 const Footer = lazy(() => import('./components/Footer'));
@@ -45,7 +45,7 @@ function AppContent() {
   const [hasBooted, setHasBooted] = useState(() => sessionStorage.getItem('hasBooted') === 'true');
   const [windows, setWindows] = useState([]);
   const [activeWindow, setActiveWindow] = useState(null);
-  const [topZIndex, setTopZIndex] = useState(10);
+  const [topZIndex, setTopZIndex] = useState(700);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
   const [isIdle, setIsIdle] = useState(false);
@@ -94,8 +94,9 @@ function AppContent() {
 
   useEffect(() => {
     if (!hasBooted) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const lenis = new Lenis({
-      duration: 1.05,
+      duration: 0.8,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
@@ -107,13 +108,15 @@ function AppContent() {
     });
     lenisRef.current = lenis;
 
+    let frameId;
     function raf(time) {
       lenis.raf(time);
-      requestAnimationFrame(raf);
+      frameId = requestAnimationFrame(raf);
     }
-    requestAnimationFrame(raf);
+    frameId = requestAnimationFrame(raf);
 
     return () => {
+      cancelAnimationFrame(frameId);
       lenis.destroy();
       lenisRef.current = null;
     };
@@ -233,7 +236,7 @@ function AppContent() {
     };
   }, [resetIdleTimer, startIdleTimer, openWindow, wakeFromScreensaver]);
 
-  const renderWindow = (win) => {
+  const renderWindow = (win, stackIndex = 0) => {
     const close = () => closeWindow(win.id);
     const focus = () => focusWindow(win.id, win.type);
 
@@ -261,7 +264,7 @@ function AppContent() {
     if (!frames[win.type]) return null;
 
     return (
-      <DraggableWindow key={win.id} isOpen type={win.type} zIndex={win.zIndex} onFocus={focus}>
+      <DraggableWindow key={win.id} isOpen type={win.type} zIndex={win.zIndex} onFocus={focus} stackIndex={stackIndex}>
         {frames[win.type]}
       </DraggableWindow>
     );
@@ -292,15 +295,15 @@ function AppContent() {
               <LazySection sectionId="about" minHeight="80vh">
                 <SectionErrorBoundary><About /></SectionErrorBoundary>
               </LazySection>
-              <LazySection sectionId="services" minHeight="50vh">
-                <SectionErrorBoundary><Services /></SectionErrorBoundary>
-              </LazySection>
-              <LazySection sectionId="projects" minHeight="60vh">
-                <SectionErrorBoundary><Projects /></SectionErrorBoundary>
-              </LazySection>
               <LazySection sectionId="skills" minHeight="80vh" rootMargin="1200px">
                 <SectionErrorBoundary><Skills /></SectionErrorBoundary>
               </LazySection>
+              <div className="hidden sm:block">
+                <LazySection sectionId="services" minHeight="50vh">
+                  <SectionErrorBoundary><Services /></SectionErrorBoundary>
+                </LazySection>
+              </div>
+              <SectionErrorBoundary><Projects /></SectionErrorBoundary>
               <LazySection sectionId="contact" minHeight="60vh">
                 <SectionErrorBoundary><Contact /></SectionErrorBoundary>
               </LazySection>

@@ -23,7 +23,8 @@ export function scrollToSection(id) {
     const el = document.getElementById(id);
     if (el) {
       const top = el.getBoundingClientRect().top + window.scrollY - NAVBAR_OFFSET;
-      window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: Math.max(0, top), behavior: reducedMotion ? 'auto' : 'smooth' });
       return;
     }
     if (tries < 40) requestAnimationFrame(() => attempt(tries + 1));

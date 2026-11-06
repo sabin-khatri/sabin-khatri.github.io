@@ -1,9 +1,8 @@
 @import "tailwindcss";
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
 @theme inline {
   --font-sans: 'Space Grotesk', system-ui, sans-serif;
-  --font-heading: 'Space Mono', monospace;
+  --font-heading: 'Syne', 'Space Grotesk', sans-serif;
   --font-mono: 'Space Mono', monospace;
   --color-accent: var(--os-accent);
   --color-os-text: var(--os-text);
@@ -39,23 +38,57 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
+section[id] {
+  scroll-margin-top: 5.5rem;
+}
+
+:focus-visible {
+  outline: 2px solid var(--os-accent);
+  outline-offset: 3px;
+}
+
+::selection {
+  color: #0a0a0a;
+  background: var(--os-accent);
+}
+
 body {
   margin: 0;
   background: var(--os-bg);
   color: var(--os-text);
   font-family: 'Space Grotesk', system-ui, sans-serif;
-  overflow-x: hidden;
+  overflow-x: clip;
   transition: background-color 0.35s ease, color 0.35s ease;
 }
 
 /* Taskbar clearance */
 .has-taskbar {
-  padding-bottom: calc(2.75rem + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+}
+
+/* Keep the compact mobile dock clear of the home indicator and content. */
+.taskbar-shell {
+  left: 0.5rem;
+  right: 0.5rem;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 0.5rem);
+  border-radius: 0.875rem;
+  background: color-mix(in srgb, var(--os-taskbar) 94%, transparent);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.36);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
 }
 
 @media (min-width: 640px) {
   .has-taskbar {
     padding-bottom: 3rem;
+  }
+
+  .taskbar-shell {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 0;
+    box-shadow: none;
   }
 }
 
@@ -182,6 +215,7 @@ body {
   100% { transform: translateY(-15vh); opacity: 0; }
 }
 
+
 .css-particle {
   position: absolute;
   border-radius: 50%;
@@ -189,6 +223,10 @@ body {
   filter: blur(0.5px);
   animation: floatUp linear infinite;
   will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .css-particle { animation: none; opacity: 0; }
 }
 
 /* Wallpaper styles — theme-aware */

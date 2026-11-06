@@ -163,6 +163,8 @@ export const SettingsProvider = ({ children }) => {
     applyWallpaper(wallpaper);
     applySoundProfile(soundProfile);
     document.documentElement.style.setProperty("--ui-font-size", `${fontSize}px`);
+    // Settings setters apply updates immediately; this effect only hydrates saved values on mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
