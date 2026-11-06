@@ -308,7 +308,7 @@ const BookPage = ({
   // Monotonic input array for page flip transforms
   const flipRange = isLast ? [0, 1] : [0, myStart, myMid, myEnd, 1];
   const rotateYRange = isLast || reducedMotion ? [0, 0] : [0, 0, -80, -135, -135];
-  const opacityRange = isLast ? [1, 1] : [1, 1, 1, 0, 0];
+  const opacityRange = isLast || reducedMotion ? [1, 1] : [1, 1, 1, 0, 0];
   const shadowRange = isLast || reducedMotion ? [0, 0] : [0, 0, 0.82, 0, 0];
   const xRange = isLast || reducedMotion ? [0, 0] : [0, 0, -25, -60, -60];
   const zRange = isLast || reducedMotion ? [0, 0] : [0, 0, 45, -20, -20];
@@ -356,7 +356,7 @@ const BookPage = ({
           backfaceVisibility: "hidden",
           WebkitBackfaceVisibility: "hidden",
         }}
-        className="absolute inset-0 rounded-2xl sm:rounded-[2rem] bg-[#101116] border border-white/[0.12] shadow-[0_24px_70px_rgba(0,0,0,0.65)] p-4 sm:p-6 lg:p-7 overflow-hidden backdrop-blur-xl"
+        className="absolute inset-0 rounded-2xl sm:rounded-[2rem] bg-[#101116] border border-white/[0.12] shadow-[0_24px_70px_rgba(0,0,0,0.65)] p-3.5 sm:p-6 lg:p-7 overflow-y-auto overflow-x-hidden overscroll-contain backdrop-blur-xl"
       >
         {/* Mouse Spotlight Glow */}
         <div
@@ -540,7 +540,7 @@ const Projects = () => {
       />
 
       {/* Sticky Viewport Container */}
-      <div className="sticky top-0 h-screen w-full flex flex-col justify-between items-center py-4 sm:py-6 lg:py-8 px-3 sm:px-6 overflow-hidden">
+      <div className="sticky top-0 h-[100svh] w-full flex flex-col justify-between items-center py-3 sm:py-6 lg:py-8 px-3 sm:px-6 overflow-hidden">
         {/* ─── Top Header & Filter ─────────────────────────── */}
         <div className="w-full max-w-5xl text-center relative z-20">
           <motion.div
@@ -659,7 +659,7 @@ const Projects = () => {
 
             {/* ─── The Stack of Pages (3D Perspective Container) ── */}
             <div
-              className="relative w-full h-[470px] sm:h-[480px] lg:h-[490px] [perspective:1800px]"
+              className="relative w-full h-[min(56svh,490px)] min-h-[300px] sm:h-[480px] sm:min-h-0 lg:h-[490px] [perspective:1800px]"
               style={{ transformStyle: "preserve-3d" }}
             >
               {filteredProjects.map((project, index) => (
