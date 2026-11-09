@@ -526,8 +526,8 @@ const Projects = () => {
     <section
       id="projects"
       ref={containerRef}
-      className="relative bg-section overflow-x-clip"
-      style={{ height: sectionHeight }}
+      className="relative bg-section overflow-x-clip h-auto md:h-[var(--projects-height)]"
+      style={{ "--projects-height": sectionHeight }}
     >
       {/* Background Grid Pattern */}
       <div
@@ -540,7 +540,7 @@ const Projects = () => {
       />
 
       {/* Sticky Viewport Container */}
-      <div className="sticky top-0 h-[100svh] w-full flex flex-col justify-between items-center py-3 sm:py-6 lg:py-8 px-3 sm:px-6 overflow-hidden">
+      <div className="md:sticky md:top-0 md:h-[100svh] w-full flex flex-col justify-start md:justify-between items-center py-8 md:py-6 lg:py-8 px-4 sm:px-6 md:overflow-hidden">
         {/* ─── Top Header & Filter ─────────────────────────── */}
         <div className="w-full max-w-5xl text-center relative z-20">
           <motion.div
@@ -562,11 +562,37 @@ const Projects = () => {
             </h2>
           </motion.div>
 
+          <div className="hidden md:block"><FilterTabs active={activeFilter} onChange={handleFilterChange} /></div>
+        </div>
+
+        <div className="md:hidden w-full max-w-xl mt-2">
           <FilterTabs active={activeFilter} onChange={handleFilterChange} />
+          <div className="space-y-5">
+            {filteredProjects.map((project) => (
+              <article key={project.id} className="overflow-hidden rounded-2xl border border-white/10 bg-[#101116] shadow-xl">
+                <div className="relative h-52 w-full overflow-hidden bg-black/40">
+                  <img src={project.image} alt={project.title} className="h-full w-full object-cover object-top" loading="lazy" />
+                  <span className="absolute bottom-3 right-3 font-mono text-5xl font-black text-white/60">{project.num}</span>
+                </div>
+                <div className="p-4">
+                  <p className="mb-2 font-mono text-[10px] uppercase tracking-widest text-accent">{project.subtitle}</p>
+                  <h3 className="mb-2 break-words text-2xl font-bold leading-tight text-white">{project.title}</h3>
+                  <p className="mb-4 text-sm leading-relaxed text-slate-300">{project.description}</p>
+                  <div className="mb-4 flex flex-wrap gap-2">
+                    {project.tags.map((tag) => <span key={tag} className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-1 text-xs text-slate-200"><span>{TAG_ICONS[tag]}</span>{tag}</span>)}
+                  </div>
+                  <div className="flex gap-2 border-t border-white/10 pt-3">
+                    <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="flex min-h-11 flex-1 items-center justify-center gap-2 rounded-full bg-white px-3 text-xs font-bold text-black">Live Preview <FiExternalLink /></a>
+                    <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="flex min-h-11 flex-1 items-center justify-center gap-2 rounded-full border border-white/20 px-3 text-xs text-white"><FaGithub /> Source Code</a>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
 
         {/* ─── The Book Stack ──────────────────────────────── */}
-        <div className="w-full max-w-5xl relative z-10 flex-1 flex flex-col justify-center min-h-0 py-1 sm:py-2">
+        <div className="hidden md:flex w-full max-w-5xl relative z-10 flex-1 flex-col justify-center min-h-0 py-1 sm:py-2">
           {/* Outer Book Binder Frame */}
           <div className="relative w-full rounded-2xl sm:rounded-3xl bg-[#090a0d]/90 border border-white/10 p-2 sm:p-3 sm:pl-9 lg:pl-11 shadow-[0_30px_100px_rgba(0,0,0,0.85)] backdrop-blur-2xl">
             {/* Left Book Spine & Binding Rivets */}
@@ -678,7 +704,7 @@ const Projects = () => {
         </div>
 
         {/* ─── Bottom Status & Scroll Hint ─────────────────── */}
-        <div className="w-full max-w-5xl flex items-center justify-between text-slate-400 font-mono text-[10px] sm:text-xs pt-1 sm:pt-2 border-t border-white/5 relative z-20">
+        <div className="hidden md:flex w-full max-w-5xl items-center justify-between text-slate-400 font-mono text-[10px] sm:text-xs pt-1 sm:pt-2 border-t border-white/5 relative z-20">
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
             <span className="hidden sm:inline">
