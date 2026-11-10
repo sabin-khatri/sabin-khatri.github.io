@@ -565,25 +565,26 @@ const Projects = () => {
           <div className="hidden md:block"><FilterTabs active={activeFilter} onChange={handleFilterChange} /></div>
         </div>
 
-        <div className="md:hidden w-full max-w-xl mt-2">
+        <div className="md:hidden w-full max-w-xl min-w-0 mt-2 pb-8">
           <FilterTabs active={activeFilter} onChange={handleFilterChange} />
           <div className="space-y-5">
             {filteredProjects.map((project) => (
-              <article key={project.id} className="overflow-hidden rounded-2xl border border-white/10 bg-[#101116] shadow-xl">
-                <div className="relative h-52 w-full overflow-hidden bg-black/40">
-                  <img src={project.image} alt={project.title} className="h-full w-full object-cover object-top" loading="lazy" />
+              <article key={project.id} className="min-w-0 rounded-2xl border border-white/10 bg-[#101116] shadow-xl">
+                <div className="relative aspect-[16/10] w-full overflow-hidden rounded-t-2xl bg-black/60">
+                  <img src={project.image} alt={project.title} className="h-full w-full object-contain" loading="lazy" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/45 to-transparent pointer-events-none" />
                   <span className="absolute bottom-3 right-3 font-mono text-5xl font-black text-white/60">{project.num}</span>
                 </div>
-                <div className="p-4">
-                  <p className="mb-2 font-mono text-[10px] uppercase tracking-widest text-accent">{project.subtitle}</p>
+                <div className="min-w-0 p-4 sm:p-5">
+                  <p className="mb-2 break-words font-mono text-[10px] uppercase tracking-[0.12em] leading-relaxed text-accent">{project.subtitle}</p>
                   <h3 className="mb-2 break-words text-2xl font-bold leading-tight text-white">{project.title}</h3>
-                  <p className="mb-4 text-sm leading-relaxed text-slate-300">{project.description}</p>
+                  <p className="mb-4 break-words text-sm leading-relaxed text-slate-300">{project.description}</p>
                   <div className="mb-4 flex flex-wrap gap-2">
                     {project.tags.map((tag) => <span key={tag} className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-1 text-xs text-slate-200"><span>{TAG_ICONS[tag]}</span>{tag}</span>)}
                   </div>
-                  <div className="flex gap-2 border-t border-white/10 pt-3">
-                    <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="flex min-h-11 flex-1 items-center justify-center gap-2 rounded-full bg-white px-3 text-xs font-bold text-black">Live Preview <FiExternalLink /></a>
-                    <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="flex min-h-11 flex-1 items-center justify-center gap-2 rounded-full border border-white/20 px-3 text-xs text-white"><FaGithub /> Source Code</a>
+                  <div className="flex flex-col min-[380px]:flex-row gap-2 border-t border-white/10 pt-3">
+                    <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="flex min-h-11 min-w-0 flex-1 items-center justify-center gap-2 rounded-full bg-white px-3 text-xs font-bold text-black">Live Preview <FiExternalLink className="shrink-0" /></a>
+                    <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="flex min-h-11 min-w-0 flex-1 items-center justify-center gap-2 rounded-full border border-white/20 px-3 text-xs text-white"><FaGithub className="shrink-0" /> Source Code</a>
                   </div>
                 </div>
               </article>
