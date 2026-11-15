@@ -68,7 +68,7 @@ const Services = () => (
         transition={{ duration: 0.6 }}
         className="text-center mb-16 lg:mb-20"
       >
-        <span className="text-accent font-mono tracking-[0.4em] text-xs font-bold uppercase mb-3 block">
+        <span className="text-accent font-mono tracking-[0.12em] sm:tracking-[0.25em] text-xs font-bold uppercase mb-3 block">
           What I Do
         </span>
         <h2

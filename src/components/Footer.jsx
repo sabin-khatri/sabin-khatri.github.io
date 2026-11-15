@@ -53,7 +53,7 @@ const Footer = () => {
           {/* Copyright */}
           <div className="text-center md:text-right">
             <p className="text-slate-500 text-xs font-mono mb-1">© {year} Sabin Khatri</p>
-            <p className="text-white/40 text-[9px] uppercase tracking-widest">Built with React & ThreeJS</p>
+            <p className="text-white/40 text-[9px] uppercase tracking-widest">Built with React &amp; Three.js</p>
           </div>
 
         </div>

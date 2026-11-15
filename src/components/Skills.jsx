@@ -16,10 +16,10 @@ const SectionChrome = ({ compact }) => (
       viewport={{ once: true }}
       className="text-center"
     >
-      <p className="text-accent font-mono tracking-[0.5em] text-[10px] sm:text-xs font-bold uppercase mb-2">
+      <p className="text-accent font-mono tracking-[0.12em] sm:tracking-[0.25em] text-[10px] sm:text-xs font-bold uppercase mb-2 text-balance">
         Skill Laboratory
       </p>
-      <h2 className={`${compact ? "text-4xl" : "text-4xl sm:text-7xl lg:text-8xl"} font-black text-os-text tracking-tighter`}>
+      <h2 className={`${compact ? "text-4xl" : "text-4xl sm:text-6xl lg:text-7xl"} font-black text-os-text tracking-tighter text-balance break-words`}>
         TECH <span className="text-accent">STACK</span>
       </h2>
     </motion.div>

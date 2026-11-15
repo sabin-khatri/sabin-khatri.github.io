@@ -107,6 +107,7 @@ function AppContent() {
       infinite: false,
     });
     lenisRef.current = lenis;
+    window.__portfolioLenis = lenis;
 
     let frameId;
     function raf(time) {
@@ -118,6 +119,7 @@ function AppContent() {
     return () => {
       cancelAnimationFrame(frameId);
       lenis.destroy();
+      if (window.__portfolioLenis === lenis) delete window.__portfolioLenis;
       lenisRef.current = null;
     };
   }, [hasBooted]);
@@ -298,11 +300,9 @@ function AppContent() {
               <LazySection sectionId="skills" minHeight="80vh" rootMargin="1200px">
                 <SectionErrorBoundary><Skills /></SectionErrorBoundary>
               </LazySection>
-              <div className="hidden sm:block">
-                <LazySection sectionId="services" minHeight="50vh">
-                  <SectionErrorBoundary><Services /></SectionErrorBoundary>
-                </LazySection>
-              </div>
+              <LazySection sectionId="services" minHeight="50vh">
+                <SectionErrorBoundary><Services /></SectionErrorBoundary>
+              </LazySection>
               <SectionErrorBoundary><Projects /></SectionErrorBoundary>
               <LazySection sectionId="contact" minHeight="60vh">
                 <SectionErrorBoundary><Contact /></SectionErrorBoundary>

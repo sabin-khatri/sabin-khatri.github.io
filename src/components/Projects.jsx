@@ -60,7 +60,7 @@ const PROJECTS = [
     quip: "Bug reports go here",
     subtitle: "Smart Complaint Management System",
     description:
-      "A real-time complaint management platform that enables users to submit, track, and monitor complaints efficiently. The system provides instant status updates, role-based dashboards, and a responsive user experience for faster issue resolution.",
+      "A real-time complaint hub for submitting and tracking issues. Role-based dashboards and live status updates help teams resolve them faster.",
     image: realtime,
     tags: ["React", "Tailwind CSS", "Node.js"],
     liveUrl: "https://realtime-complaint-tracking.netlify.app/",
@@ -74,7 +74,7 @@ const PROJECTS = [
     quip: "Freshly brewed UI",
     subtitle: "Modern Tea Café Website",
     description:
-      "A modern and responsive website for a Nepali tea café featuring smooth animations, interactive UI, elegant layouts, and an engaging user experience to showcase products, services, and the café's unique atmosphere.",
+      "A responsive tea café website with a warm visual identity and smooth interactions. The menu and story bring its atmosphere online.",
     image: chiyaghar,
     tags: ["React", "Tailwind CSS", "Framer Motion"],
     liveUrl: "https://chiya-adda.vercel.app/",
@@ -88,7 +88,7 @@ const PROJECTS = [
     quip: "Scroll responsibly",
     subtitle: "Tourism & Adventure Platform",
     description:
-      "A visually appealing trekking and tourism platform designed to explore Nepal's natural beauty. It includes responsive layouts, engaging animations, destination highlights, and an immersive browsing experience.",
+      "A travel site showcasing trekking destinations across Nepal. Responsive layouts and subtle motion keep destination details easy to explore.",
     image: trekking,
     tags: ["React", "Tailwind CSS", "Framer Motion"],
     liveUrl: "https://trekking-web-mu69.vercel.app/",
@@ -102,7 +102,7 @@ const PROJECTS = [
     quip: "Data, but make it scenic",
     subtitle: "Hackathon Data Dashboard",
     description:
-      "A hackathon project developed collaboratively to visualize district-level data through an interactive dashboard. Built with Supabase for backend services, it offers secure data management, responsive design, and real-time information presentation.",
+      "A collaborative hackathon dashboard for exploring district-level data. Supabase powers its data layer and interactive visualizations.",
     image: district,
     tags: ["React", "TypeScript", "Tailwind CSS", "Supabase"],
     liveUrl: "https://district-scrore.vercel.app/",
@@ -221,7 +221,7 @@ const CardBody = ({ project, total }) => (
           </h3>
 
           {/* Description */}
-          <p className="text-slate-300/80 text-xs sm:text-sm leading-relaxed mb-4 line-clamp-3 sm:line-clamp-4">
+          <p className="text-slate-300/80 text-xs sm:text-sm leading-relaxed mb-4">
             {project.description}
           </p>
 
@@ -448,7 +448,7 @@ const Projects = () => {
   const [activeFilter, setActiveFilter] = useState("All");
   const [currentPage, setCurrentPage] = useState(0);
   const containerRef = useRef(null);
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = useReducedMotion() || (typeof window !== "undefined" && window.innerWidth < 1024);
 
   const filteredProjects =
     activeFilter === "All"
@@ -504,10 +504,8 @@ const Projects = () => {
     }
 
     const targetY = containerTop + targetProgress * totalScrollable;
-    window.scrollTo({
-      top: targetY,
-      behavior: "smooth",
-    });
+    if (window.__portfolioLenis) window.__portfolioLenis.scrollTo(targetY, { duration: 0.8 });
+    else window.scrollTo({ top: targetY, behavior: "smooth" });
     playClickSound();
   };
 
@@ -517,7 +515,8 @@ const Projects = () => {
     if (containerRef.current) {
       const rect = containerRef.current.getBoundingClientRect();
       const targetTop = rect.top + window.scrollY - 80;
-      window.scrollTo({ top: Math.max(0, targetTop), behavior: "smooth" });
+      if (window.__portfolioLenis) window.__portfolioLenis.scrollTo(Math.max(0, targetTop), { duration: 0.8 });
+      else window.scrollTo({ top: Math.max(0, targetTop), behavior: "smooth" });
     }
     playClickSound();
   };
@@ -526,7 +525,7 @@ const Projects = () => {
     <section
       id="projects"
       ref={containerRef}
-      className="relative bg-section overflow-x-clip h-auto md:h-[var(--projects-height)]"
+      className="relative bg-section overflow-x-clip h-auto lg:h-[var(--projects-height)]"
       style={{ "--projects-height": sectionHeight }}
     >
       {/* Background Grid Pattern */}
@@ -540,7 +539,7 @@ const Projects = () => {
       />
 
       {/* Sticky Viewport Container */}
-      <div className="md:sticky md:top-0 md:h-[100svh] w-full flex flex-col justify-start md:justify-between items-center py-8 md:py-6 lg:py-8 px-4 sm:px-6 md:overflow-hidden">
+      <div className="lg:sticky lg:top-0 lg:h-[100svh] w-full flex flex-col justify-start lg:justify-between items-center py-8 lg:py-6 px-4 sm:px-6 lg:overflow-hidden">
         {/* ─── Top Header & Filter ─────────────────────────── */}
         <div className="w-full max-w-5xl text-center relative z-20">
           <motion.div
@@ -550,8 +549,8 @@ const Projects = () => {
           >
             <div className="flex items-center justify-center gap-2 mb-1.5">
               <FiBookOpen className="text-accent text-xs sm:text-sm" />
-              <span className="text-accent font-mono tracking-[0.3em] text-[11px] sm:text-xs font-bold uppercase">
-                Interactive Folio // Selected Works
+              <span className="text-accent font-mono tracking-[0.12em] sm:tracking-[0.25em] text-[10px] sm:text-xs font-bold uppercase text-balance">
+                <span className="sm:hidden">Selected Works</span><span className="hidden sm:inline">Interactive Folio // Selected Works</span>
               </span>
             </div>
             <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-[1.1] text-os-text mb-3 sm:mb-4">
@@ -562,10 +561,10 @@ const Projects = () => {
             </h2>
           </motion.div>
 
-          <div className="hidden md:block"><FilterTabs active={activeFilter} onChange={handleFilterChange} /></div>
+          <div className="hidden lg:block"><FilterTabs active={activeFilter} onChange={handleFilterChange} /></div>
         </div>
 
-        <div className="md:hidden w-full max-w-xl min-w-0 mt-2 pb-8">
+        <div className="lg:hidden w-full max-w-xl min-w-0 mt-2 pb-8">
           <FilterTabs active={activeFilter} onChange={handleFilterChange} />
           <div className="space-y-5">
             {filteredProjects.map((project) => (
@@ -593,7 +592,7 @@ const Projects = () => {
         </div>
 
         {/* ─── The Book Stack ──────────────────────────────── */}
-        <div className="hidden md:flex w-full max-w-5xl relative z-10 flex-1 flex-col justify-center min-h-0 py-1 sm:py-2">
+        <div className="hidden lg:flex w-full max-w-5xl relative z-10 flex-1 flex-col justify-center min-h-0 py-1 sm:py-2">
           {/* Outer Book Binder Frame */}
           <div className="relative w-full rounded-2xl sm:rounded-3xl bg-[#090a0d]/90 border border-white/10 p-2 sm:p-3 sm:pl-9 lg:pl-11 shadow-[0_30px_100px_rgba(0,0,0,0.85)] backdrop-blur-2xl">
             {/* Left Book Spine & Binding Rivets */}
@@ -705,7 +704,7 @@ const Projects = () => {
         </div>
 
         {/* ─── Bottom Status & Scroll Hint ─────────────────── */}
-        <div className="hidden md:flex w-full max-w-5xl items-center justify-between text-slate-400 font-mono text-[10px] sm:text-xs pt-1 sm:pt-2 border-t border-white/5 relative z-20">
+        <div className="hidden lg:flex w-full max-w-5xl items-center justify-between text-slate-400 font-mono text-[10px] sm:text-xs pt-1 sm:pt-2 border-t border-white/5 relative z-20">
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
             <span className="hidden sm:inline">
