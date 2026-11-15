@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useMemo, useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useTypewriter, Cursor } from "react-simple-typewriter";
 import { HiOutlineArrowRight } from "react-icons/hi";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
@@ -59,10 +59,10 @@ const MovingBorderBtn = ({ href, children, innerClass = "", bg = 'rgba(var(--acc
       href={href}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      whileHover={{ y: -3, scale: 1.04 }}
-      whileTap={{ scale: 0.97 }}
-      transition={{ type: "spring", stiffness: 380, damping: 28 }}
-      className={`relative inline-flex cursor-pointer items-center gap-2.5 px-7 py-3.5 text-base font-semibold rounded-xl transition-all duration-300 ${innerClass}`}
+      whileHover={{ y: -2 }}
+      whileTap={{ scale: 0.98 }}
+      transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+      className={`relative inline-flex cursor-pointer items-center gap-2.5 px-7 py-3.5 text-base font-semibold rounded-xl ${innerClass}`}
       style={{
         border: '1px solid rgba(var(--accent-rgb), 0.3)',
         background: bg,
@@ -75,6 +75,7 @@ const MovingBorderBtn = ({ href, children, innerClass = "", bg = 'rgba(var(--acc
 };
 
 const Hero = () => {
+  const shouldReduceMotion = useReducedMotion();
   const [text] = useTypewriter({
     words: [
       "build polished web experiences",
@@ -86,9 +87,9 @@ const Hero = () => {
   });
 
   const fadeUp = (delay = 0) => ({
-    initial: { opacity: 0, y: 28 },
+    initial: { opacity: 0, y: shouldReduceMotion ? 0 : 14 },
     animate: { opacity: 1, y: 0 },
-    transition: { type: "spring", stiffness: 200, damping: 20, delay },
+    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1], delay },
   });
 
   return (
@@ -102,9 +103,9 @@ const Hero = () => {
         <div className="flex flex-col lg:grid lg:grid-cols-2 lg:gap-20 items-center gap-6 sm:gap-10 lg:gap-12">
           <motion.div
             className="flex justify-center lg:justify-end lg:order-2 w-full h-[180px] sm:h-[280px] lg:h-[400px] min-h-0"
-            initial={{ scale: 0.82, opacity: 0 }}
+            initial={{ scale: 0.96, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: "spring", stiffness: 180, damping: 22, delay: 0.1 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
           >
             <div className="w-full h-full min-h-0">
               <Terminal />
@@ -122,11 +123,11 @@ const Hero = () => {
 
             <motion.div {...fadeUp(0.15)} className="inline-block max-w-full">
               <span className="block text-[11px] font-mono text-os-muted uppercase tracking-[0.25em] mb-2">Frontend developer · Nepal</span>
-              <h1 className="font-heading text-[2.25rem] sm:text-6xl lg:text-[5.2rem] font-black tracking-[-0.04em] leading-[1.05] mb-4">
+              <h1 className="font-heading text-[2.25rem] sm:text-5xl md:text-6xl lg:text-[5rem] font-black tracking-[-0.04em] leading-[1.05] mb-4 text-balance break-words">
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-orange-400 drop-shadow-sm">Sabin</span> 
                 <span className="text-white drop-shadow-sm ml-2">Khatri</span>
               </h1>
-              <p className="text-lg sm:text-xl lg:text-2xl text-slate-300 font-mono tracking-tight min-h-[2.5rem]">
+              <p className="text-base sm:text-xl lg:text-2xl text-slate-300 font-mono tracking-tight min-h-[3.25rem] sm:min-h-[2.5rem] text-balance">
                 <span className="text-accent/80">I </span><span className="text-white">{text}</span>
                 <Cursor cursorColor="var(--os-accent)" cursorStyle="▊" />
               </p>
@@ -145,7 +146,7 @@ const Hero = () => {
             </motion.div>
 
             <motion.p {...fadeUp(0.32)} className="text-sm sm:text-base lg:text-lg text-slate-400 max-w-lg mx-auto lg:mx-0 leading-relaxed font-sans font-light">
-                I’m Sabin, a frontend developer building thoughtful, fast web experiences with React and modern JavaScript. I care about clear interfaces, useful details, and smooth interactions.
+                I build thoughtful React interfaces with clear details and smooth interactions.
             </motion.p>
 
             <motion.div {...fadeUp(0.44)} className="flex flex-wrap items-center gap-4 justify-center lg:justify-start pt-1">
