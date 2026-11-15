@@ -82,7 +82,7 @@ const Contact = () => {
   };
 
   const copyEmail = () => {
-    navigator.clipboard?.writeText("sabink802@email.com");
+    navigator.clipboard?.writeText("sabinkhatri.dev@gmail.com");
     toast.success("Email copied to clipboard.");
   };
 
@@ -129,7 +129,7 @@ const Contact = () => {
               className="text-3xl sm:text-4xl md:text-5xl font-black text-os-text tracking-tighter"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Let's <span className="text-accent">Connect</span>
+              Let&apos;s <span className="text-accent">Connect</span>
             </h2>
           </div>
           <p className="text-os-muted font-mono text-xs sm:text-sm">Send a post request to my inbox.</p>
@@ -163,8 +163,8 @@ const Contact = () => {
                 <div>
                   <p className="text-os-muted text-xs uppercase mb-1">Email</p>
                   <div className="flex items-center gap-2">
-                    <a href="mailto:sabink802@email.com" className="text-accent text-sm hover:underline break-all">
-                      sabink802@email.com
+                    <a href="mailto:sabinkhatri.dev@gmail.com" className="text-accent text-sm hover:underline break-all">
+                      sabinkhatri.dev@gmail.com
                     </a>
                     <button
                       type="button"
