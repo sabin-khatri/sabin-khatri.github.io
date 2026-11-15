@@ -119,10 +119,10 @@ const About = () => {
               animate={isInView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.6 }}
             >
-              <span className="text-accent font-mono tracking-[0.25em] sm:tracking-[0.4em] text-[10px] sm:text-xs font-bold uppercase block mb-2">
+              <span className="text-accent font-mono tracking-[0.12em] sm:tracking-[0.25em] text-[10px] sm:text-xs font-bold uppercase block mb-2">
                 Introduction
               </span>
-              <h2 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-[1.1] mb-4 sm:mb-6 break-words">
+              <h2 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl font-black tracking-tighter leading-[1.1] mb-4 sm:mb-6 break-words text-balance">
                 About{' '}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent via-orange-400 to-accent drop-shadow-sm">
                   Me.
@@ -137,9 +137,7 @@ const About = () => {
               animate={isInView ? { opacity: 1 } : {}}
               transition={{ delay: 0.2 }}
             >
-              I am <span className="text-os-text font-semibold">Sabin Khatri</span>, a passionate Frontend
-              developer crafting high-performance digital experiences. I specialize in turning complex ideas into{' '}
-              <span className="text-accent">pixel-perfect</span> realities.
+              I’m a frontend developer in Nepal building React interfaces, dashboards, and responsive web experiences that make information easier to use.
             </motion.p>
 
             {/* Mobile skill chips (replaces orbiting animation) */}
