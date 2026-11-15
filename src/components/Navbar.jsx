@@ -21,8 +21,8 @@ const SOCIALS = [
 ];
 
 /* ─── SPRING CONFIGS (GPU-friendly: only transform/opacity) ─ */
-const SPRING_FAST  = { type: "spring", stiffness: 500, damping: 38, mass: 0.6 };
-const SPRING_PILL  = { type: "spring", stiffness: 420, damping: 34, mass: 0.7 };
+const SPRING_FAST  = { type: "spring", stiffness: 320, damping: 32, mass: 0.8 };
+const SPRING_PILL  = { type: "spring", stiffness: 320, damping: 32, mass: 0.8 };
 const DRAWER_EASE  = [0.16, 1, 0.3, 1];   // custom expo-out
 
 /* ─── LOGO ──────────────────────────────────────────── */
